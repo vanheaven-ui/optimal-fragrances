@@ -18,8 +18,13 @@
         "name": "next"
       }
     ],
+
+    "baseUrl": "./src", // Important: This sets the base for non-relative paths
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./data/*", // This maps @/ to the src directory
+        "./components/"
+      ]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
