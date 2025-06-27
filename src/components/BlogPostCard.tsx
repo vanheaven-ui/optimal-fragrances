@@ -35,7 +35,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post }) => {
             {post.title}
           </h3>
           <p className="text-ug-text-dark text-sm mb-3">
-            By {post.author} on{" "}
+            By {post.author} <span className="mx-1">on</span>
             {new Date(post.date).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",

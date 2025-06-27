@@ -144,6 +144,15 @@ export default function DrawerNavigation() {
                 Blog
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/login"
+                className={`block text-xl font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-ug-text-heading hover:text-ug-purple-primary`}
+                onClick={closeDrawer}
+              >
+                Admin Login
+              </Link>
+            </li>
             {/* Add more links here as needed */}
           </ul>
         </nav>

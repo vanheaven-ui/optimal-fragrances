@@ -1,5 +1,8 @@
 // src/data/blogPosts.ts
 
+// This file now primarily serves as the type definition for BlogPost.
+// The actual blog post data will be fetched from Firestore.
+
 export interface BlogPost {
   id: string;
   slug: string;
@@ -12,8 +15,12 @@ export interface BlogPost {
   seoTitle?: string;
   seoDescription?: string;
   keywords?: string[];
+  createdAt?: Date; // Added for Firestore timestamps
+  updatedAt?: Date; // Added for Firestore timestamps
 }
 
+// The 'blogPosts' array is now defined here primarily for the 'uploadData.ts' script
+// and as a fallback structure. In the actual React components, data will be fetched from Firestore.
 export const blogPosts: BlogPost[] = [
   {
     id: "1",
@@ -21,7 +28,6 @@ export const blogPosts: BlogPost[] = [
     title: "The Art of Perfume Layering: Create Your Signature Scent",
     author: "Sophia Scent",
     date: "2023-10-26",
-    // Changed to .png format for compatibility
     image:
       "https://placehold.co/600x400/9333ea/ffffff.png?text=Perfume+Layering",
     excerpt:
@@ -68,7 +74,6 @@ export const blogPosts: BlogPost[] = [
     title: "Top Fragrance Trends for 2024: What's Hot in the World of Scent?",
     author: "Aroma Expert",
     date: "2024-01-15",
-    // Changed to .png format for compatibility
     image:
       "https://placehold.co/600x400/805AD5/ffffff.png?text=Fragrance+Trends",
     excerpt:
@@ -117,7 +122,6 @@ export const blogPosts: BlogPost[] = [
     title: "How to Choose Your Perfect Perfume: A Step-by-Step Guide",
     author: "Scent Seeker",
     date: "2023-11-05",
-    // Changed to .png format for compatibility
     image: "https://placehold.co/600x400/9333ea/ffffff.png?text=Choose+Perfume",
     excerpt:
       "Finding your signature scent can be a delightful journey. Our guide helps you navigate fragrance families, understand notes, and test perfumes like a pro.",
@@ -172,7 +176,6 @@ export const blogPosts: BlogPost[] = [
       "From Ancient Rituals to Modern Luxury: A Journey Through Perfume History",
     author: "History Buff",
     date: "2023-09-20",
-    // Changed to .png format for compatibility
     image:
       "https://placehold.co/600x400/805AD5/ffffff.png?text=Perfume+History",
     excerpt:

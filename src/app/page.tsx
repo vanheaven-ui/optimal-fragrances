@@ -1,9 +1,9 @@
 "use client";
 
-import { products } from "@/product";
-import ProductCard from "components/ProductCard";
-import SpotlightProduct from "components/SpotLightProduct";
 import { useMemo } from "react";
+import { useProducts } from "../hooks/useProducts";
+import  SpotlightProduct from "../components/SpotLightProduct";
+import ProductCard from "../components/ProductCard";
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
@@ -16,9 +16,11 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default function HomePage() {
+  const { products, loading, error } = useProducts(); // Use the custom hook to fetch products
+
   const allFeaturedProducts = useMemo(() => {
     return products.filter((p) => p.featured);
-  }, []); // Only compute once
+  }, [products]);
 
   const spotlightProducts = useMemo(() => {
     return shuffleArray(allFeaturedProducts).slice(0, 2);
@@ -32,6 +34,22 @@ export default function HomePage() {
   const curatedProducts = useMemo(() => {
     return shuffleArray(nonSpotlightProducts).slice(0, 4);
   }, [nonSpotlightProducts]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
+        <p className="text-2xl text-ug-text-dark">Loading perfumes...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
+        <p className="text-2xl text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -83,7 +101,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-16">
-            <a // Replaced Link with standard <a> tag
+            <a
               href="/perfumes"
               className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-10 py-4 rounded-lg text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
             >

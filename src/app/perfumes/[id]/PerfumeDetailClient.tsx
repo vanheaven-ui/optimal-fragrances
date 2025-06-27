@@ -9,13 +9,10 @@ import { formatPrice } from "utils/currencyFormatter";
 export default function PerfumeDetailClient({ perfume }: { perfume: Product }) {
   // Use a default WhatsApp number, perhaps from a config or environment variable
   // For now, using a placeholder number as it's not defined elsewhere in the context.
-  const defaultWhatsappNumber = "256758071512"; // Replace with Dr. Enok's actual number
+  const defaultWhatsappNumber = "256702889253";
 
   const whatsappMessage = `Hello, I'm interested in ordering the "${perfume.name}" perfume. Could you provide more details?`;
-  // Use a product-specific WhatsApp channel link if available, otherwise fallback to the default number
-  const whatsappLink = perfume.whatsappChannelLink
-    ? perfume.whatsappChannelLink // Use product-specific channel link
-    : `https://wa.me/${defaultWhatsappNumber}?text=${encodeURIComponent(
+  const whatsappLink = `https://wa.me/${defaultWhatsappNumber}?text=${encodeURIComponent(
         whatsappMessage
       )}`;
 

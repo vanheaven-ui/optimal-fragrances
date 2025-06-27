@@ -1,27 +1,52 @@
 // src/app/perfumes/page.tsx
-"use client";
+'use client';
 
-import { products } from "@/product";
-import ProductCard from "components/ProductCard";
 import { useState, useMemo, useEffect } from "react";
+import { formatPrice } from "../../utils/currencyFormatter"; 
+import { useProducts } from '../../hooks/useProducts'; 
+import ProductCard from "../../components/ProductCard";
+
+// Helper function to shuffle an array (Fisher-Yates algorithm)
+const shuffleArray = <T extends unknown>(array: T[]): T[] => {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
 
 export default function PerfumesPage() {
-  const allProducts = products;
+  const { products: allProducts, loading, error } = useProducts(); // Use the custom hook to fetch all products
+
   const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [searchTerm, setSearchTerm] = useState("");
-  const [minPrice, setMinPrice] = useState<string>(""); // State for min price input (string for user input)
-  const [maxPrice, setMaxPrice] = useState<string>(""); // State for max price input (string for user input)
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8; // Two rows of 4 columns = 8 products per page
+
+  // Select two random featured products to display prominently
+  const topFeaturedProducts = useMemo(() => {
+    const featured = allProducts.filter(p => p.featured);
+    const shuffledFeatured = shuffleArray(featured);
+    return shuffledFeatured.slice(0, 2);
+  }, [allProducts]); // Re-shuffle only if allProducts changes
+
+  // Filter out the top featured products from the main collection to avoid duplicates
+  const mainCollectionProducts = useMemo(() => {
+    const featuredIds = new Set(topFeaturedProducts.map(p => p.id));
+    return allProducts.filter(p => !featuredIds.has(p.id));
+  }, [allProducts, topFeaturedProducts]);
 
   const uniqueBrands = useMemo(() => {
     const brands = new Set<string>();
     allProducts.forEach((product) => brands.add(product.brand));
     return ["All Brands", ...Array.from(brands).sort()];
-  }, [allProducts]); // Depend on allProducts
+  }, [allProducts]);
 
   const filteredProducts = useMemo(() => {
-    let productsToDisplay = allProducts;
+    let productsToDisplay = mainCollectionProducts; // Start with products excluding top featured
 
     const lowerCaseSearchTerm = searchTerm.trim().toLowerCase();
     if (lowerCaseSearchTerm) {
@@ -33,7 +58,7 @@ export default function PerfumesPage() {
       );
     }
 
-    if (selectedBrand !== "All Brands") {
+    if (selectedBrand !== 'All Brands') {
       productsToDisplay = productsToDisplay.filter(
         (product) => product.brand === selectedBrand
       );
@@ -52,17 +77,13 @@ export default function PerfumesPage() {
         (product) => product.price <= parsedMaxPrice
       );
     }
-
-    // This useEffect handles resetting currentPage, removing it from useMemo dependencies
     return productsToDisplay;
-  }, [selectedBrand, searchTerm, minPrice, maxPrice, allProducts]);
+  }, [selectedBrand, searchTerm, minPrice, maxPrice, mainCollectionProducts]);
 
-  // Effect to reset current page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedBrand, searchTerm, minPrice, maxPrice]);
 
-  // Pagination Logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -74,7 +95,7 @@ export default function PerfumesPage() {
   const paginate = (pageNumber: number) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top on page change
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -86,45 +107,71 @@ export default function PerfumesPage() {
     setCurrentPage(1);
   };
 
-  // Logic for displaying pagination numbers (more modern approach)
   const getPaginationNumbers = () => {
     const pageNumbers = [];
-    const maxPagesToShow = 5; // e.g., 1 ... 4 5 6 ... 10
+    const maxPagesToShow = 5;
 
     if (totalPages <= maxPagesToShow) {
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
-      pageNumbers.push(1); // Always show first page
+      pageNumbers.push(1);
 
-      if (currentPage > maxPagesToShow - 2) {
-        // If current page is far enough from start
-        pageNumbers.push("...");
+      if (currentPage > maxPagesToShow - 2 && totalPages > maxPagesToShow) {
+        pageNumbers.push('...');
       }
 
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      let startPage = Math.max(2, currentPage - Math.floor(maxPagesToShow / 2) + 1);
+      let endPage = Math.min(totalPages - 1, currentPage + Math.floor(maxPagesToShow / 2) - 1);
 
       // Adjust range if near start or end
-      if (currentPage < maxPagesToShow - 1) {
-        endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
-      } else if (currentPage > totalPages - (maxPagesToShow - 2)) {
+      if (currentPage <= Math.ceil(maxPagesToShow / 2)) {
+        endPage = Math.min(totalPages -1, maxPagesToShow - 1);
+        startPage = 2; // Make sure it doesn't go below 2
+      } else if (currentPage > totalPages - Math.ceil(maxPagesToShow / 2)) {
         startPage = Math.max(2, totalPages - (maxPagesToShow - 2));
+        endPage = totalPages - 1; // Make sure it doesn't go above totalPages - 1
       }
 
       for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
+        if (i > 1 && i < totalPages) { // Ensure we don't duplicate first/last page
+          pageNumbers.push(i);
+        }
       }
 
-      if (currentPage < totalPages - (maxPagesToShow - 2)) {
-        // If current page is far enough from end
-        pageNumbers.push("...");
+      if (currentPage < totalPages - Math.floor(maxPagesToShow / 2) && totalPages > maxPagesToShow) {
+        pageNumbers.push('...');
       }
-      pageNumbers.push(totalPages); // Always show last page
+      if (totalPages > 1) { // Only push last page if there's more than one page
+        pageNumbers.push(totalPages);
+      }
     }
-    return pageNumbers;
+
+    // Remove duplicates from pagination numbers
+    return Array.from(new Set(pageNumbers)).sort((a: any, b: any) => {
+        if (a === '...') return 1;
+        if (b === '...') return -1;
+        return a - b;
+    });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
+        <p className="text-2xl text-ug-text-dark">Loading perfume catalog...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
+        <p className="text-2xl text-red-600">{error}</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="container mx-auto p-4 md:p-8 min-h-[calc(100vh-200px)]">
@@ -132,9 +179,53 @@ export default function PerfumesPage() {
         Our Perfume Collection
       </h1>
       <p className="text-xl text-ug-text-dark text-center max-w-2xl mx-auto mb-8">
-        Explore a curated selection of fragrances crafted to evoke unique
-        emotions and memories.
+        Explore a curated selection of fragrances crafted to evoke unique emotions and memories.
       </p>
+
+      {/* Dynamic Featured Products Section */}
+      {topFeaturedProducts.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-ug-purple-primary text-center mb-8">
+            Special Highlights
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto">
+            {topFeaturedProducts.map((product) => (
+              <div key={product.id} className="relative bg-white rounded-lg shadow-lg overflow-hidden group">
+                <div className="relative w-full aspect-[4/3] overflow-hidden">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                    onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found'; // Fallback image
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg"></div>
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="text-xl font-bold text-ug-text-heading mb-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-ug-text-dark text-sm mb-3">
+                    {product.description.substring(0, 100)}...
+                  </p>
+                  <span className="text-2xl font-extrabold text-ug-purple-primary">
+                    {formatPrice(product.price, "UGX", 0)}
+                  </span>
+                  <div className="mt-4">
+                    <a
+                      href={`/perfumes/${product.id}`}
+                      className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-6 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300 ease-in-out"
+                    >
+                      View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Filtering Controls */}
       <div className="bg-ug-neutral-bg rounded-lg shadow-md p-6 mb-12 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 flex-wrap">
@@ -149,19 +240,8 @@ export default function PerfumesPage() {
                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
                        bg-white text-ug-text-dark placeholder-ug-text-dark/70"
           />
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ug-text-dark"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ug-text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
 
@@ -207,10 +287,7 @@ export default function PerfumesPage() {
         </div>
 
         {/* Clear Filters Button */}
-        {(selectedBrand !== "All Brands" ||
-          searchTerm.trim() !== "" ||
-          minPrice !== "" ||
-          maxPrice !== "") && (
+        {(selectedBrand !== "All Brands" || searchTerm.trim() !== "" || minPrice !== "" || maxPrice !== "") && (
           <button
             onClick={clearFilters}
             className="w-full md:w-auto bg-ug-neutral-light text-ug-text-dark hover:bg-ug-text-heading hover:text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300 ease-in-out"
@@ -257,8 +334,8 @@ export default function PerfumesPage() {
               >
                 Previous
               </button>
-              {getPaginationNumbers().map((pageNumber, index) =>
-                typeof pageNumber === "number" ? (
+              {getPaginationNumbers().map((pageNumber, index) => (
+                typeof pageNumber === 'number' ? (
                   <button
                     key={index}
                     onClick={() => paginate(pageNumber)}
@@ -276,7 +353,7 @@ export default function PerfumesPage() {
                     {pageNumber}
                   </span>
                 )
-              )}
+              ))}
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
