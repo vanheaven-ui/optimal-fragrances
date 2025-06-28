@@ -1,4 +1,3 @@
-// src/app/admin/login/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +6,8 @@ import {
   onAuthStateChanged,
   Auth,
 } from "firebase/auth";
-import { getFirebaseInstances } from "../../../lib/firebase"; // Corrected import path
+import { getFirebaseInstances } from "../../../lib/firebase";
+import FragranceLoader from "components/FragranceLoader";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
       }
     });
     return () => unsubscribe(); // Clean up subscription on unmount
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,13 +81,7 @@ export default function AdminLoginPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-100px)] bg-ug-neutral-bg">
-        <p className="text-2xl text-ug-text-dark">
-          Checking authentication status...
-        </p>
-      </div>
-    );
+    return <FragranceLoader message="Checking authentication status..." />;
   }
 
   return (

@@ -12,13 +12,12 @@ export interface Product {
   description: string;
   category: "men" | "women" | "unisex";
   featured: boolean;
-  // whatsappChannelLink?: string; // Removed - not used in the UI, data will be fetched from Firestore
   scentNotes?: {
     topNotes: string;
     heartNotes: string;
     baseNotes: string;
   };
-  volume?: number
+  volume?: number | 100
   createdAt?: Date; // Added for Firestore timestamps
   updatedAt?: Date; // Added for Firestore timestamps
 }

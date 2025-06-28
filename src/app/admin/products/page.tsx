@@ -1,28 +1,29 @@
 // src/app/admin/products/page.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { formatPrice } from "../../../utils/currencyFormatter"; // Path: src/app/admin/products/page.tsx -> src/utils/currencyFormatter.ts
-// Import Firebase functions and types from the central utility
+import React, { useState, useEffect } from "react";
+import Link from "next/link"; // Import Link for internal navigation
+import { formatPrice } from "../../../utils/currencyFormatter";
 import {
   getFirebaseInstances,
   collection,
   onSnapshot,
   deleteDoc,
   doc,
-} from "../../../lib/firebase"; // Path: src/app/admin/products/page.tsx -> src/lib/firebase.ts
-import { FirebaseError } from "firebase/app"; // Specific Firebase error type
-import AdminLayout from "../../../components/AdminLayout"; // Path: src/app/admin/products/page.tsx -> src/components/AdminLayout.tsx
+} from "../../../lib/firebase";
+import { FirebaseError } from "firebase/app";
+import AdminLayout from "../../../components/AdminLayout";
 import { DocumentData, Firestore, QuerySnapshot } from "firebase/firestore";
 import { Product } from "../../../data/product";
+import FragranceLoader from "components/FragranceLoader";
 
 export default function AdminProductsPage() {
   const [currentProducts, setCurrentProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [dbInstance, setDbInstance] = useState<Firestore | null>(null); // State to hold the Firestore instance
+  const [dbInstance, setDbInstance] = useState<Firestore | null>(null);
 
-  // Initialize Firebase when the component mounts
+  // Initialize Firebase DB instance
   useEffect(() => {
     const { db, error: initError } = getFirebaseInstances();
     if (initError) {
@@ -32,26 +33,19 @@ export default function AdminProductsPage() {
       setLoading(false);
     } else if (db) {
       setDbInstance(db);
-      // Data fetching will proceed in the next useEffect
     } else {
       setError("Firebase Firestore instance is not available.");
       setLoading(false);
     }
   }, []);
 
-  // Fetch and listen to real-time product updates from Firestore
+  // Fetch products from Firestore using onSnapshot for real-time updates
   useEffect(() => {
-    if (!dbInstance) {
-      // Don't try to fetch if Firestore isn't available yet
-      // Loading is already handled by the first useEffect
-      return;
-    }
+    if (!dbInstance) return;
 
     setLoading(true);
     setError(null);
 
-    // Assuming products are in a root collection named 'products' for simplicity
-    // If you're using /artifacts/{appId}/public/data/products, you'd need the appId here.
     const productsCollectionRef = collection(dbInstance, "products");
 
     const unsubscribe = onSnapshot(
@@ -62,19 +56,19 @@ export default function AdminProductsPage() {
           const data = doc.data();
           const productData: Product = {
             id: doc.id,
-            name: data.name as string,
-            brand: data.brand as string,
-            price: data.price as number,
-            imageUrl: data.imageUrl as string,
-            description: data.description as string,
-            category: data.category as "men" | "women" | "unisex",
-            featured: data.featured as boolean,
+            name: data.name,
+            brand: data.brand,
+            price: data.price,
+            imageUrl: data.imageUrl,
+            description: data.description,
+            category: data.category,
+            featured: data.featured,
             volume: data.volume || undefined,
             scentNotes: data.scentNotes
               ? {
-                  topNotes: (data.scentNotes.topNotes as string) || "",
-                  heartNotes: (data.scentNotes.heartNotes as string) || "",
-                  baseNotes: (data.scentNotes.baseNotes as string) || "",
+                  topNotes: data.scentNotes.topNotes || "",
+                  heartNotes: data.scentNotes.heartNotes || "",
+                  baseNotes: data.scentNotes.baseNotes || "",
                 }
               : undefined,
             createdAt: data.createdAt,
@@ -92,10 +86,10 @@ export default function AdminProductsPage() {
       }
     );
 
-    // Cleanup subscription on component unmount
-    return () => unsubscribe();
-  }, [dbInstance]); // Re-run when dbInstance changes
+    return () => unsubscribe(); // Clean up the listener on component unmount
+  }, [dbInstance]);
 
+  // Handle product deletion
   const handleDelete = async (id: string): Promise<void> => {
     if (!dbInstance) {
       alert("Firestore not initialized.");
@@ -107,7 +101,6 @@ export default function AdminProductsPage() {
         const productDocRef = doc(dbInstance, "products", id);
         await deleteDoc(productDocRef);
         alert("Product deleted successfully!");
-        // onSnapshot listener will automatically update currentProducts state
       } catch (err: any) {
         alert(`Failed to delete product: ${(err as Error).message}`);
         console.error("Error deleting product:", err);
@@ -118,9 +111,7 @@ export default function AdminProductsPage() {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="text-center py-10 text-ug-text-dark text-lg">
-          Loading products...
-        </div>
+        <FragranceLoader message="Loading products..." />
       </AdminLayout>
     );
   }
@@ -135,17 +126,17 @@ export default function AdminProductsPage() {
 
   return (
     <AdminLayout>
-      {/* Sticky header for title and add button */}
       <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 z-20 rounded-lg shadow-sm">
         <h1 className="text-4xl font-bold text-ug-text-heading">
           Manage Products
         </h1>
-        <a
+        {/* Use Link for internal navigation */}
+        <Link
           href="/admin/products/new"
           className="bg-ug-purple-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-ug-purple-accent transition duration-300"
         >
           + Add New Product
-        </a>
+        </Link>
       </div>
 
       {currentProducts.length === 0 ? (
@@ -156,110 +147,116 @@ export default function AdminProductsPage() {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow-md">
-          <table className="min-w-full divide-y divide-ug-neutral-light table-auto w-full">
-            <thead className="bg-ug-neutral-bg sticky top-[128px] z-10">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
-                >
-                  Image
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[20%]"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
-                >
-                  Brand
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
-                >
-                  Price
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
-                >
-                  Category
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[5%]"
-                >
-                  Featured
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[15%]"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-ug-neutral-light">
-              {currentProducts.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-ug-text-heading">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-16 h-16 object-cover rounded-md"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "https://placehold.co/64x64/CCCCCC/000000?text=No+Image"; // Fallback
-                      }}
-                    />
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium text-ug-text-heading break-words">
-                    {product.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
-                    {product.brand}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
-                    {formatPrice(product.price, "UGX", 0)}{" "}
-                    {/* Removed extra arguments */}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark capitalize">
-                    {product.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
-                    {product.featured ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Yes
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        No
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <a
-                      href={`/admin/products/${product.id}/edit`} // Use id for editing
-                      className="text-ug-purple-primary hover:text-ug-purple-accent mr-3"
-                    >
-                      Edit
-                    </a>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Delete
-                    </button>
-                  </td>
+        <div className="w-full bg-white rounded-lg shadow-md">
+          <div className="overflow-x-auto">
+            {" "}
+            {/* Changed md:overflow-x-visible to just overflow-x-auto for consistency on smaller screens */}
+            {/* Added table-fixed to ensure column widths are respected */}
+            <table className="min-w-full divide-y divide-ug-neutral-light table-fixed w-full">
+              <thead className="bg-ug-neutral-bg">
+                <tr>
+                  {/* Adjusted column widths for better visual balance and consistency with blog posts */}
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
+                  >
+                    Image
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-1/4"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[12%]"
+                  >
+                    Brand
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[12%]"
+                  >
+                    Price
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[12%]"
+                  >
+                    Category
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[8%]"
+                  >
+                    Featured
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[16%]"
+                  >
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-ug-neutral-light">
+                {currentProducts.map((product) => (
+                  <tr key={product.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-ug-text-heading">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded-md"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://placehold.co/64x64/CCCCCC/000000?text=No+Image";
+                        }}
+                      />
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-ug-text-heading break-words">
+                      {product.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
+                      {product.brand}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
+                      {formatPrice(product.price, "UGX", 0)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark capitalize">
+                      {product.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
+                      {product.featured ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          Yes
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          No
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                      {/* Use Link for internal navigation */}
+                      <Link
+                        href={`/admin/products/${product.id}/edit`}
+                        className="text-ug-purple-primary hover:text-ug-purple-accent mr-3"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </AdminLayout>

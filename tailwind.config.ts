@@ -10,12 +10,32 @@ const config: Config = {
     extend: {
       keyframes: {
         moveBike: {
-          '0%, 100%': { transform: 'translateX(0)' },
-          '50%': { transform: 'translateX(-10px)' },
+          "0%, 100%": { transform: "translateX(0)" },
+          "50%": { transform: "translateX(-10px)" },
+        },
+        "mist-diffusion": {
+          "0%": { transform: "translateY(0) scale(0.5)", opacity: "0.7" },
+          "100%": { transform: "translateY(-50px) scale(1.2)", opacity: "0" },
+        },
+        "particle-float": {
+          "0%, 100%": { transform: "translateY(0) translateX(0) scale(1)" },
+          "25%": { transform: "translateY(-10px) translateX(5px) scale(1.05)" },
+          "50%": { transform: "translateY(-20px) translateX(-5px) scale(1.1)" },
+          "75%": { transform: "translateY(-15px) translateX(8px) scale(1.02)" },
+        },
+        "pulse-light": {
+          "0%, 100%": { opacity: "0.1" },
+          "50%": { opacity: "0.3" },
         },
       },
       animation: {
-        moveBike: 'moveBike 6s ease-in-out infinite',
+        moveBike: "moveBike 6s ease-in-out infinite",
+        "mist-diffusion": "mist-diffusion 3s ease-out infinite forwards",
+        "particle-1": "particle-float 4s ease-in-out infinite",
+        "particle-2": "particle-float 3.5s ease-in-out infinite",
+        "particle-3": "particle-float 4.2s ease-in-out infinite",
+        "particle-4": "particle-float 3.8s ease-in-out infinite",
+        "pulse-light": "pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       colors: {
         // Our custom color palette

@@ -9,7 +9,7 @@ export interface BlogPost {
   title: string;
   author: string;
   date: string; // Format: YYYY-MM-DD
-  image: string; // URL to the blog post's main image
+  imageUrl: string; // URL to the blog post's main image
   excerpt: string; // A short summary of the post
   content: string; // The full content of the blog post (Markdown or HTML string)
   seoTitle?: string;
@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
     title: "The Art of Perfume Layering: Create Your Signature Scent",
     author: "Sophia Scent",
     date: "2023-10-26",
-    image:
+    imageUrl:
       "https://placehold.co/600x400/9333ea/ffffff.png?text=Perfume+Layering",
     excerpt:
       "Discover the secret to crafting a truly unique fragrance by mastering the art of perfume layering. Learn how to combine different scents to create a personalized aroma that reflects your style.",
@@ -74,7 +74,7 @@ export const blogPosts: BlogPost[] = [
     title: "Top Fragrance Trends for 2024: What's Hot in the World of Scent?",
     author: "Aroma Expert",
     date: "2024-01-15",
-    image:
+    imageUrl:
       "https://placehold.co/600x400/805AD5/ffffff.png?text=Fragrance+Trends",
     excerpt:
       "Stay ahead of the curve with our comprehensive guide to the top fragrance trends expected to dominate 2024. From gourmand delights to sustainable notes, find your next favorite. ",
@@ -122,7 +122,7 @@ export const blogPosts: BlogPost[] = [
     title: "How to Choose Your Perfect Perfume: A Step-by-Step Guide",
     author: "Scent Seeker",
     date: "2023-11-05",
-    image: "https://placehold.co/600x400/9333ea/ffffff.png?text=Choose+Perfume",
+    imageUrl: "https://placehold.co/600x400/9333ea/ffffff.png?text=Choose+Perfume",
     excerpt:
       "Finding your signature scent can be a delightful journey. Our guide helps you navigate fragrance families, understand notes, and test perfumes like a pro.",
     content: `
@@ -176,7 +176,7 @@ export const blogPosts: BlogPost[] = [
       "From Ancient Rituals to Modern Luxury: A Journey Through Perfume History",
     author: "History Buff",
     date: "2023-09-20",
-    image:
+    imageUrl:
       "https://placehold.co/600x400/805AD5/ffffff.png?text=Perfume+History",
     excerpt:
       "Embark on a captivating journey through time to explore the rich and aromatic history of perfume, from its ancient origins to its status as a luxury staple today.",

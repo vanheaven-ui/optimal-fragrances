@@ -69,8 +69,9 @@ export default function DrawerNavigation() {
           <IconBars /> {/* Using inline SVG icon */}
         </button>
         {/* Tooltip content */}
+        {/* Adjusted text content */}
         <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-1 bg-ug-text-heading text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
-          Open Menu
+          Click to open menu {/* Changed text here */}
           <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-ug-text-heading"></div>
         </div>
       </div>

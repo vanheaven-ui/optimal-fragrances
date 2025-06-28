@@ -11,27 +11,25 @@ import React, {
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import {
   getAuth,
-  signInAnonymously,
   signInWithCustomToken,
+  signOut,
   Auth,
   User,
 } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
-// Define the shape of the context value
 interface FirebaseContextType {
   db: Firestore | null;
   auth: Auth | null;
   userId: string | null;
-  isAuthReady: boolean; // Indicates if Firebase Auth has completed its initial check
+  isAuthReady: boolean;
+  logout: () => Promise<void>;
 }
 
-// Create the context with a default null value
 const FirebaseContext = createContext<FirebaseContextType | undefined>(
   undefined
 );
 
-// Define global variables provided by the Canvas environment
 declare global {
   interface Window {
     __firebase_config?: string;
@@ -54,11 +52,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   useEffect(() => {
     let firebaseApp: FirebaseApp;
-    let firestoreInstance: Firestore;
-    let authInstance: Auth;
 
     try {
-      // 1. Initialize Firebase App
       const firebaseConfigString =
         typeof window !== "undefined" ? window.__firebase_config : undefined;
       let firebaseConfig: object;
@@ -68,30 +63,28 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           firebaseConfig = JSON.parse(firebaseConfigString);
         } catch (e) {
           console.error("Error parsing __firebase_config:", e);
-          // Fallback to dummy config if parsing fails
           firebaseConfig = {
-            apiKey: "AIzaSyAvxfY-M697XiIIEATiZ_W_PM_w9Ol6P3w",
-            authDomain: "optimal-fragrances.firebaseapp.com",
-            projectId: "optimal-fragrances",
-            storageBucket: "optimal-fragrances.firebasestorage.app",
-            messagingSenderId: "462977682528",
-            appId: "1:462977682528:web:aca4a37ca9bc0234b58705",
-            measurementId: "G-CYKVE8JKJ4",
+            apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+            authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+            storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+            messagingSenderId:
+              process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+            appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+            measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
           };
         }
       } else {
-        console.warn(
-          "No __firebase_config found. Using dummy Firebase config. For local testing, replace with your actual Firebase project config."
-        );
-        // Fallback for local testing outside Canvas
+        console.warn("No __firebase_config found. Using fallback config.");
         firebaseConfig = {
-          apiKey: "AIzaSyAvxfY-M697XiIIEATiZ_W_PM_w9Ol6P3w",
-          authDomain: "optimal-fragrances.firebaseapp.com",
-          projectId: "optimal-fragrances",
-          storageBucket: "optimal-fragrances.firebasestorage.app",
-          messagingSenderId: "462977682528",
-          appId: "1:462977682528:web:aca4a37ca9bc0234b58705",
-          measurementId: "G-CYKVE8JKJ4",
+          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+          messagingSenderId:
+            process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+          measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
         };
       }
 
@@ -101,13 +94,12 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         firebaseApp = getApp();
       }
 
-      firestoreInstance = getFirestore(firebaseApp);
-      authInstance = getAuth(firebaseApp);
+      const firestoreInstance = getFirestore(firebaseApp);
+      const authInstance = getAuth(firebaseApp);
 
       setDb(firestoreInstance);
       setAuth(authInstance);
 
-      // 2. Authenticate
       const initialAuthToken =
         typeof window !== "undefined" ? window.__initial_auth_token : undefined;
 
@@ -116,26 +108,22 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           if (initialAuthToken) {
             await signInWithCustomToken(authInstance, initialAuthToken);
             console.log("Firebase: Authenticated with custom token.");
-          } else {
-            await signInAnonymously(authInstance);
-            console.log("Firebase: Signed in anonymously.");
           }
         } catch (error) {
           console.error("Firebase Authentication failed:", error);
-          // If anonymous sign-in fails, a random UUID will be used for userId
         } finally {
-          setIsAuthReady(true); // Mark auth as ready regardless of success
+          setIsAuthReady(true);
         }
       };
 
-      authenticate(); // Call authentication
+      authenticate();
     } catch (error) {
       console.error("Failed to initialize Firebase:", error);
-      setIsAuthReady(true); // Even if init fails, mark as ready to prevent infinite loading states
+      setIsAuthReady(true);
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Listen for Auth state changes to set userId
+  // Listen for changes in auth state
   useEffect(() => {
     if (auth) {
       const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
@@ -143,33 +131,30 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           setUserId(user.uid);
           console.log("Firebase Auth State Changed: User ID set:", user.uid);
         } else {
-          // If no user is authenticated (e.g., sign out, or initial anonymous failed)
-          // For private collections, we need a unique ID per user session even if anonymous sign-in fails
-          // For public collections, request.auth != null is usually sufficient.
-          const currentUserId = localStorage.getItem("localUserId");
-          if (currentUserId) {
-            setUserId(currentUserId);
-            console.log(
-              "Firebase Auth State Changed: Using existing local user ID:",
-              currentUserId
-            );
-          } else {
-            const newId = crypto.randomUUID();
-            setUserId(newId);
-            localStorage.setItem("localUserId", newId);
-            console.log(
-              "Firebase Auth State Changed: Generated new local user ID:",
-              newId
-            );
-          }
+          setUserId(null);
+          console.log("Firebase Auth State Changed: No authenticated user.");
         }
       });
-      return () => unsubscribe(); // Cleanup subscription on unmount
+      return () => unsubscribe();
     }
   }, [auth]);
 
-  // Provide the context value
-  const contextValue = { db, auth, userId, isAuthReady };
+  // Clean logout function
+  const logout = async () => {
+    if (auth) {
+      try {
+        await signOut(auth);
+        setUserId(null);
+        console.log("User signed out successfully.");
+        // Optional: Clear token from localStorage or cookies if used
+        // localStorage.removeItem("your_custom_token");
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
+    }
+  };
+
+  const contextValue = { db, auth, userId, isAuthReady, logout };
 
   return (
     <FirebaseContext.Provider value={contextValue}>
@@ -178,7 +163,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   );
 };
 
-// Custom hook to easily consume the Firebase context
 export const useFirebase = () => {
   const context = useContext(FirebaseContext);
   if (context === undefined) {

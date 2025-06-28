@@ -1,36 +1,55 @@
 // src/app/admin/products/new/page.tsx
 "use client";
 
-import { Product, products } from "@/product";
 import AdminLayout from "components/AdminLayout";
 import React, { useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useFirebase } from "../../../../context/FirebaseContext";
+import FragranceLoader from "components/FragranceLoader";
 
-// Simple function to generate a unique ID for new products
-const generateUniqueProductId = (): string => {
-  const existingIds = products.map((p) => parseInt(p.id) || 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 0;
-  return (maxId + 1).toString();
-};
+// Define the Product interface (ensure this is consistent with your Firestore structure)
+export interface Product {
+  id?: string; // ID is optional when creating, Firestore generates it
+  name: string;
+  brand: string;
+  price: number;
+  imageUrl: string;
+  description: string;
+  category: "men" | "women" | "unisex";
+  featured: boolean;
+  volume?: number;
+  scentNotes?: {
+    topNotes: string;
+    heartNotes: string;
+    baseNotes: string;
+  };
+  createdAt?: Date; // To store creation timestamp
+  updatedAt?: Date; // To store update timestamp
+}
 
 interface AdminProductFormProps {
-  // This prop would typically be passed by a dynamic route
-  // For '/admin/products/new', it won't be present
-  // For '/admin/products/[id]/edit', the parent component would fetch and pass it
   initialProduct?: Product;
 }
 
 const AdminProductForm: React.FC<AdminProductFormProps> = ({
   initialProduct,
 }) => {
+  const { db, isAuthReady } = useFirebase();
   const [formData, setFormData] = useState<Product>(
     initialProduct || {
-      id: generateUniqueProductId(), // Default new ID
       name: "",
       brand: "",
       price: 0,
       imageUrl: "",
       description: "",
-      category: "unisex", // Default category
+      category: "unisex",
       featured: false,
       scentNotes: {
         topNotes: "",
@@ -44,37 +63,53 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     type: "success" | "error";
     message: string;
   } | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // This useEffect will run when the component mounts.
-  // It checks if we're in 'edit' mode by looking at the URL.
-  // If it's an edit page (e.g., /admin/products/some-id/edit), it loads the product data.
-  // This is a workaround for not using Next.js dynamic routing and `useParams`.
   useEffect(() => {
-    // Check if the current URL matches an edit pattern
+    if (!isAuthReady || !db) return;
+
     const pathParts = window.location.pathname.split("/");
-    const isEditPath = pathParts.includes("edit") && pathParts.length > 3; // e.g., /admin/products/ID/edit
+    const isEditPath = pathParts.includes("edit") && pathParts.length > 3;
     const productIdFromUrl = isEditPath
       ? pathParts[pathParts.length - 2]
       : null;
 
-    if (productIdFromUrl) {
-      const foundProduct = products.find((p) => p.id === productIdFromUrl);
-      if (foundProduct) {
-        setFormData(foundProduct);
-        setIsEditMode(true);
-      } else {
+    const fetchProduct = async (id: string) => {
+      setLoading(true);
+      try {
+        const productRef = doc(db, "products", id);
+        const productSnap = await getDoc(productRef);
+
+        if (productSnap.exists()) {
+          const productData = productSnap.data() as Product;
+          setFormData({
+            ...productData,
+            id: productSnap.id,
+            price: Number(productData.price),
+          });
+          setIsEditMode(true);
+          setStatusMessage(null);
+        } else {
+          setStatusMessage({
+            type: "error",
+            message: "Product not found for editing.",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
         setStatusMessage({
           type: "error",
-          message: "Product not found for editing.",
+          message: "Error loading product data.",
         });
-        // Optionally redirect back to the product list if product not found
-        // window.location.href = '/admin/products';
+      } finally {
+        setLoading(false);
       }
+    };
+
+    if (productIdFromUrl) {
+      fetchProduct(productIdFromUrl);
     } else {
-      // Ensure we are in "add new" mode and have a fresh ID
-      setFormData((prev) => ({
-        ...prev,
-        id: generateUniqueProductId(),
+      setFormData({
         name: "",
         brand: "",
         price: 0,
@@ -82,12 +117,11 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         description: "",
         category: "unisex",
         featured: false,
-        whatsappChannelLink: "",
         scentNotes: { topNotes: "", heartNotes: "", baseNotes: "" },
-      }));
+      });
       setIsEditMode(false);
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, [db, isAuthReady]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -96,7 +130,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
   ) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
 
-    // Handle nested scentNotes properties
     if (name.startsWith("scentNotes.")) {
       const scentNoteKey = name.split(".")[1] as keyof Product["scentNotes"];
       setFormData((prev) => ({
@@ -104,7 +137,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         scentNotes: {
           ...prev.scentNotes,
           [scentNoteKey]: value,
-        } as Product["scentNotes"], // Cast to ensure type correctness
+        } as Product["scentNotes"],
       }));
     } else {
       setFormData((prev) => ({
@@ -114,11 +147,20 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatusMessage(null); // Clear previous messages
+    setStatusMessage(null);
+    setLoading(true);
 
-    // Basic validation
+    if (!db) {
+      setStatusMessage({
+        type: "error",
+        message: "Firebase Firestore not initialized.",
+      });
+      setLoading(false);
+      return;
+    }
+
     if (
       !formData.name ||
       !formData.brand ||
@@ -131,51 +173,59 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         message:
           "Please fill in all required fields (Name, Brand, Price, Image URL, Description).",
       });
+      setLoading(false);
       return;
     }
 
-    if (isEditMode) {
-      // Find and update the existing product in the global array
-      const index = products.findIndex((p) => p.id === formData.id);
-      if (index !== -1) {
-        products[index] = formData; // Directly modifying the imported array
+    try {
+      if (isEditMode && formData.id) {
+        const productRef = doc(db, "products", formData.id);
+        const { id, ...dataToUpdate } = formData;
+        await updateDoc(productRef, {
+          ...dataToUpdate,
+          updatedAt: serverTimestamp(),
+        });
         setStatusMessage({
           type: "success",
           message: "Product updated successfully!",
         });
       } else {
+        const productsCollectionRef = collection(db, "products");
+        const { id, ...dataToAdd } = formData;
+        await addDoc(productsCollectionRef, {
+          ...dataToAdd,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
         setStatusMessage({
-          type: "error",
-          message: "Error: Product not found for update.",
+          type: "success",
+          message: "New product added successfully!",
+        });
+        setFormData({
+          name: "",
+          brand: "",
+          price: 0,
+          imageUrl: "",
+          description: "",
+          category: "unisex",
+          featured: false,
+          scentNotes: { topNotes: "", heartNotes: "", baseNotes: "" },
         });
       }
-    } else {
-      // Add new product to the global array
-      const newProduct = { ...formData, id: generateUniqueProductId() }; // Ensure new ID
-      products.push(newProduct); // Directly modifying the imported array
+    } catch (error) {
+      console.error("Error saving product:", error);
       setStatusMessage({
-        type: "success",
-        message: "New product added successfully!",
+        type: "error",
+        message: `Error saving product: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       });
-      // Reset form for next entry, but keep new ID logic
-      setFormData({
-        id: generateUniqueProductId(),
-        name: "",
-        brand: "",
-        price: 0,
-        imageUrl: "",
-        description: "",
-        category: "unisex",
-        featured: false,
-        scentNotes: { topNotes: "", heartNotes: "", baseNotes: "" },
-      });
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 3000);
     }
-
-    setTimeout(() => {
-      setStatusMessage(null);
-      // Optional: Redirect back to product list after a short delay
-      // window.location.href = '/admin/products';
-    }, 3000);
   };
 
   return (
@@ -195,6 +245,15 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           >
             {statusMessage.message}
           </div>
+        )}
+
+        {loading && (
+          <FragranceLoader
+            message={`${
+              isEditMode ? "Loading product..." : "Saving product..."
+            } Please
+            wait.`}
+          />
         )}
 
         <form
@@ -217,6 +276,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               onChange={handleChange}
               className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
               required
+              disabled={loading}
             />
           </div>
 
@@ -236,6 +296,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               onChange={handleChange}
               className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
               required
+              disabled={loading}
             />
           </div>
 
@@ -257,6 +318,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               required
               min="0"
               step="1000"
+              disabled={loading}
             />
           </div>
 
@@ -277,6 +339,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
               placeholder="https://example.com/perfume.png or /local-image.jpg"
               required
+              disabled={loading}
             />
             {formData.imageUrl && (
               <div className="mt-4 flex items-center space-x-4">
@@ -311,6 +374,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
               placeholder="Detailed description of the product..."
               required
+              disabled={loading}
             ></textarea>
           </div>
 
@@ -328,6 +392,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               value={formData.category}
               onChange={handleChange}
               className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary bg-white"
+              disabled={loading}
             >
               <option value="men">Men</option>
               <option value="women">Women</option>
@@ -344,6 +409,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
               checked={formData.featured}
               onChange={handleChange}
               className="h-5 w-5 text-ug-purple-primary rounded border-ug-neutral-light focus:ring-ug-purple-primary"
+              disabled={loading}
             />
             <label
               htmlFor="featured"
@@ -374,6 +440,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
                   placeholder="e.g., Citrus, Bergamot, Pink Peppercorn"
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -391,6 +458,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
                   placeholder="e.g., Jasmine, Rose, Sandalwood"
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -408,6 +476,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
                   onChange={handleChange}
                   className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
                   placeholder="e.g., Musk, Amber, Vanilla, Oud"
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -423,6 +492,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             <button
               type="submit"
               className="px-6 py-3 bg-ug-purple-primary text-white rounded-lg font-semibold hover:bg-ug-purple-accent transition duration-300"
+              disabled={loading || !isAuthReady}
             >
               {isEditMode ? "Update Product" : "Add Product"}
             </button>

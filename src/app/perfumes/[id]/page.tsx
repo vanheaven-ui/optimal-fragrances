@@ -7,6 +7,8 @@ import { useProducts } from "../../../hooks/useProducts";
 import { Product } from "../../../data/product";
 import { formatPrice } from "../../../utils/currencyFormatter";
 import { FaWhatsapp } from "react-icons/fa";
+import FragranceLoader from "../../../components/FragranceLoader";
+import Link from "next/link";
 
 export default function PerfumeDetail() {
   const { id } = useParams(); // Get the product ID from the URL
@@ -37,11 +39,7 @@ export default function PerfumeDetail() {
 
   // Check if product is available
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
-        <p className="text-2xl text-ug-text-dark">Loading perfume details...</p>
-      </div>
-    );
+    return <FragranceLoader message="Loading perfume details..." />;
   }
 
   if (error) {
@@ -114,21 +112,6 @@ export default function PerfumeDetail() {
             </div>
           </div>
 
-          {/* WhatsApp Order Button */}
-          {/* <motion.a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            whileHover={{ scale: 1.07 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center justify-center gap-3 bg-ug-success hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl text-lg shadow-md mt-8"
-          >
-            <IconWhatsapp />
-            Order via WhatsApp
-          </motion.a> */}
-
           <motion.a
             href={whatsappLink}
             target="_blank"
@@ -191,12 +174,12 @@ export default function PerfumeDetail() {
 
       {/* Back Button */}
       <div className="mt-10 text-center">
-        <a
+        <Link
           href="/perfumes"
           className="inline-block text-ug-purple-primary font-medium hover:underline text-base"
         >
           ← Back to catalog
-        </a>
+        </Link>
       </div>
     </div>
   );

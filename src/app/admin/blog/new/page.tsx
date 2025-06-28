@@ -1,33 +1,54 @@
 // src/app/admin/blog/new/page.tsx
 "use client";
 
-import { BlogPost, blogPosts } from "@/blogPosts";
 import AdminLayout from "components/AdminLayout";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+  Timestamp, // Import Timestamp for type checking
+} from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
+import { useRouter } from "next/navigation"; // For redirection
+import { useFirebase } from "../../../../context/FirebaseContext";
 
-// A simple way to get a unique ID for new posts.
-// In a real app, this would come from the database.
-const generateUniqueId = (): string => {
-  const existingIds = blogPosts.map((p) => parseInt(p.id) || 0);
-  const maxId = existingIds.length > 0 ? Math.max(...existingIds) : 0;
-  return (maxId + 1).toString();
-};
+// Define the BlogPost interface here or ideally from a central types file
+export interface BlogPost {
+  id?: string; // ID is optional when creating, Firestore assigns it
+  slug: string;
+  title: string;
+  author: string;
+  date: string; // Stored as a date string (YYYY-MM-DD)
+  imageUrl?: string; // Changed from 'image' to 'imageUrl' for consistency with products
+  excerpt: string;
+  content: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  keywords?: string[];
+  createdAt?: Date; // For retrieved data
+  updatedAt?: Date; // For retrieved data
+}
 
 // This component can be re-used for editing by passing `initialPost` prop
 interface BlogPostFormProps {
-  initialPost?: BlogPost; // Optional: if provided, it's an edit form
+  initialPost?: BlogPost | null; // Optional: if provided, it's an edit form
 }
 
 const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
+  const { db, isAuthReady } = useFirebase();
+  const router = useRouter(); // Initialize router for navigation
+
   const [formData, setFormData] = useState<BlogPost>(
     initialPost || {
-      id: generateUniqueId(), // New ID for new posts
       slug: "",
       title: "",
       author: "",
       date: new Date().toISOString().split("T")[0], // Default to today's date
-      image: "",
+      imageUrl: "", // Use imageUrl
       excerpt: "",
       content: "",
       seoTitle: "",
@@ -36,29 +57,35 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
     }
   );
   const [isEditMode, setIsEditMode] = useState(!!initialPost);
+  const [loading, setLoading] = useState(false); // For form submission loading
   const [statusMessage, setStatusMessage] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
 
-  // If this page is loaded directly for editing (e.g., /admin/blog/some-slug/edit),
-  // we'd need to fetch the post based on the slug. For now, assume initialPost is passed.
-  // In a real Next.js dynamic route ([slug]/edit), you'd get the slug from params and fetch.
   useEffect(() => {
-    // This useEffect is primarily for when the component is mounted directly as an edit page
-    // and the initialPost needs to be loaded based on a URL parameter (e.g., actual dynamic routing)
-    // For this simplified example, we rely on the initialPost prop being set correctly.
-    // If we were using Next.js route params, this is where you'd retrieve the slug
-    // and find the corresponding blog post from `blogPosts` array.
+    // This effect ensures the form initializes correctly when `initialPost` changes
+    // (e.g., when navigating from the Add New page to an Edit page).
     if (initialPost) {
       setFormData(initialPost);
       setIsEditMode(true);
     } else {
-      // Ensure a new ID is generated if we are truly creating a new post
-      setFormData((prev) => ({ ...prev, id: generateUniqueId() }));
+      // Reset form for a new post if initialPost is null/undefined
+      setFormData({
+        slug: "",
+        title: "",
+        author: "",
+        date: new Date().toISOString().split("T")[0],
+        imageUrl: "",
+        excerpt: "",
+        content: "",
+        seoTitle: "",
+        seoDescription: "",
+        keywords: [],
+      });
       setIsEditMode(false);
     }
-  }, [initialPost]); // Re-run if initialPost changes (e.g., navigating from New to Edit)
+  }, [initialPost]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -73,7 +100,6 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
   };
 
   const handleKeywordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Split by comma, trim spaces, filter out empty strings
     const keywordsArray = e.target.value
       .split(",")
       .map((kw) => kw.trim())
@@ -84,9 +110,17 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatusMessage(null); // Clear previous messages
+
+    if (!isAuthReady || !db) {
+      setStatusMessage({
+        type: "error",
+        message: "Firebase not initialized. Please try again.",
+      });
+      return;
+    }
 
     // Basic validation
     if (
@@ -104,69 +138,70 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
       return;
     }
 
-    // Ensure slug is clean for URL
-    let cleanSlug = formData.slug
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-    if (!cleanSlug) {
-      cleanSlug = formData.title
-        .toLowerCase()
-        .replace(/[^a-z0-9-]/g, "")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-      if (!cleanSlug) {
-        cleanSlug = `post-${formData.id}`; // Fallback slug
-      }
-    }
+    setLoading(true); // Start loading state for submission
 
-    if (isEditMode) {
-      // Find and update the existing post in the global array
-      const index = blogPosts.findIndex((p) => p.id === formData.id);
-      if (index !== -1) {
-        blogPosts[index] = { ...formData, slug: cleanSlug }; // Update with clean slug
+    // Ensure slug is clean for URL
+    const cleanSlug = formData.slug
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-") // Replace non-alphanumeric (except hyphen) with hyphen
+      .replace(/-+/g, "-") // Replace multiple hyphens with single
+      .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
+
+    try {
+      if (isEditMode && formData.id) {
+        // Update existing post
+        const postRef = doc(db, "blogPosts", formData.id);
+        await updateDoc(postRef, {
+          ...formData,
+          slug: cleanSlug,
+          updatedAt: serverTimestamp(),
+        });
         setStatusMessage({
           type: "success",
           message: "Blog post updated successfully!",
         });
       } else {
+        // Add new post
+        const postsCollectionRef = collection(db, "blogPosts");
+        await addDoc(postsCollectionRef, {
+          ...formData,
+          slug: cleanSlug,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
         setStatusMessage({
-          type: "error",
-          message: "Error: Blog post not found for update.",
+          type: "success",
+          message: "New blog post added successfully!",
+        });
+        // Reset form for new entry if successfully added
+        setFormData({
+          slug: "",
+          title: "",
+          author: "",
+          date: new Date().toISOString().split("T")[0],
+          imageUrl: "",
+          excerpt: "",
+          content: "",
+          seoTitle: "",
+          seoDescription: "",
+          keywords: [],
         });
       }
-    } else {
-      // Add new post to the global array
-      const newPost = { ...formData, id: generateUniqueId(), slug: cleanSlug }; // Ensure new ID and clean slug
-      blogPosts.push(newPost); // Directly modifying the imported array
-      setStatusMessage({
-        type: "success",
-        message: "New blog post added successfully!",
-      });
-      // Reset form for next entry, but keep new ID logic
-      setFormData({
-        id: generateUniqueId(),
-        slug: "",
-        title: "",
-        author: "",
-        date: new Date().toISOString().split("T")[0],
-        image: "",
-        excerpt: "",
-        content: "",
-        seoTitle: "",
-        seoDescription: "",
-        keywords: [],
-      });
-    }
 
-    // After successful submission (add or edit), consider redirecting or showing success
-    // For now, we show a status message.
-    setTimeout(() => {
-      setStatusMessage(null);
       // Optional: Redirect back to blog list after a short delay
-      // window.location.href = '/admin/blog';
-    }, 3000);
+      setTimeout(() => {
+        setStatusMessage(null);
+        router.push("/admin/blog"); // Redirect to blog list
+      }, 2000);
+    } catch (err: any) {
+      console.error("Error saving blog post:", err);
+      setStatusMessage({
+        type: "error",
+        message: `Failed to save blog post: ${(err as Error).message}`,
+      });
+    } finally {
+      setLoading(false); // End loading state
+    }
   };
 
   return (
@@ -206,6 +241,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             required
+            disabled={loading}
           />
         </div>
 
@@ -225,6 +261,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="e.g., the-art-of-perfume-layering"
             required
+            disabled={loading}
           />
         </div>
 
@@ -243,6 +280,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             required
+            disabled={loading}
           />
         </div>
 
@@ -261,24 +299,26 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             required
+            disabled={loading}
           />
         </div>
 
         <div>
           <label
-            htmlFor="image"
+            htmlFor="imageUrl"
             className="block text-ug-text-dark text-sm font-semibold mb-2"
           >
             Image URL
           </label>
           <input
             type="url"
-            id="image"
-            name="image"
-            value={formData.image}
+            id="imageUrl"
+            name="imageUrl"
+            value={formData.imageUrl || ""}
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="https://example.com/blog-image.png"
+            disabled={loading}
           />
         </div>
 
@@ -297,6 +337,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             rows={3}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="A short summary of the blog post..."
+            disabled={loading}
           ></textarea>
         </div>
 
@@ -316,6 +357,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary font-mono text-sm"
             placeholder="Write your blog post content here using Markdown or HTML..."
             required
+            disabled={loading}
           ></textarea>
         </div>
 
@@ -334,6 +376,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="Short, keyword-rich title for search engines"
+            disabled={loading}
           />
         </div>
 
@@ -352,6 +395,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             rows={2}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="Concise summary for search engine results"
+            disabled={loading}
           ></textarea>
         </div>
 
@@ -370,6 +414,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
             onChange={handleKeywordsChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="perfume, fragrance, layering, trends"
+            disabled={loading}
           />
         </div>
 
@@ -383,8 +428,15 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
           <button
             type="submit"
             className="px-6 py-3 bg-ug-purple-primary text-white rounded-lg font-semibold hover:bg-ug-purple-accent transition duration-300"
+            disabled={loading} // Disable button when submitting
           >
-            {isEditMode ? "Update Post" : "Add Post"}
+            {loading
+              ? isEditMode
+                ? "Updating..."
+                : "Adding..."
+              : isEditMode
+              ? "Update Post"
+              : "Add Post"}
           </button>
         </div>
       </form>

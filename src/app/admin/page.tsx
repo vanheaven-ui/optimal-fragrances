@@ -1,14 +1,79 @@
 // src/app/admin/page.tsx
 "use client";
 
-import { products } from "@/product";
-// Adjusted import paths to be more direct from a perceived 'src' root
+import React, { useState, useEffect } from "react";
+// Remove local data imports as we will fetch from Firebase
+// import { products } from "@/product";
+// import { blogPosts } from "@/blogPosts";
+
 import AdminLayout from "../../components/AdminLayout";
-import { blogPosts } from "@/blogPosts";
+import { collection, getDocs } from "firebase/firestore"; // Import Firestore functions
+import { FirebaseError } from "firebase/app";
+import { useFirebase } from "../../context/FirebaseContext";
+import FragranceLoader from "components/FragranceLoader";
 
 export default function AdminDashboardPage() {
-  const totalProducts = products.length;
-  const totalBlogPosts = blogPosts.length;
+  const { db, isAuthReady } = useFirebase(); // Get db instance and auth status
+  const [totalProducts, setTotalProducts] = useState<number | null>(null);
+  const [totalBlogPosts, setTotalBlogPosts] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only attempt to fetch data if Firebase is ready and db instance is available
+    if (!isAuthReady || !db) {
+      if (!isAuthReady) {
+        setLoading(true);
+        setError(null);
+      } else if (!db) {
+        setError("Firebase Firestore instance is not available.");
+        setLoading(false);
+      }
+      return;
+    }
+
+    const fetchCounts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch total products count
+        const productsCollectionRef = collection(db, "products");
+        const productSnapshot = await getDocs(productsCollectionRef);
+        setTotalProducts(productSnapshot.size);
+
+        // Fetch total blog posts count
+        const blogPostsCollectionRef = collection(db, "blogPosts");
+        const blogPostSnapshot = await getDocs(blogPostsCollectionRef);
+        setTotalBlogPosts(blogPostSnapshot.size);
+
+        setLoading(false);
+      } catch (err: any) {
+        console.error("Error fetching dashboard counts:", err);
+        setError(`Failed to load dashboard data: ${(err as Error).message}`);
+        setLoading(false);
+      }
+    };
+
+    fetchCounts();
+    // No need for onSnapshot here as counts don't need real-time updates on dashboard
+    // A one-time fetch on load is sufficient.
+  }, [db, isAuthReady]); // Re-run effect if db or auth state changes
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <FragranceLoader message="Loading dashboard data..." />
+      </AdminLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminLayout>
+        <div className="text-center py-10 text-red-500 text-lg">{error}</div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -44,7 +109,7 @@ export default function AdminDashboardPage() {
           <div>
             <p className="text-ug-text-dark text-lg">Total Products</p>
             <h2 className="text-4xl font-bold text-ug-text-heading">
-              {totalProducts}
+              {totalProducts !== null ? totalProducts : "N/A"}
             </h2>
           </div>
         </div>
@@ -70,7 +135,7 @@ export default function AdminDashboardPage() {
           <div>
             <p className="text-ug-text-dark text-lg">Total Blog Posts</p>
             <h2 className="text-4xl font-bold text-ug-text-heading">
-              {totalBlogPosts}
+              {totalBlogPosts !== null ? totalBlogPosts : "N/A"}
             </h2>
           </div>
         </div>

@@ -1,9 +1,10 @@
 // src/app/contact/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
+import FragranceLoader from "../../components/FragranceLoader"; // Adjust path as needed
 
-// Inline SVG for icons
+// Inline SVG for icons (no changes needed here)
 const IconPhone = () => (
   <svg
     className="w-7 h-7 text-white"
@@ -56,6 +57,9 @@ const IconDelivery = () => (
 );
 
 export default function ContactPage() {
+  // New state for initial page loading
+  const [pageLoading, setPageLoading] = useState(true);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,6 +69,17 @@ export default function ContactPage() {
   const [submitMessage, setSubmitMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
+  // Use useEffect to simulate initial data fetching/page readiness
+  useEffect(() => {
+    // Simulate a network request or heavy component loading
+    const timer = setTimeout(() => {
+      setPageLoading(false); // Once "loading" is done, set pageLoading to false
+    }, 1000); // Simulate 1 second of loading
+
+    // Cleanup function: important to clear timeout if component unmounts early
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array means this runs once on mount
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -72,13 +87,14 @@ export default function ContactPage() {
   };
 
   const validateEmail = (email: string) => {
-    // Basic regex for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+
     setIsSubmitting(true);
     setSubmitMessage("");
     setMessageType("");
@@ -98,8 +114,7 @@ export default function ContactPage() {
     }
 
     try {
-      // Simulate API call for sending message
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
 
       setSubmitMessage(
         "Your message has been sent successfully! We will get back to you shortly."
@@ -115,6 +130,14 @@ export default function ContactPage() {
       setIsSubmitting(false);
     }
   };
+
+  // --- Conditional Rendering for Page Loading ---
+  if (pageLoading) {
+    return (
+      <FragranceLoader message="Brewing the perfect contact experience..." />
+    );
+  }
+  // --- End Conditional Rendering ---
 
   return (
     <div className="container mx-auto p-4 md:p-8 min-h-[calc(100vh-200px)] flex flex-col items-center font-sans">
@@ -132,7 +155,7 @@ export default function ContactPage() {
           <h2 className="text-3xl font-bold mb-6 text-white">
             Reach Out Directly
           </h2>
-           <hr />
+          <hr />
           <div className="space-y-8 mt-auto flex-grow flex flex-col justify-center">
             <div className="flex items-center gap-4">
               <IconPhone />
@@ -148,7 +171,6 @@ export default function ContactPage() {
                 <p className="text-white text-lg">info@optimalfragrances.ug</p>
               </div>
             </div>
-            {/* Updated section for delivery information */}
             <div className="flex items-start gap-4">
               <IconDelivery />
               <div>
@@ -162,7 +184,6 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-          {/* Decorative background circles */}
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white opacity-10 rounded-full blur-xl"></div>
           <div className="absolute -top-5 -left-5 w-24 h-24 bg-white opacity-5 rounded-full blur-xl"></div>
         </div>
@@ -190,6 +211,7 @@ export default function ContactPage() {
                            focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
                            bg-white text-ug-text-dark placeholder-ug-text-dark/70"
                 required
+                disabled={isSubmitting} // Still disable while submitting form
               />
             </div>
             <div>
@@ -209,6 +231,7 @@ export default function ContactPage() {
                            focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
                            bg-white text-ug-text-dark placeholder-ug-text-dark/70"
                 required
+                disabled={isSubmitting} // Still disable while submitting form
               />
             </div>
             <div>
@@ -228,6 +251,7 @@ export default function ContactPage() {
                            focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
                            bg-white text-ug-text-dark placeholder-ug-text-dark/70 resize-y"
                 required
+                disabled={isSubmitting} // Still disable while submitting form
               ></textarea>
             </div>
             {submitMessage && (

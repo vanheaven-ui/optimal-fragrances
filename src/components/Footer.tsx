@@ -19,7 +19,7 @@ export default function Footer() {
             href="/perfumes"
             className="hover:text-ug-purple-primary transition-colors duration-300"
           >
-            Shop
+            Perfumes
           </Link>
           <Link
             href="/contact"

@@ -2,8 +2,11 @@
 "use client";
 
 import React, { useEffect, useState, ReactNode } from "react";
+import { useRouter } from "next/navigation"; // Next 13+ app router
+import Link from "next/link"; // Import Link for internal navigation
 import { onAuthStateChanged, signOut, Auth } from "firebase/auth";
-import { getFirebaseInstances } from "../lib/firebase"; // Corrected import path to the central utility
+import { getFirebaseInstances } from "../lib/firebase"; // Your Firebase utility
+import FragranceLoader from "./FragranceLoader";
 
 // Inline SVG for Hamburger icon
 const IconBars = () => (
@@ -46,9 +49,12 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
+  const router = useRouter();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // NEW STATE for logout loading
   const [authInstance, setAuthInstance] = useState<Auth | null>(null);
   const [firebaseInitError, setFirebaseInitError] = useState<string | null>(
     null
@@ -56,6 +62,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     const { auth: firebaseAuth, error: initError } = getFirebaseInstances();
+
     if (initError) {
       setFirebaseInitError(
         `Firebase initialization error: ${initError.message}`
@@ -63,7 +70,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       setIsAuthenticated(false);
       setLoadingAuth(false);
       setAuthInstance(null);
-      // No redirect here, display error on page
       return;
     }
     if (!firebaseAuth) {
@@ -73,57 +79,81 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       setIsAuthenticated(false);
       setLoadingAuth(false);
       setAuthInstance(null);
-      // No redirect here, display error on page
       return;
     }
 
     setAuthInstance(firebaseAuth);
 
-    // This listener will fire once initially with the current auth state,
-    // and then again on any auth state changes.
     const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+      // If we were logging out and the user becomes null, it means logout was successful.
+      // We can stop showing the logout loading screen.
+      if (isLoggingOut && !user) {
+        setIsLoggingOut(false);
+      }
+
       if (user) {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
-        // Only redirect to login if we are *not* already on the login page.
-        // This prevents infinite redirects.
-        if (window.location.pathname !== "/admin/login") {
-          window.location.href = "/admin/login";
+        // Only redirect if not already on the login page AND not currently logging out
+        // The isLoggingOut check prevents double redirects/flicker if signOut is explicitly called.
+        if (window.location.pathname !== "/admin/login" && !isLoggingOut) {
+          router.push("/admin/login");
         }
       }
-      setLoadingAuth(false); // Authentication check is definitively complete here
+      setLoadingAuth(false);
     });
 
-    // Cleanup subscription
-    return () => unsubscribe();
-  }, []); // Empty dependency array, runs once.
+    return () => {
+      unsubscribe();
+    };
+  }, [router, isLoggingOut]); // Added isLoggingOut to dependency array
 
   const handleLogout = async () => {
     if (authInstance) {
-      // Use the state-managed auth instance
+      setIsLoggingOut(true); // Start showing the custom logout loading screen
       try {
         await signOut(authInstance);
-        // The onAuthStateChanged listener will handle the redirect after signOut.
+        // The onAuthStateChanged listener will detect the user change and redirect
+        // We set isLoggingOut to false in the onAuthStateChanged callback once user is null
       } catch (error) {
         console.error("Error signing out:", error);
-        alert("Error logging out. Please try again."); // Replace with custom modal later
+        alert("Error logging out. Please try again.");
+        setIsLoggingOut(false); // Stop showing loading screen on error
       }
     }
   };
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  // Show loading indicator while authentication status is being determined
-  if (loadingAuth) {
+  // --- CUSTOM LOGOUT LOADING SCREEN ---
+  if (isLoggingOut) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-ug-neutral-bg">
-        <p className="text-2xl text-ug-text-dark">Verifying admin access...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-ug-purple-primary to-ug-purple-accent text-white p-8">
+        <div className="relative w-24 h-24 mb-6">
+          {/* A simple spinning circle or pulse for a loading animation */}
+          <div className="absolute inset-0 border-4 border-ug-neutral-light border-t-ug-text-heading rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-4xl font-bold">✨</span>{" "}
+            {/* A fragrance-related emoji */}
+          </div>
+        </div>
+        <h1 className="text-4xl font-bold mb-4 text-center">
+          Optimal Fragrances
+        </h1>
+        <p className="text-xl text-center">Logging you out...</p>
+        <p className="text-md text-center mt-2 opacity-80">
+          Please wait a moment.
+        </p>
       </div>
     );
   }
+  // --- END CUSTOM LOGOUT LOADING SCREEN ---
 
-  // If Firebase initialization failed, display a prominent error.
+  if (loadingAuth) {
+    return <FragranceLoader message="Verifying admin access..." />;
+  }
+
   if (firebaseInitError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-ug-neutral-bg p-4 text-center">
@@ -132,26 +162,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </h1>
         <p className="text-xl text-red-500 mb-6">{firebaseInitError}</p>
         <p className="text-ug-text-dark text-lg">
-          Please ensure your Firebase configuration is correctly set in
-          src/lib/firebase.ts.
+          Please ensure your Firebase configuration is correctly set in{" "}
+          <code className="bg-ug-neutral-light p-1 rounded">
+            src/lib/firebase.ts
+          </code>
+          .
         </p>
-        <a
+        <Link
           href="/admin/login"
           className="mt-8 bg-ug-purple-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-ug-purple-accent transition duration-300"
         >
           Go to Login Page
-        </a>
+        </Link>
       </div>
     );
   }
 
-  // If not authenticated, and no firebaseInitError, it means the onAuthStateChanged
-  // listener has already handled the redirection to /admin/login. So, return null.
   if (!isAuthenticated && !firebaseInitError) {
+    // If not authenticated and no init error, it means onAuthStateChanged
+    // has already handled the redirect. Return null to prevent flicker.
     return null;
   }
 
-  // If authenticated, render the layout
   return (
     <div className="flex min-h-screen bg-ug-neutral-bg">
       {/* Sidebar - Desktop */}
@@ -162,28 +194,31 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <nav>
           <ul className="space-y-4">
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
               >
                 Dashboard
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin/blog"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
               >
                 Manage Blog Posts
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin/products"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
               >
                 Manage Products
-              </a>
+              </Link>
             </li>
             <li>
               <button
@@ -206,8 +241,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       )}
       <div
         className={`fixed top-0 left-0 w-64 h-full bg-ug-text-heading text-white p-6 shadow-2xl z-50
-                    transform transition-transform duration-300 ease-in-out md:hidden
-                    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+                     transform transition-transform duration-300 ease-in-out md:hidden
+                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-ug-purple-primary mt-10">
@@ -223,31 +258,34 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <nav>
           <ul className="space-y-4">
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
                 onClick={closeSidebar}
               >
                 Dashboard
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin/blog"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
                 onClick={closeSidebar}
               >
                 Manage Blog Posts
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              {/* Use Link for internal navigation */}
+              <Link
                 href="/admin/products"
                 className="block p-3 rounded-lg hover:bg-ug-purple-primary transition-colors duration-200"
                 onClick={closeSidebar}
               >
                 Manage Products
-              </a>
+              </Link>
             </li>
             <li>
               <button

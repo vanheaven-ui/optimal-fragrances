@@ -17,7 +17,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post }) => {
         {/* Blog Post Image */}
         <div className="relative w-full" style={{ paddingBottom: "66.66%" }}>
           <Image
-            src={post.image}
+            src={post.imageUrl}
             alt={post.title}
             width={100}
             height={100}
