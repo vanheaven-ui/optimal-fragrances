@@ -1,26 +1,52 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Basic setup for full height */
+html, body {
+  height: 100%;
+  margin: 0; /* Remove default body margin */
+  padding: 0; /* Remove default body padding */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Your existing body styles will remain here */
+  /* e.g., font-sans bg-ug-neutral-bg text-ug-text-dark relative; */
+
+  position: relative; /* Ensure body is a positioning context for the pseudo-element */
+  z-index: 1; /* Ensure body content is above the pseudo-element */
+  overflow-x: hidden; /* Prevent horizontal scroll if background moves */
+}
+
+/* Pseudo-element for the subtle background logo */
+body::before {
+  content: '';
+  position: fixed; /* Fixed position so it stays in place when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/optimal.png'); /* Path to your logo */
+  background-repeat: no-repeat; /* Don't repeat the logo */
+  background-position: center center; /* Center the logo on the page */
+  background-size: 60%; /* Adjust this value (e.g., 50%, 70%, cover, contain) to control its size relative to the viewport */
+  opacity: 0.05; /* This is the key for subtlety! Adjust from 0.02 (very faint) to 0.1 (more visible) */
+  pointer-events: none; /* Allows clicks and interactions to pass through to the content below */
+  z-index: -1; /* Place it behind all other content */
+}
+
+/* You might need to adjust the background-size for different screen sizes */
+@media (max-width: 768px) {
+  body::before {
+    background-size: 80%; /* Larger on smaller screens if it looks better */
+  }
+}
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Global Styles - Use Tailwind's @apply for consistency */
+body {
+  @apply bg-ug-neutral-bg text-ug-text-dark font-sans; /* Apply our custom colors and a default font */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-ug-text-heading; /* Apply heading color */
 }
