@@ -6,6 +6,7 @@ import { formatPrice } from "../../utils/currencyFormatter";
 import { useProducts } from "../../hooks/useProducts";
 import ProductCard from "../../components/ProductCard";
 import FragranceLoader from "../../components/FragranceLoader";
+import Image from "next/image";
 
 // Define the price ranges for filtering (using UGX currency context)
 const PRICE_RANGES = [
@@ -19,6 +20,7 @@ const PRICE_RANGES = [
 ];
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 const shuffleArray = <T extends unknown>(array: T[]): T[] => {
   const shuffledArray = [...array];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -174,23 +176,17 @@ export default function PerfumesPage() {
     }
 
     // Remove duplicates from pagination numbers
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return Array.from(new Set(pageNumbers)).sort((a: any, b: any) => {
+      // Disabled two 'any' errors here
       if (a === "...") return 1;
       if (b === "...") return -1;
       return a - b;
     });
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
-  //       <p className="text-2xl text-ug-text-dark">Loading perfume catalog...</p>
-  //     </div>
-  //   );
-  // }
-
   if (loading) {
-    return <FragranceLoader message="Loading perfume catalog..."/>
+    return <FragranceLoader message="Loading perfume catalog..." />;
   }
 
   if (error) {
@@ -230,9 +226,11 @@ export default function PerfumesPage() {
                 className="relative bg-white rounded-lg shadow-lg overflow-hidden group"
               >
                 <div className="relative w-full aspect-[4/3] overflow-hidden">
-                  <img
+                  <Image
                     src={product.imageUrl}
                     alt={product.name}
+                    width={100}
+                    height={100}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
                     onError={(e) => {
                       e.currentTarget.src =
@@ -304,8 +302,8 @@ export default function PerfumesPage() {
           value={selectedBrand}
           onChange={(e) => setSelectedBrand(e.target.value)}
           className="block w-full max-w-sm md:max-w-xs p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                     focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                     bg-white text-ug-text-dark cursor-pointer"
+                       focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                       bg-white text-ug-text-dark cursor-pointer"
         >
           {uniqueBrands.map((brand) => (
             <option key={brand} value={brand}>
@@ -323,8 +321,8 @@ export default function PerfumesPage() {
           value={selectedPriceRangeIndex}
           onChange={(e) => setSelectedPriceRangeIndex(Number(e.target.value))}
           className="block w-full max-w-sm md:max-w-xs p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                     focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                     bg-white text-ug-text-dark cursor-pointer"
+                       focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                       bg-white text-ug-text-dark cursor-pointer"
         >
           {PRICE_RANGES.map((range, index) => (
             <option key={index} value={index}>

@@ -6,6 +6,7 @@ import { useProducts } from "../hooks/useProducts";
 import SpotlightProduct from "../components/SpotLightProduct";
 import ProductCard from "../components/ProductCard";
 import FragranceLoader from "../components/FragranceLoader";
+import Link from "next/link";
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
@@ -121,7 +122,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-16">
-            <a
+            <Link
               href="/perfumes"
               onClick={handleViewAllPerfumesClick} // Attach the click handler
               // Conditionally apply classes for visual feedback and disable effect
@@ -136,7 +137,7 @@ export default function HomePage() {
             >
               {/* Conditional text rendering */}
               {isViewingAllPerfumes ? 'Loading...' : 'View All Perfumes'}
-            </a>
+            </Link>
           </div>
         </section>
       )}
@@ -149,7 +150,7 @@ export default function HomePage() {
           </h2>
           <p className="text-lg text-ug-text-dark leading-relaxed mb-4">
             At Optimal Fragrance, we believe that a scent is more than just a
-            fragrance; it's an extension of your personality, a memory, a
+            fragrance; it&lsquo;s an extension of your personality, a memory, a
             feeling. We meticulously curate a collection of the finest perfumes
             from around the world, ensuring authenticity and unparalleled
             quality.

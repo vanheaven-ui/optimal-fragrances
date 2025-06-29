@@ -9,14 +9,12 @@ import { formatPrice } from "../../../utils/currencyFormatter";
 import { FaWhatsapp } from "react-icons/fa";
 import FragranceLoader from "../../../components/FragranceLoader";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function PerfumeDetail() {
   const { id } = useParams(); // Get the product ID from the URL
   const { products, loading, error } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
-
-  // State for image zoom (retained from previous version)
-  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     if (products.length > 0 && id) {
@@ -75,9 +73,11 @@ export default function PerfumeDetail() {
       >
         {/* Product Image */}
         <div className="w-full md:flex-1 relative aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
-          <img
+          <Image
             src={imageSrc}
             alt={product.name}
+            width={100}
+            height={100}
             className="w-full h-full object-cover" // Use object-cover for fill effect without next/image
             onError={(e) => {
               e.currentTarget.src =

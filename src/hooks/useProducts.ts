@@ -38,7 +38,8 @@ export const useProducts = (): UseProductsResult => {
           ...doc.data(),
         })) as Product[]; // Type assertion to ensure correct type
 
-        setProducts(fetchedProducts);
+        setProducts(fetchedProducts); // <--- RESOLVED: Using setProducts here
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         // Catch any errors during the fetch operation
         console.error("Error fetching products:", err);

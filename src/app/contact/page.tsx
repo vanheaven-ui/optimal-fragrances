@@ -126,6 +126,8 @@ export default function ContactPage() {
         "There was an error sending your message. Please try again later."
       );
       setMessageType("error");
+      console.error(error);
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -145,7 +147,7 @@ export default function ContactPage() {
         Connect With Optimal Fragrance
       </h1>
       <p className="text-xl text-ug-text-dark text-center max-w-2xl mx-auto mb-12">
-        We're here to help! Reach out for inquiries about our unique scents,
+        We are here to help! Reach out for inquiries about our unique scents,
         your orders, or anything else.
       </p>
 
