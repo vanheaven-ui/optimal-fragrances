@@ -16,6 +16,7 @@ import AdminLayout from "../../../components/AdminLayout";
 import { DocumentData, Firestore, QuerySnapshot } from "firebase/firestore";
 import { Product } from "../../../data/product";
 import FragranceLoader from "components/FragranceLoader";
+import Image from "next/image";
 
 export default function AdminProductsPage() {
   const [currentProducts, setCurrentProducts] = useState<Product[]>([]);
@@ -204,9 +205,11 @@ export default function AdminProductsPage() {
                 {currentProducts.map((product) => (
                   <tr key={product.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-ug-text-heading">
-                      <img
+                      <Image
                         src={product.imageUrl}
                         alt={product.name}
+                        width={100}
+                        height={100}
                         className="w-16 h-16 object-cover rounded-md"
                         onError={(e) => {
                           e.currentTarget.src =
