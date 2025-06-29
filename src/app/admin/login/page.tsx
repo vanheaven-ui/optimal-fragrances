@@ -1,3 +1,4 @@
+// src/app/admin/login/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -59,7 +60,10 @@ export default function AdminLoginPage() {
     try {
       await signInWithEmailAndPassword(authInstance, email, password);
       // The onAuthStateChanged listener above will handle the redirect
-    } catch (firebaseError: any) {
+    } catch (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      firebaseError: any
+    ) {
       // Handle Firebase specific errors
       let errorMessage = "An unexpected error occurred during login.";
       switch (firebaseError.code) {

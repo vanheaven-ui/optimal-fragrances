@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { useFirebase } from "../../../../context/FirebaseContext";
 import FragranceLoader from "components/FragranceLoader";
+import Image from "next/image";
 
 // Define the Product interface (ensure this is consistent with your Firestore structure)
 export interface Product {
@@ -180,7 +181,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     try {
       if (isEditMode && formData.id) {
         const productRef = doc(db, "products", formData.id);
-        const { id, ...dataToUpdate } = formData;
+        const { ...dataToUpdate } = formData;
         await updateDoc(productRef, {
           ...dataToUpdate,
           updatedAt: serverTimestamp(),
@@ -191,7 +192,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         });
       } else {
         const productsCollectionRef = collection(db, "products");
-        const { id, ...dataToAdd } = formData;
+        const { ...dataToAdd } = formData;
         await addDoc(productsCollectionRef, {
           ...dataToAdd,
           createdAt: serverTimestamp(),
@@ -344,8 +345,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             {formData.imageUrl && (
               <div className="mt-4 flex items-center space-x-4">
                 <p className="text-sm text-ug-text-dark">Preview:</p>
-                <img
+                <Image
                   src={formData.imageUrl}
+                  width={100}
+                  height={100}
                   alt="Product Preview"
                   className="w-20 h-20 object-cover rounded-md border border-ug-neutral-light"
                   onError={(e) => {

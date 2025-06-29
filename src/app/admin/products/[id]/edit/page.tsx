@@ -4,12 +4,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation"; // Import useParams
 import Link from "next/link"; // Import Link for internal navigation
-import AdminProductForm, { Product } from "../../new/page"; // Import the reusable form component AND Product interface
-import AdminLayout from "components/AdminLayout";
-import { doc, getDoc, DocumentData } from "firebase/firestore"; // Import Firestore functions
-import { FirebaseError } from "firebase/app"; // Import FirebaseError for specific error handling
+import AdminProductForm, { Product } from "../../new/page";
+import { doc, getDoc, DocumentData } from "firebase/firestore";
 import { useFirebase } from "../../../../../context/FirebaseContext";
 import FragranceLoader from "components/FragranceLoader";
+import { FirebaseError } from "firebase/app"; // Import FirebaseError if you want to differentiate it
 
 // This component acts as a wrapper for the AdminProductForm when editing.
 // It retrieves the product ID from the URL using useParams and fetches the
@@ -79,10 +78,27 @@ export default function EditProductPage() {
           setError("Product not found.");
           setProductToEdit(null); // Ensure post is null if not found
         }
-      } catch (err: any) {
-        console.error("Error fetching product for edit:", err);
-        // Cast err to FirebaseError if specific details are needed, otherwise generic Error
-        setError(`Error loading product: ${(err as Error).message}`);
+      } catch (caughtError: unknown) {
+        // Changed 'any' to 'unknown'
+        console.error("Error fetching product for edit:", caughtError);
+        // Initialize with a default error message
+        let errorMessage: string =
+          "Error loading product: An unexpected error occurred.";
+
+        // Type narrowing for caughtError
+        if (caughtError instanceof FirebaseError) {
+          // Check if it's a FirebaseError
+          errorMessage = `Error loading product: ${caughtError.message} (Code: ${caughtError.code})`;
+        } else if (caughtError instanceof Error) {
+          // Check if it's a general JavaScript Error
+          errorMessage = `Error loading product: ${caughtError.message}`;
+        } else if (typeof caughtError === "string") {
+          // Check if it's a string
+          errorMessage = `Error loading product: ${caughtError}`;
+        }
+        // If none of the above match, it remains the initial generic message.
+
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

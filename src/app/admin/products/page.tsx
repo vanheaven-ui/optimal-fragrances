@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link"; // Import Link for internal navigation
+import Image from "next/image"; // IMPORT THE NEXT.JS IMAGE COMPONENT
 import { formatPrice } from "../../../utils/currencyFormatter";
 import {
   getFirebaseInstances,
@@ -27,9 +28,14 @@ export default function AdminProductsPage() {
   useEffect(() => {
     const { db, error: initError } = getFirebaseInstances();
     if (initError) {
-      setError(
-        "Failed to initialize Firebase: " + (initError as Error).message
-      );
+      let errorMessage =
+        "Failed to initialize Firebase: An unknown error occurred.";
+      if (initError instanceof Error) {
+        errorMessage = `Failed to initialize Firebase: ${initError.message}`;
+      } else if (typeof initError === "string") {
+        errorMessage = `Failed to initialize Firebase: ${initError}`;
+      }
+      setError(errorMessage);
       setLoading(false);
     } else if (db) {
       setDbInstance(db);
@@ -80,6 +86,7 @@ export default function AdminProductsPage() {
         setLoading(false);
       },
       (err: FirebaseError) => {
+        // This catch block already correctly uses FirebaseError
         console.error("Firestore products fetch error:", err);
         setError("Failed to load products: " + err.message);
         setLoading(false);
@@ -101,9 +108,24 @@ export default function AdminProductsPage() {
         const productDocRef = doc(dbInstance, "products", id);
         await deleteDoc(productDocRef);
         alert("Product deleted successfully!");
-      } catch (err: any) {
-        alert(`Failed to delete product: ${(err as Error).message}`);
-        console.error("Error deleting product:", err);
+      } catch (caughtError: unknown) {
+        // CHANGED 'any' to 'unknown' here
+        console.error("Error deleting product:", caughtError);
+        let alertMessage: string =
+          "Failed to delete product: An unexpected error occurred.";
+
+        // Type narrowing for caughtError
+        if (caughtError instanceof Error) {
+          alertMessage = `Failed to delete product: ${caughtError.message}`;
+        } else if (typeof caughtError === "string") {
+          alertMessage = `Failed to delete product: ${caughtError}`;
+        }
+        // If you had FirebaseError imported and wanted to specifically handle it here:
+        // else if (caughtError instanceof FirebaseError) {
+        //   alertMessage = `Failed to delete product: ${caughtError.message} (Code: ${caughtError.code})`;
+        // }
+
+        alert(alertMessage);
       }
     }
   };
@@ -143,7 +165,7 @@ export default function AdminProductsPage() {
         <div className="bg-white p-6 rounded-lg shadow-md text-center">
           <p className="text-xl text-ug-text-dark">No products found.</p>
           <p className="text-ug-text-dark mt-2">
-            Click "Add New Product" to create one.
+            Click &quot;Add New Product&quot; to create one.
           </p>
         </div>
       ) : (
@@ -204,12 +226,21 @@ export default function AdminProductsPage() {
                 {currentProducts.map((product) => (
                   <tr key={product.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-ug-text-heading">
-                      <img
+                      {/* --- CONVERTED <img> TO <Image /> HERE --- */}
+                      <Image
                         src={product.imageUrl}
                         alt={product.name}
-                        className="w-16 h-16 object-cover rounded-md"
+                        width={64} // Specify appropriate width
+                        height={64} // Specify appropriate height
+                        objectFit="cover" // Use objectFit property instead of className
+                        className="rounded-md" // Keep other styling classes
                         onError={(e) => {
-                          e.currentTarget.src =
+                          // Note: onError for Next.js Image component needs a different approach if you want to set a fallback image.
+                          // You generally handle this by providing a default image path if product.imageUrl is null/undefined,
+                          // or by wrapping <Image> in an error boundary. For simplicity, keeping the direct DOM manipulation for now,
+                          // but be aware this is less "Next.js idiomatic" for the <Image /> component.
+                          // A more Next.js way would be to conditionally render <Image> or a placeholder based on `product.imageUrl` existence.
+                          (e.currentTarget as HTMLImageElement).src =
                             "https://placehold.co/64x64/CCCCCC/000000?text=No+Image";
                         }}
                       />

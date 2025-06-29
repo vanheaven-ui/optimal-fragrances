@@ -7,7 +7,6 @@ import { marked } from "marked"; // Import the marked library for Markdown parsi
 export default function PrivacyPolicyPage() {
   const [markdownContent, setMarkdownContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // In a real application, you might fetch this content from a CMS or a static file.
@@ -101,16 +100,6 @@ Phone: +256 702 889 253
     return (
       <div className="flex items-center justify-center min-h-screen bg-ug-neutral-bg">
         <p className="text-ug-text-dark text-lg">Loading Privacy Policy...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-ug-neutral-bg">
-        <p className="text-red-500 text-lg">
-          Error loading Privacy Policy: {error}
-        </p>
       </div>
     );
   }

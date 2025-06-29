@@ -10,11 +10,12 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
-  Timestamp, // Import Timestamp for type checking
 } from "firebase/firestore";
-import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation"; // For redirection
 import { useFirebase } from "../../../../context/FirebaseContext";
+// If you anticipate specific Firebase errors here (e.g. from storage/auth related to image upload),
+// you might also import { FirebaseError } from "firebase/app" or "firebase/auth" as needed.
+// For general Firestore errors, 'Error' usually suffices.
 
 // Define the BlogPost interface here or ideally from a central types file
 export interface BlogPost {
@@ -64,20 +65,17 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
   } | null>(null);
 
   useEffect(() => {
-    // This effect ensures the form initializes correctly when `initialPost` changes
-    // (e.g., when navigating from the Add New page to an Edit page).
     if (initialPost) {
       setFormData(initialPost);
       setIsEditMode(true);
     } else {
-      // Reset form for a new post if initialPost is null/undefined
       setFormData({
         slug: "",
         title: "",
         author: "",
         date: new Date().toISOString().split("T")[0],
         imageUrl: "",
-        excerpt: "",
+        excerpt: "", 
         content: "",
         seoTitle: "",
         seoDescription: "",
@@ -193,11 +191,25 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
         setStatusMessage(null);
         router.push("/admin/blog"); // Redirect to blog list
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      // <--- Changed 'any' to 'unknown' here
       console.error("Error saving blog post:", err);
+      let errorMessage =
+        "Failed to save blog post: An unexpected error occurred.";
+
+      if (err instanceof Error) {
+        // If it's a standard Error object, use its message
+        errorMessage = `Failed to save blog post: ${err.message}`;
+      } else if (typeof err === "string") {
+        // If the error was thrown as a string
+        errorMessage = `Failed to save blog post: ${err}`;
+      }
+      // You could add an 'else if (err instanceof FirebaseError)' here if you want to handle specific Firebase errors
+      // but for generic save errors, catching 'Error' is often sufficient.
+
       setStatusMessage({
         type: "error",
-        message: `Failed to save blog post: ${(err as Error).message}`,
+        message: errorMessage,
       });
     } finally {
       setLoading(false); // End loading state

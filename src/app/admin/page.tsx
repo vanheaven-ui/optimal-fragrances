@@ -7,10 +7,11 @@ import React, { useState, useEffect } from "react";
 // import { blogPosts } from "@/blogPosts";
 
 import AdminLayout from "../../components/AdminLayout";
-import { collection, getDocs } from "firebase/firestore"; // Import Firestore functions
-import { FirebaseError } from "firebase/app";
+import { collection, getDocs } from "firebase/firestore";
 import { useFirebase } from "../../context/FirebaseContext";
 import FragranceLoader from "components/FragranceLoader";
+// Optionally import FirebaseError if you want to differentiate
+// import { FirebaseError } from "firebase/app";
 
 export default function AdminDashboardPage() {
   const { db, isAuthReady } = useFirebase(); // Get db instance and auth status
@@ -47,9 +48,26 @@ export default function AdminDashboardPage() {
         setTotalBlogPosts(blogPostSnapshot.size);
 
         setLoading(false);
-      } catch (err: any) {
-        console.error("Error fetching dashboard counts:", err);
-        setError(`Failed to load dashboard data: ${(err as Error).message}`);
+      } catch (caughtError: unknown) {
+        // CHANGED 'any' to 'unknown' here
+        console.error("Error fetching dashboard counts:", caughtError);
+        let errorMessage: string =
+          "Failed to load dashboard data: An unexpected error occurred.";
+
+        // Type narrowing for caughtError
+        // If you specifically want to handle Firebase errors:
+        // if (caughtError instanceof FirebaseError) {
+        //   errorMessage = `Failed to load dashboard data: ${caughtError.message} (Code: ${caughtError.code})`;
+        // } else
+        if (caughtError instanceof Error) {
+          // If it's a general JavaScript Error, use its message
+          errorMessage = `Failed to load dashboard data: ${caughtError.message}`;
+        } else if (typeof caughtError === "string") {
+          // If a string was thrown
+          errorMessage = `Failed to load dashboard data: ${caughtError}`;
+        }
+
+        setError(errorMessage);
         setLoading(false);
       }
     };

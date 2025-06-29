@@ -11,7 +11,7 @@ import {
   DocumentData,
   QuerySnapshot,
 } from "firebase/firestore";
-import { FirebaseError } from "firebase/app";
+import { FirebaseError } from "firebase/app"; // Keep this import, it's useful for Firestore errors
 import AdminLayout from "../../../components/AdminLayout";
 import { useFirebase } from "../../../context/FirebaseContext";
 
@@ -124,11 +124,26 @@ export default function AdminBlogPage() {
           type: "success",
           message: "Blog post deleted successfully!",
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
+        // Changed 'any' to 'unknown' here
         console.error("Error deleting blog post:", err);
+        let errorMessage =
+          "Failed to delete blog post: An unexpected error occurred.";
+
+        if (err instanceof FirebaseError) {
+          // If it's a specific Firebase error, use its message
+          errorMessage = `Failed to delete blog post: ${err.message}`;
+        } else if (err instanceof Error) {
+          // If it's a general JavaScript Error, use its message
+          errorMessage = `Failed to delete blog post: ${err.message}`;
+        } else if (typeof err === "string") {
+          // If a string was thrown
+          errorMessage = `Failed to delete blog post: ${err}`;
+        }
+
         setStatusMessage({
           type: "error",
-          message: `Failed to delete blog post: ${(err as Error).message}`,
+          message: errorMessage,
         });
       } finally {
         setDeletingPostId(null); // Reset the deleting state
@@ -186,7 +201,7 @@ export default function AdminBlogPage() {
         <div className="bg-white p-6 rounded-lg shadow-md text-center">
           <p className="text-xl text-ug-text-dark">No blog posts found.</p>
           <p className="text-ug-text-dark mt-2">
-            Click "Add New Post" to create one.
+            Click &quot;Add New Post&quot; to create one.
           </p>
         </div>
       ) : (

@@ -1,20 +1,13 @@
-// src/app/admin/blog/[slug]/edit/page.tsx
-// Note: Adjusted file path from `edit/[slug]/edit/page.tsx` to `[slug]/edit/page.tsx`
-// as this is the standard Next.js dynamic routing convention for a file-based route.
-// If your folder structure is literally `admin/blog/edit/[slug]/edit/page.tsx`,
-// then the URL would be `/admin/blog/edit/YOUR_SLUG/edit`, which is redundant.
-// I'm assuming a structure like `/admin/blog/[slug]/edit`.
 "use client";
 
 import React, { useState, useEffect } from "react";
 import AdminLayout from "../../../../../components/AdminLayout";
-// import { blogPosts, BlogPost } from "../../../../../data/blogPosts"; // REMOVE THIS
-import BlogPostForm, { BlogPost } from "../../new/page"; // Import BlogPost interface from BlogPostForm
-import { useParams } from "next/navigation"; // Import useParams
-import { collection, query, where, getDocs, Firestore, DocumentData } from "firebase/firestore";
-import { FirebaseError } from "firebase/app";
+import BlogPostForm, { BlogPost } from "../../new/page"; 
+import { useParams } from "next/navigation"; 
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { useFirebase } from "../../../../../context/FirebaseContext";
 import Link from "next/link";
+import FragranceLoader from "../../../../../components/FragranceLoader";
 
 // This component acts as a wrapper for the BlogPostForm when editing.
 // It retrieves the blog post slug from the URL using useParams and fetches
@@ -68,16 +61,35 @@ export default function EditBlogPostPage() {
             seoDescription: data.seoDescription || undefined,
             keywords: data.keywords || [],
             // Convert Firebase Timestamps to Date objects if they exist
-            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : undefined,
-            updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : undefined,
+            createdAt: data.createdAt?.toDate
+              ? data.createdAt.toDate()
+              : undefined,
+            updatedAt: data.updatedAt?.toDate
+              ? data.updatedAt.toDate()
+              : undefined,
           };
           setBlogPostToEdit(fetchedPost);
         } else {
           setError("Blog post not found.");
         }
-      } catch (err: any) {
-        console.error("Error fetching blog post for edit:", err);
-        setError(`Error loading blog post: ${(err as Error).message}`);
+      } catch (caughtError: unknown) {
+        // Changed 'err' to 'caughtError' for consistency, and 'any' to 'unknown'
+        console.error("Error fetching blog post for edit:", caughtError);
+        let errorMessage =
+          "Error loading blog post: An unexpected error occurred.";
+
+        // Type narrowing to handle different error types safely
+        // You had FirebaseError commented out, but if you re-add it, the check would look like this:
+        // if (caughtError instanceof FirebaseError) {
+        //   errorMessage = `Error loading blog post: ${caughtError.message} (Code: ${caughtError.code})`;
+        // } else
+        if (caughtError instanceof Error) {
+          errorMessage = `Error loading blog post: ${caughtError.message}`;
+        } else if (typeof caughtError === "string") {
+          errorMessage = `Error loading blog post: ${caughtError}`;
+        }
+
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -90,7 +102,7 @@ export default function EditBlogPostPage() {
     return (
       <AdminLayout>
         <div className="text-center py-10 text-ug-text-dark text-lg">
-          Loading blog post data...
+          <FragranceLoader message="Loading blog post data..." />
         </div>
       </AdminLayout>
     );
@@ -116,5 +128,9 @@ export default function EditBlogPostPage() {
 
   // Render the BlogPostForm with the loaded blog post data
   // We explicitly cast to `BlogPost | undefined` as BlogPostForm expects that type
-  return <BlogPostForm initialPost={blogPostToEdit as BlogPost | undefined} />;
+  // Note: if blogPostToEdit is null here, it means it wasn't found or there was an error.
+  // The error state above should handle the 'not found' case.
+  // If no error, and loading is false, blogPostToEdit should contain the data or be null if no post was found.
+  // The BlogPostForm component handles `initialPost` being null/undefined correctly.
+  return <BlogPostForm initialPost={blogPostToEdit} />;
 }
