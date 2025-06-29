@@ -5,12 +5,11 @@ import React, { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
-  doc,
-  getDoc,
+  doc, // Keep doc for updateDoc
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { useFirebase } from "../context/FirebaseContext"
+import { useFirebase } from "../context/FirebaseContext";
 import FragranceLoader from "components/FragranceLoader";
 import Image from "next/image";
 import Link from "next/link"; // For the cancel button
@@ -35,12 +34,14 @@ export interface Product {
   updatedAt?: Date; // To store update timestamp
 }
 
-interface AdminProductFormProps { // Renamed interface
+interface AdminProductFormProps {
+  // Renamed interface
   initialProduct?: Product; // Optional prop for pre-filling the form (for editing)
   isEditMode?: boolean; // Indicate if the form is in edit mode
 }
 
-const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed component
+const AdminProductForm: React.FC<AdminProductFormProps> = ({
+  // Renamed component
   initialProduct,
   isEditMode: propIsEditMode = false, // Default to false if not provided
 }) => {
@@ -146,7 +147,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
     try {
       if (propIsEditMode && formData.id) {
         // Prepare data for update: exclude `id` from the object to be written
-        const { id, ...dataToUpdate } = formData;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, ...dataToUpdate } = formData; // Fix: Renamed 'id' to '_id'
         await updateDoc(doc(db, "products", formData.id), {
           ...dataToUpdate,
           updatedAt: serverTimestamp(),
@@ -157,7 +159,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         });
       } else {
         // Prepare data for add: exclude `id` from the object to be written
-        const { id, ...dataToAdd } = formData;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, ...dataToAdd } = formData; // Fix: Renamed 'id' to '_id'
         await addDoc(collection(db, "products"), {
           ...dataToAdd,
           createdAt: serverTimestamp(),
@@ -227,7 +230,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
       >
         {/* Form fields remain the same */}
         <div>
-          <label htmlFor="name" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="name"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Product Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -243,7 +249,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         </div>
 
         <div>
-          <label htmlFor="brand" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="brand"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Brand <span className="text-red-500">*</span>
           </label>
           <input
@@ -259,7 +268,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         </div>
 
         <div>
-          <label htmlFor="price" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="price"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Price (UGX) <span className="text-red-500">*</span>
           </label>
           <input
@@ -277,7 +289,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         </div>
 
         <div>
-          <label htmlFor="imageUrl" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="imageUrl"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Image URL <span className="text-red-500">*</span>
           </label>
           <input
@@ -310,7 +325,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="description"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Description <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -327,7 +345,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-ug-text-dark text-sm font-semibold mb-2">
+          <label
+            htmlFor="category"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
             Category
           </label>
           <select
@@ -354,7 +375,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
             className="h-5 w-5 text-ug-purple-primary rounded border-ug-neutral-light focus:ring-ug-purple-primary"
             disabled={loading}
           />
-          <label htmlFor="featured" className="ml-2 block text-ug-text-dark text-sm font-semibold">
+          <label
+            htmlFor="featured"
+            className="ml-2 block text-ug-text-dark text-sm font-semibold"
+          >
             Featured Product
           </label>
         </div>
@@ -365,7 +389,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
           </legend>
           <div className="space-y-4">
             <div>
-              <label htmlFor="scentNotes.topNotes" className="block text-ug-text-dark text-sm font-semibold mb-2">
+              <label
+                htmlFor="scentNotes.topNotes"
+                className="block text-ug-text-dark text-sm font-semibold mb-2"
+              >
                 Top Notes
               </label>
               <input
@@ -380,7 +407,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
               />
             </div>
             <div>
-              <label htmlFor="scentNotes.heartNotes" className="block text-ug-text-dark text-sm font-semibold mb-2">
+              <label
+                htmlFor="scentNotes.heartNotes"
+                className="block text-ug-text-dark text-sm font-semibold mb-2"
+              >
                 Heart Notes
               </label>
               <input
@@ -395,7 +425,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ // Renamed componen
               />
             </div>
             <div>
-              <label htmlFor="scentNotes.baseNotes" className="block text-ug-text-dark text-sm font-semibold mb-2">
+              <label
+                htmlFor="scentNotes.baseNotes"
+                className="block text-ug-text-dark text-sm font-semibold mb-2"
+              >
                 Base Notes
               </label>
               <input
