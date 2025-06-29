@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import AdminLayout from "../../../../../components/AdminLayout";
-import BlogPostForm, { BlogPost } from "../../new/page"; 
+import BlogPostForm, { BlogPost } from "../../../../../components/BlogPostForm"; 
 import { useParams } from "next/navigation"; 
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useFirebase } from "../../../../../context/FirebaseContext";
