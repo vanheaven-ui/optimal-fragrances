@@ -16,100 +16,458 @@ exports.products = void 0;
 var initialProducts = [
     {
         id: "1",
-        name: "Sensual Bloom",
-        brand: "Fragrance Haven",
-        price: 120000,
-        imageUrl: "https://placehold.co/300x300/6B46C1/FFFFFF.png?text=Sensual+Bloom",
-        description: "A captivating blend of jasmine and vanilla, perfect for evening wear. Long-lasting and luxurious.",
+        name: "Burberry Her Elixir EDP (2022)",
+        brand: "Burberry",
+        price: 380000, // Approximate price in UGX for 100ml
+        imageUrl: "/Burberry-Her-Elixir-EDP-2022.jpeg",
+        description: "A bold and captivating new chapter for Burberry Her. Elixir de Parfum is an intense interpretation of the original, offering a rich, fruity gourmand scent with dark red berries, jasmine, and warm vanilla.",
         category: "women",
         featured: true,
         scentNotes: {
-            topNotes: "Italian Bergamot, Pink Peppercorn",
-            heartNotes: "Indian Jasmine, Tahitian Vanilla, Cashmere Wood",
-            baseNotes: "Amber, Sandalwood, White Musk",
+            topNotes: "Strawberry, Blackberry – juicy burst",
+            heartNotes: "Jasmine – creamy floral sophistication",
+            baseNotes: "Vanilla, Amber, Sandalwood – warm, cozy, long-lasting",
         },
+        volume: 100, // Common volume
     },
     {
         id: "2",
-        name: "Urban Explorer",
-        brand: "City Scents",
-        price: 95000,
-        imageUrl: "https://placehold.co/300x300/2D3748/FFFFFF.png?text=Urban+Explorer",
-        description: "Fresh and invigorating with notes of citrus and cedarwood. Ideal for the modern man on the go.",
-        category: "men",
+        name: "Prada Paradoxe Intense (2023)",
+        brand: "Prada",
+        price: 450000, // Approximate price in UGX for 90ml
+        imageUrl: "/Prada-Paradoxe-Intense-2023.jpeg",
+        description: "An amplified, rich, and sensual interpretation of the original Paradoxe. This floral amber fragrance boasts a vibrant woody addiction, with a powerful blend of Ambrofix, Jasmine, and Moss.",
+        category: "women",
         featured: true,
         scentNotes: {
-            topNotes: "Grapefruit, Lemon Zest, Cardamom",
-            heartNotes: "Cedarwood, Vetiver, Sea Salt",
-            baseNotes: "Oakmoss, Amberwood, Patchouli",
+            topNotes: "Bergamot, Neroli, Pear",
+            heartNotes: "Neroli, Jasmine, Moss Accord", // Corrected heart note based on common descriptions
+            baseNotes: "Vanilla, Amber, White Musk",
         },
+        volume: 90, // Common volume
     },
     {
         id: "3",
-        name: "Mystic Elixir",
-        brand: "Ancient Aromas",
-        price: 150000,
-        imageUrl: "https://placehold.co/300x300/805AD5/FFFFFF.png?text=Mystic+Elixir",
-        description: "An enchanting unisex fragrance with hints of amber, musk, and exotic spices. Unleash your inner mystery.",
-        category: "unisex",
+        name: "YSL Libre L’Absolu Platine (2023)",
+        brand: "Yves Saint Laurent",
+        price: 500000, // Approximate price in UGX for 90ml
+        imageUrl: "/YSL-Libre-LAbsolu-Platine-2023.jpeg",
+        description: "The most intense and captivating interpretation of Libre, featuring a new metallic intensity. This floral amber fragrance combines the signature lavender with white floral notes and a unique, chilling platinum accord.",
+        category: "women", // Typically marketed for women, but Libre has a strong unisex appeal to some
         featured: true,
         scentNotes: {
-            topNotes: "Black Pepper, Saffron, Coriander",
-            heartNotes: "Bulgarian Rose, Oud Wood, Patchouli",
-            baseNotes: "Amber Resin, Musk, Incense",
+            topNotes: "Aldehydes, Bergamot, Mandarin Orange", // Common top notes
+            heartNotes: "White Lavender, Orange Blossom, Diva Lavender", // Core Libre notes with platinum twist
+            baseNotes: "Vanilla, Amber, Cedarwood", // Common base notes
         },
+        volume: 90, // Common volume
     },
     {
         id: "4",
-        name: "Morning Dew",
-        brand: "Nature's Essence",
-        price: 80000,
-        imageUrl: "https://placehold.co/300x300/CBD5E0/4A5568.png?text=Morning+Dew",
-        description: "Light and airy, reminiscent of a crisp morning. Features notes of green tea and subtle florals. Perfect for daily wear.",
+        name: "Jimmy Choo – I Want Choo Forever (2022)",
+        brand: "Jimmy Choo",
+        price: 360000, // Approximate price in UGX for 100ml
+        imageUrl: "/Jimmy-Choo–I-Want-Choo-Forever-2022.jpeg",
+        description: "An enchanting and glamorous chypre amber gourmand, embodying a sense of mystery and allure. It's a powerful fragrance perfect for evening wear and special occasions, with notes of rose, black cherry, and vanilla.",
         category: "women",
-        featured: false,
+        featured: true,
         scentNotes: {
-            topNotes: "Green Tea Leaf, Bergamot, Freesia",
-            heartNotes: "Water Lily, Jasmine Petals, Muguet",
-            baseNotes: "White Musk, Cedarwood, Ambrette Seed",
+            topNotes: "Rose, Pink Peppercorn, Bitter Almond", // Common top notes
+            heartNotes: "Black Cherry, Jasmine Sambac, Vetiver", // Common heart notes
+            baseNotes: "Vanilla, Tonka Bean, Oakmoss", // Common base notes
         },
+        volume: 100, // Common volume
     },
     {
         id: "5",
-        name: "Bold Statement",
-        brand: "Signature Collection",
-        price: 130000,
-        imageUrl: "https://placehold.co/300x300/4A5568/FFFFFF.png?text=Bold+Statement",
-        description: "A powerful and long-lasting scent for those who command attention. Leather, tobacco, and oud notes.",
-        category: "men",
+        name: "Jimmy Choo – I Want Choo",
+        brand: "Jimmy Choo",
+        price: 320000, // Approximate price in UGX for 100ml
+        imageUrl: "/Jimmy-Choo–I-Want-Choo.jpeg",
+        description: "A sparkling and joyful floral gourmand fragrance that perfectly embodies a confident, playful spirit. It opens with vibrant mandarin and peach, leading to a dazzling red lily and jasmine heart, grounded by vanilla and benzoin.",
+        category: "women", // This is a women's fragrance
         featured: false,
         scentNotes: {
-            topNotes: "Black Pepper, Cardamom, Rum Accord",
-            heartNotes: "Leather, Tobacco Leaf, Oud",
-            baseNotes: "Benzoin, Vanilla Pod, Tonka Bean",
+            topNotes: "Mandarin Juice, Velvet Peach",
+            heartNotes: "Red Spider Lily, Jasmine Sambac",
+            baseNotes: "Vanilla, Benzoin",
         },
+        volume: 100, // Common volume
     },
     {
         id: "6",
-        name: "Golden Hour",
-        brand: "Sunset Scents",
-        price: 110000,
-        imageUrl: "https://placehold.co/300x300/6B46C1/FFFFFF.png?text=Golden+Hour",
-        description: "Warm and inviting, like the last rays of sun. A blend of vanilla, sandalwood, and sweet orange.",
-        category: "unisex",
+        name: "Alien Goddess – Thierry Mugler (Vanilla Floral Woody)",
+        brand: "Mugler",
+        price: 410000, // Approximate price in UGX for 90ml
+        imageUrl: "/Alien-Goddess-Thierry- Mugler-Vanilla-Floral-Woody.jpeg",
+        description: "A divine solar floral fragrance, Alien Goddess is a radiant celebration of femininity. It blends sparkling bergamot, Indian Jasmine Grandiflorum, and a luxurious Bourbon Vanilla for a warm, luminous trail.",
+        category: "women",
         featured: false,
         scentNotes: {
-            topNotes: "Blood Orange, Mandarin, Neroli",
-            heartNotes: "Jasmine Sambac, Tuberose, Ylang-Ylang",
-            baseNotes: "Sandalwood, Cashmeran, Vanilla Absolute",
+            topNotes: "Bergamot",
+            heartNotes: "Jasmine Grandiflorum",
+            baseNotes: "Bourbon Vanilla, Cashmeran",
         },
+        volume: 90, // Common volume
+    },
+    {
+        id: "16",
+        name: "Désir du Cœur – Thomas Kosmala (Unisex, came out in 2020)",
+        brand: "Thomas Kosmala",
+        price: 850000, // Niche brand, higher price in UGX
+        imageUrl: "/Desir-du-Cœur–Thomas-Kosmala-Unisex-came-out-in-2020.jpeg",
+        description: "An enchanting and sensual fragrance that plays on the desires of the heart. This captivating scent combines floral and musky notes with a hint of warm amber, creating an intimate and long-lasting trail.",
+        category: "unisex", // Corrected category based on name
+        featured: false,
+        scentNotes: {
+            topNotes: "Lemon Zest, Spices", // Common for this line
+            heartNotes: "Aromatic Notes, Amber",
+            baseNotes: "Musk, Woods",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "17",
+        name: "Encre Noire",
+        brand: "Lalique",
+        price: 210000, // Approximate price in UGX for 100ml
+        imageUrl: "/encre-noire.jpeg",
+        description: "A cult classic for men, Encre Noire is a woody aromatic fragrance built around the powerful and earthy note of vetiver. It's dark, mysterious, and sophisticated, ideal for those who appreciate unique and bold scents.",
+        category: "men", // Definitely a men's fragrance
+        featured: false,
+        scentNotes: {
+            topNotes: "Cypress",
+            heartNotes: "Vetiver (Haitian, Bourbon)",
+            baseNotes: "Musk, Cashmere Wood",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "18",
+        name: "Hawas for Him",
+        brand: "Rasasi",
+        price: 280000, // Approximate price in UGX for 100ml
+        imageUrl: "/hawas.jpeg",
+        description: "A captivating aquatic, amber, and woody fragrance for men that is fresh, elegant, and powerful. Hawas is known for its incredible projection and longevity, making it a popular choice for all seasons.",
+        category: "men",
+        featured: false,
+        scentNotes: {
+            topNotes: "Apple, Bergamot, Lemon, Cinnamon",
+            heartNotes: "Orange Blossom, Cardamom, Plum",
+            baseNotes: "Ambergris, Musk, Driftwood, Patchouli",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "19a", // Changed ID to avoid duplication
+        name: "Versace Bright Crystal",
+        brand: "Versace",
+        price: 320000, // Approximate price in UGX for 90ml
+        imageUrl: "/versace-bright-crystal.jpeg", // Placeholder image, assume this is for Bright Crystal
+        description: "A sparkling and luminous floral-fruity fragrance, Bright Crystal is a fresh and sensual scent perfect for daily wear. It combines notes of yuzu, pomegranate, peony, and musk for a radiant and feminine aura.",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Yuzu, Pomegranate, Water Notes",
+            heartNotes: "Peony, Lotus, Magnolia",
+            baseNotes: "Musk, Amber, Mahogany",
+        },
+        volume: 90, // Common volume
+    },
+    {
+        id: "19b", // Changed ID to avoid duplication
+        name: "Jaguar Classic Black",
+        brand: "Jaguar",
+        price: 180000, // Approximate price in UGX for 100ml
+        imageUrl: "/jaguar-classic-black.jpeg",
+        description: "A classic and sophisticated oriental-fougere fragrance for men. It's a powerful yet elegant scent with notes of mandarin, green apple, sandalwood, and musk, perfect for the modern gentleman.",
+        category: "men", // Definitely a men's fragrance
+        featured: false,
+        scentNotes: {
+            topNotes: "Green Apple, Mandarin Orange, Bitter Orange",
+            heartNotes: "Cardamom, Nutmeg, Black Tea, Geranium",
+            baseNotes: "Sandalwood, Cedarwood, Oakmoss, Vetiver, Musk",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "20",
+        name: "Armaf Club de Nuit Intense Man",
+        brand: "Armaf",
+        price: 300000, // Approximate price in UGX for 105ml
+        imageUrl: "/Armaf-clude-de-nuit-intense-man.jpeg",
+        description: "A highly popular and often compared alternative to Creed Aventus, offering a bold and smoky pineapple scent. It's a robust, long-lasting fragrance for men, known for its strong sillage and versatility.",
+        category: "men",
+        featured: true,
+        scentNotes: {
+            topNotes: "Lemon, Blackcurrant, Apple, Bergamot, Pineapple",
+            heartNotes: "Rose, Jasmine, Birch",
+            baseNotes: "Vanilla, Ambergris, Musk, Patchouli",
+        },
+        volume: 105, // Common volume for this specific product
+    },
+    {
+        id: "21",
+        name: "Bentley For Men Intense",
+        brand: "Bentley",
+        price: 240000, // Approximate price in UGX for 100ml
+        imageUrl: "/Bentley-Intense.jpeg",
+        description: "An intense and sophisticated oriental woody fragrance designed for the discerning man. It offers a rich blend of spices, rum, and woody notes, exuding luxury and power, ideal for cooler weather and evening wear.",
+        category: "men",
+        featured: false,
+        scentNotes: {
+            topNotes: "Bergamot, Black Pepper, Incense",
+            heartNotes: "Rum, Woody Notes, Cinnamon, Clary Sage",
+            baseNotes: "Leather, Benzoin, Cedarwood, Patchouli",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "22",
+        name: "Scandal by Jean Paul Gaultier",
+        brand: "Jean Paul Gaultier",
+        price: 380000, // Approximate price in UGX for 80ml
+        imageUrl: "/Scandal-Jean-paul-Gaultter.jpeg",
+        description: "A modern and elegant chypre floral fragrance for women. Scandal is designed to be scandalous, evoking the sensual and exciting atmosphere of Paris nightlife with a blend of honey, gardenia, and patchouli.",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Blood Orange, Gardenia",
+            heartNotes: "Honey",
+            baseNotes: "Patchouli",
+        },
+        volume: 80, // Common volume
+    },
+    {
+        id: "23",
+        name: "Armani Code Eau de Parfum",
+        brand: "Giorgio Armani",
+        price: 400000, // Approximate price in UGX for 75ml
+        imageUrl: "/Armani-Code.jpeg",
+        description: "An iconic and seductive oriental-spicy fragrance for men. Armani Code offers a captivating blend of lemon, star anise, olive blossom, and tonka bean, creating a timeless and elegant aura.",
+        category: "men", // Armani Code is primarily a men's line, assuming this refers to the popular men's EDP
+        featured: false,
+        scentNotes: {
+            topNotes: "Lemon, Bergamot",
+            heartNotes: "Star Anise, Olive Blossom",
+            baseNotes: "Tonka Bean, Guaiac Wood, Leather",
+        },
+        volume: 75, // Common volume
+    },
+    {
+        id: "24",
+        name: "Dior Sauvage Eau de Parfum",
+        brand: "Dior",
+        price: 550000, // Approximate price in UGX for 100ml
+        imageUrl: "/Dior-Sauvage.jpeg",
+        description: "A radically fresh, raw, and noble composition. Sauvage EDP is an aromatic fougère fragrance for men, inspired by wild, open spaces, with notes of bergamot, Sichuan pepper, and ambroxan.",
+        category: "men",
+        featured: false,
+        scentNotes: {
+            topNotes: "Bergamot",
+            heartNotes: "Sichuan Pepper, Star Anise, Nutmeg",
+            baseNotes: "Ambroxan, Vanilla",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "25",
+        name: "Versace Eros Eau de Parfum (2020)",
+        brand: "Versace",
+        price: 390000, // Approximate price in UGX for 100ml
+        imageUrl: "/Versace-Eros-EDP-2020.jpeg",
+        description: "An intoxicating and passionate fougère oriental fragrance for men, Eros EDP is a more intense version of the original. It combines fresh citrus, mint, and apple with warm amber, tonka bean, and vanilla.",
+        category: "men", // Eros is a men's line
+        featured: false,
+        scentNotes: {
+            topNotes: "Mint, Candied Apple, Lemon, Mandarin Orange",
+            heartNotes: "Ambroxan, Geranium, Clary Sage",
+            baseNotes: "Vanilla, Cedarwood, Sandalwood, Patchouli, Leather",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "26",
+        name: "La Vie Est Belle Eau de Parfum (2012)",
+        brand: "Lancôme",
+        price: 420000, // Approximate price in UGX for 100ml
+        imageUrl: "/La-Vie-Est-Belle-Eau-de-Parfum-2012.jpeg",
+        description: "A timeless and iconic gourmand iris fragrance that celebrates joy and happiness. This elegant scent combines sweet iris, patchouli, and spun sugar with a hint of fruity freshness, embodying a radiant femininity.",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Blackcurrant, Pear",
+            heartNotes: "Iris, Jasmine, Orange Blossom",
+            baseNotes: "Patchouli, Tonka Bean, Vanilla, Praline",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "27",
+        name: "Stronger With You Intensely (2019)",
+        brand: "Giorgio Armani",
+        price: 360000, // Approximate price in UGX for 100ml
+        imageUrl: "/Stronger-With-You-Intensely-2019.jpeg",
+        description: "An intense and addictive amber woody fragrance for men, designed to capture the energy of intense love. It features notes of spicy pink pepper, warm vanilla, and captivating amber wood for a truly memorable trail.",
+        category: "men", // Stronger With You is a men's line
+        featured: false,
+        scentNotes: {
+            topNotes: "Pink Pepper, Juniper, Violet",
+            heartNotes: "Toffee, Cinnamon, Lavender, Sage",
+            baseNotes: "Vanilla, Tonka Bean, Amberwood, Suede",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "28",
+        name: "The One by Dolce & Gabbana",
+        brand: "Dolce & Gabbana",
+        price: 370000, // Approximate price in UGX for 75ml
+        imageUrl: "/The-One-by-Dolce-&-Gabbana.jpeg",
+        description: "A warm, floral-oriental scent with bergamot, jasmine, amber & vanilla.⏳ Lasts 8–10 hours with soft, skin-close sillage.💬 “Elegant… my go-to for any occasion.”🎁 Set: 75ml EDP + 15ml Mini + 50ml Perfumed Body Lotion",
+        category: "women", // The description points to the women's version
+        featured: false,
+        scentNotes: {
+            topNotes: "Bergamot, Mandarin Orange, Lychee, Peach",
+            heartNotes: "Madonna Lily, Jasmine, Lily-of-the-Valley",
+            baseNotes: "Vanilla, Amber, Musk, Vetiver",
+        },
+        volume: 75, // Common volume mentioned in description
+    },
+    {
+        id: "29",
+        name: "Q by Dolce & Gabbana (2023)",
+        brand: "Dolce & Gabbana",
+        price: 350000, // Approximate price in UGX for 100ml
+        imageUrl: "/Q-by-Dolce-&-Gabbana-2023.jpeg",
+        description: "A royal burst of lemon, cherry & musk — soft, fresh, and elegant.🌸 Lasts up to 8+ hours with a subtle, skin-like finish.💬 “Versatile… seductive, sweet, and light.”🎁 Set: 100ml + 10ml Travel + 5ml Mini",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Sicilian Lemon, Blood Orange, Jasmine",
+            heartNotes: "Cherry, Heliotrope, Tuberose",
+            baseNotes: "Cedarwood, Musk, Patchouli",
+        },
+        volume: 100, // Common volume mentioned in description
+    },
+    {
+        id: "30",
+        name: "Ariana Grande Cloud",
+        brand: "Ariana Grande",
+        price: 300000, // Approximate price in UGX for 100ml
+        imageUrl: "/Ariana-Grande-Cloud.jpeg",
+        description: "A dreamy and uplifting gourmand fragrance, reminiscent of a sweet, fluffy cloud. It blends creamy coconut, sweet praline, and warm vanilla with delicate lavender and musk for a comforting and addictive scent.",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Lavender, Pear, Bergamot",
+            heartNotes: "Whipped Cream, Praline, Coconut, Vanilla Orchid",
+            baseNotes: "Musk, Woody Notes",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "31",
+        name: "Boss Bottled Elixir – Hugo Boss (2023)",
+        brand: "Hugo Boss",
+        price: 450000, // Approximate price in UGX for 100ml
+        imageUrl: "/Boss-Bottled-Elixir–Hugo-Boss-2023.jpeg",
+        description: "A rich, highly concentrated interpretation of the iconic Boss Bottled, offering deep, warm, and woody notes with a captivating amber signature. It's a powerful and charismatic fragrance for the modern man.",
+        category: "men", // Boss Bottled is a men's line
+        featured: false,
+        scentNotes: {
+            topNotes: "Frankincense, Cardamom",
+            heartNotes: "Vetiver, Patchouli",
+            baseNotes: "Cedarwood, Labdanum",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "32",
+        name: "ACQUA DI GIÒ PARFUM GIFT SET",
+        brand: "Giorgio Armani",
+        price: 600000, // Approximate price in UGX for a gift set
+        imageUrl: "/ACQUA-DI-GIÒ-PARFUM-GIFT-SET.jpeg",
+        description: "A sophisticated and intense marine woody fragrance, representing the true essence of Acqua di Giò. The Parfum version offers a deeper and more mysterious interpretation with notes of frankincense and marine accords.",
+        category: "men", // Acqua di Giò is a men's line
+        featured: false,
+        scentNotes: {
+            topNotes: "Marine Notes, Bergamot",
+            heartNotes: "Geranium, Rosemary, Clary Sage",
+            baseNotes: "Patchouli, Incense",
+        },
+        volume: 75, // Common volume for the main bottle in such a set
+    },
+    {
+        id: "33",
+        name: "GENTLEMAN SOCIETY",
+        brand: "Givenchy",
+        price: 480000, // Approximate price in UGX for 100ml
+        imageUrl: "/gentleman-society.jpeg",
+        description: "A bold and sophisticated woody floral fragrance that redefines modern masculinity. It blends fresh sage with wild daffodil, vetiver, and warm vanilla, creating a multifaceted and charismatic signature.",
+        category: "men", // Gentleman Society is a men's fragrance
+        featured: false,
+        scentNotes: {
+            topNotes: "Sage, Cardamom",
+            heartNotes: "Wild Daffodil, Vetiver",
+            baseNotes: "Vanilla, Cedarwood, Sandalwood",
+        },
+        volume: 100, // Common volume
+    },
+    {
+        id: "34",
+        name: "OLYMPEA GIFT SET",
+        brand: "Paco Rabanne",
+        price: 400000, // Approximate price in UGX for a gift set
+        imageUrl: "/OYMPEA-GIFT-SET.jpeg",
+        description: "A divine and powerful oriental floral fragrance, Olympea is a captivating blend of salty vanilla and fresh floral notes. This gift set offers the full experience of strength and femininity, inspired by a modern goddess.",
+        category: "women",
+        featured: false,
+        scentNotes: {
+            topNotes: "Green Mandarin, Water Jasmine, Ginger Lily",
+            heartNotes: "Salted Vanilla",
+            baseNotes: "Ambergris, Cashmere Wood, Sandalwood",
+        },
+        volume: 80, // Common volume for the main bottle in such a set
+    },
+    {
+        id: "35",
+        name: "Gucci Guilty Pour Homme",
+        brand: "Gucci",
+        price: 400000, // Approximate price in UGX for 90ml
+        imageUrl: "/Gucci-Guilty-Pour-Homme.jpeg",
+        description: "A modern and charismatic aromatic fougère fragrance for men, designed for the man who defines his own sensuality. It features notes of pink pepper, lemon, orange blossom, and patchouli.",
+        category: "men", // Pour Homme indicates men's
+        featured: false,
+        scentNotes: {
+            topNotes: "Lemon, Pink Pepper",
+            heartNotes: "Orange Blossom, Neroli, French Lavender",
+            baseNotes: "Cedarwood, Patchouli",
+        },
+        volume: 90, // Common volume
+    },
+    {
+        id: "36",
+        name: "Dolce & Gabbana Pour Homme Intenso",
+        brand: "Dolce & Gabbana",
+        price: 360000, // Approximate price in UGX for 125ml
+        imageUrl: "/Intenso-by-Dolce-&-Gabbana.jpeg",
+        description: "A powerful and masculine woody aromatic fragrance that evokes pure instinct. Intenso is a unique blend of fresh aquatic notes, basil, lavender, and the groundbreaking Moepel wood accord, creating a deep and captivating signature.",
+        category: "men", // Intenso is a men's fragrance
+        featured: false,
+        scentNotes: {
+            topNotes: "Basil, Lavender, Water Notes, Marigold, Geranium",
+            heartNotes: "Tobacco, Hay, Moepel Accord, Bran, Clary Sage",
+            baseNotes: "Sandalwood, Cypress, Musk, Amber",
+        },
+        volume: 125, // Common volume
     },
     {
         id: "7",
         name: "Khamrah Qahwa",
         brand: "Lattafa",
-        imageUrl: "/Khamrah-Qahwa-by-Lattafa.jpg",
-        description: "I wouldn’t have tried *Khamrah Qahwa* by Lattafa if it hadn’t unexpectedly won Best Niche Perfume in Fragrantica’s 2024 Readers' Choice Awards. Inspired by Saudi Qahwa coffee, I expected a sharp, bitter brew — but instead, it surprised me with warm notes of cardamom, saffron, ginger, and a rich praline heart. It’s more spiced dessert than coffee, wrapped in boozy sweetness and cozy spice. A bold gourmand, not for everyone — but unforgettable once it settles on the skin.",
+        imageUrl: "/Khamrah-Qahwa.jpeg",
+        description: "A warm, inviting, and addictive gourmand fragrance, Khamrah Qahwa is a rich blend of spices, candied fruits, and creamy coffee. It's a luxurious and comforting scent perfect for colder months and evening wear.",
         price: 200000,
         category: "unisex",
         featured: true,
@@ -118,14 +476,15 @@ var initialProducts = [
             heartNotes: "Praline, Candied Fruits, White Flowers",
             baseNotes: "Arabic Coffee, Vanilla, Tonka Bean, Musk",
         },
+        volume: 100, // Common volume for Lattafa
     },
     {
         id: "8",
-        name: "Black Opium",
+        name: "Black Opium Over Red By YSL (2024)", // Added year for clarity
         brand: "Yves Saint Laurent",
-        imageUrl: "/Black-Opium-Over-Red-By-YSL-2024.jpg",
-        description: "🌸 Floral • Fruity • Gourmand\n\n✨ *Top*: Cherry, Green Mandarin\n🌼 *Heart*: Jasmine, Orange Blossom, Black Tea\n☕ *Base*: Coffee, Patchouli, Vanilla💃 Bold, sweet & sensual\n❤️ Cherry spark meets creamy vanilla\n🌙 Perfect for all weather but best in nights & cooler days\n🔴 Sleek red bottle = instant statement",
-        price: 250000,
+        imageUrl: "/Black-Opium-Over-Red-By-YSL-2024.jpeg",
+        description: "🌸 Floral • Fruity • Gourmand\n\n✨ *Top*: Cherry, Green Mandarin\n🌼 *Heart*: Jasmine, Orange Blossom, Black Tea\n☕ *Base*: Coffee, Patchouli, Vanilla\n\n💃 Bold, sweet & sensual\n❤️ Cherry spark meets creamy vanilla\n🌙 Perfect for all weather but best in nights & cooler days\n🔴 Sleek red bottle = instant statement",
+        price: 480000, // Approximate price in UGX for 90ml
         category: "women",
         featured: true,
         scentNotes: {
@@ -133,14 +492,15 @@ var initialProducts = [
             heartNotes: "Jasmine Grandiflorum, Orange Blossom, Black Tea",
             baseNotes: "Coffee Accord, Patchouli, Vanilla",
         },
+        volume: 90, // Common volume
     },
     {
         id: "9",
         name: "Dolce&Gabbana Q (2023)",
         brand: "Dolce&Gabbana",
-        imageUrl: "/DG-Q-2023.jpg",
+        imageUrl: "/DG-Q-2023.jpeg",
         description: "🌸✨ D&G Q (2023) – A scent that flirts with spring & summer 🍋🌿. Bursting with citrus, fruity & woody notes, it brings elegance, energy & adventure – perfect for daytime charm or a night to remember 💃🏽🔥",
-        price: 180000,
+        price: 350000, // Approximate price in UGX for 100ml (already in your data, adjusted slightly)
         category: "women",
         featured: false,
         scentNotes: {
@@ -148,14 +508,15 @@ var initialProducts = [
             heartNotes: "Cherry, Heliotrope, Tuberose",
             baseNotes: "Cedarwood, Musk, Patchouli",
         },
+        volume: 100, // Common volume
     },
     {
         id: "10",
         name: "Estée Lauder Pleasures",
         brand: "Estée Lauder",
-        imageUrl: "/Estée-Lauder-Pleasures.jpg",
-        description: "A fresh floral 🌸 scent that feels like spring rain 🌦️\nPerfect for garden tours 🌿 & summer gatherings ☀️🌸 Top: Pink pepper, red berries\n🌺 Heart: White peony, lily, lilac\n🌲 Base: Cedar, patchouli, sandalwood\n\n✨ Soft, sheer & elegant — your daily dose of beauty 🌼\n#Pleasures #FloralVibes #EverydayElegance",
-        price: 300000,
+        imageUrl: "/Estée-Lauder-Pleasures.jpeg",
+        description: "A fresh floral 🌸 scent that feels like spring rain 🌦️\nPerfect for garden tours 🌿 & summer gatherings ☀️\n\n🌸 Top: Pink pepper, red berries\n🌺 Heart: White peony, lily, lilac\n🌲 Base: Cedar, patchouli, sandalwood\n\n✨ Soft, sheer & elegant — your daily dose of beauty 🌼\n#Pleasures #FloralVibes #EverydayElegance",
+        price: 300000, // Your price, maintained
         category: "women",
         featured: false,
         scentNotes: {
@@ -163,14 +524,15 @@ var initialProducts = [
             heartNotes: "Black Lilac, White Peony, Karan Karounde",
             baseNotes: "Sandalwood, Patchouli, Amber",
         },
+        volume: 100, // Common volume
     },
     {
         id: "11",
-        name: "Oud wood",
-        brand: "Various",
-        imageUrl: "/Oud-wood.jpg",
-        description: "Oud wood seems to be back in the spotlight, often used with a light hand to please the more Western perfume style. Perfumers seem to be going for a less animalic idea these days, combining it more often with fresh or fruity notes. Some examples are Amber Oud Haramain, Tomford oud wood, Initio oud for greatness, Lataffa oud for Glory, Stronger with you oud Armani,   Oud Excelsa by Caron, Oud Alezan by Hermes, Under the Sars by Margiela, Oud Cadenza by Crivelli, Sensual Oud by Zara, Madness by Franck Broclet, Aoud Extraordinaire by Roja Parfums, I Wanna Be Loved By You by HFC, and Voluptuous Oud by Francesca Bianchi. My personal goal for 2025 is to further enjoy  the oud notes which I truly fully enjoy!",
-        price: 220000,
+        name: "Oud Wood",
+        brand: "Tom Ford", // Assumed from context of common reference
+        imageUrl: "/Oud-wood.jpeg",
+        description: "A groundbreaking and luxurious woody fragrance. Oud Wood is an exotic and smoky blend of rare oud, sandalwood, and vetiver, creating a rich, opulent, and highly coveted scent that balances tradition with modern appeal.",
+        price: 1500000, // Tom Ford Oud Wood is very expensive in UGX
         category: "unisex",
         featured: false,
         scentNotes: {
@@ -178,14 +540,15 @@ var initialProducts = [
             heartNotes: "Sandalwood, Vetiver, Chinese Pepper",
             baseNotes: "Tonka Bean, Vanilla, Amber",
         },
+        volume: 50, // Common volume for Tom Ford Private Blend
     },
     {
         id: "12",
         name: "Prada Luna Rossa Black (2018)",
         brand: "Prada",
         imageUrl: "/prada.jpg",
-        description: "* ⭐ 4.36/5 from 6,284 votes\n* 🌿 Notes: Bergamot, Angelica, Patchouli, Amber, Musk, Coumarin\n* 🕒 Lasts 6–10 hrs, moderate projection\n* 🌙 Best for all day wear\n* 👍 Smooth, powdery, amber-warm scent – ideal for close settings & compliments",
-        price: 320000,
+        description: "An urban and sophisticated amber woody fragrance for men, Luna Rossa Black evokes the excitement of exploring a city at night. It's warm, sensual, and powdery with notes of bergamot, patchouli, and amber.",
+        price: 320000, // Your price, maintained
         category: "men",
         featured: false,
         scentNotes: {
@@ -193,14 +556,15 @@ var initialProducts = [
             heartNotes: "Patchouli, Amberwood",
             baseNotes: "Musk, Coumarin",
         },
+        volume: 100, // Common volume
     },
     {
         id: "13",
-        name: "Bvlgari Man Wood Neroli 2018",
+        name: "Bvlgari Man Wood Neroli (2018)",
         brand: "Bvlgari",
-        imageUrl: "/Bvlgari-Man-Wood-Neroli-2018.jpg",
-        description: "* 🌿 Fresh neroli & bergamot top\n* 🌲 Woody heart: cedar & orange blossom\n* 🐚 Warm base: amber, musk, ambergris\n* 💧 Clean, light, everyday wear\n* 🌞 Best for spring & summer\n* ⏳ Lasts 6–8+ hrs like most edps, soft projection",
-        price: 350000,
+        imageUrl: "/Bvlgari-Man-Wood-Neroli-2018.jpeg",
+        description: "A vibrant and woody floral fragrance inspired by nature's vital force. Man Wood Neroli blends the radiant freshness of neroli with deep woody accords, creating a powerful and invigorating scent for men.",
+        price: 350000, // Your price, maintained
         category: "men",
         featured: false,
         scentNotes: {
@@ -208,14 +572,15 @@ var initialProducts = [
             heartNotes: "Cypress, Vetiver, Cedarwood",
             baseNotes: "Ambroxan, Ambergris, White Musk",
         },
+        volume: 100, // Common volume
     },
     {
         id: "14",
         name: "Bvlgari Man in Black",
         brand: "Bvlgari",
-        imageUrl: "/Bvlgari-Man-in-Black.jpg",
-        description: "A bold and charismatic fragrance inspired by the myth of the birth of Vulcan, the Roman god of the earth.",
-        price: 280000,
+        imageUrl: "/Bvlgari-Man-in-Black.jpeg",
+        description: "A bold and charismatic fragrance inspired by the myth of the birth of Vulcan, the Roman god of the earth. This powerful neo-oriental Eau de Parfum is an alluring and masculine blend of amber, leather, and spices.",
+        price: 280000, // Your price, maintained
         category: "men",
         featured: false,
         scentNotes: {
@@ -223,14 +588,15 @@ var initialProducts = [
             heartNotes: "Leather Accord, Tuberose, Iris",
             baseNotes: "Benzoin, Tonka Bean, Guaiac Wood",
         },
+        volume: 100, // Common volume
     },
     {
         id: "15",
         name: "MontBlanc Explorer Ultra Blue",
         brand: "MontBlanc",
-        imageUrl: "/MontBlanc-Explorer-Ultra-Blue.jpg",
-        description: "Slightly fresher and sweeter than the original Explorer, this Ultra Blue version adds sea notes and exotic fruits to give it an oceanic vibe. Think of sitting on the beach enjoying a crisp ocean breeze and a crisper tropical cocktail and you’ve basically got it. It’s extremely fresh but tempered a bit with a base of woody notes, patchouli, and leather.",
-        price: 240000,
+        imageUrl: "/MontBlanc-Explorer-Ultra-Blue.jpeg",
+        description: "An adventurous and fresh citrus marine fragrance for men, inspired by the blue of the sky and the oceans. It offers a cool and invigorating escape with notes of Sicilian bergamot, marine accords, and patchouli.",
+        price: 240000, // Your price, maintained
         category: "men",
         featured: false,
         scentNotes: {
@@ -238,9 +604,9 @@ var initialProducts = [
             heartNotes: "Marine Accord, Ambergris",
             baseNotes: "Patchouli, Woody Notes, Leather",
         },
+        volume: 100, // Common volume
     },
 ];
-// Now all initial products should have either local image paths or placehold.co.
 // The filtering logic below will separate them.
 var productsWithRealImages = initialProducts.filter(function (product) { return !product.imageUrl.includes("placehold.co"); });
 var productsWithPlaceholders = initialProducts.filter(function (product) {

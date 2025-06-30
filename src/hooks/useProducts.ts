@@ -59,5 +59,7 @@ export const useProducts = (): UseProductsResult => {
     }
   }, [db, isAuthReady]); // Dependencies: re-run effect if db instance or auth readiness changes
 
+  console.log(products)
+
   return { products, loading, error };
 };

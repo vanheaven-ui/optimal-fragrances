@@ -57,6 +57,7 @@ var app_1 = require("firebase/app");
 var firestore_1 = require("firebase/firestore");
 var auth_1 = require("firebase/auth");
 var blogPosts_1 = require("../data/blogPosts");
+var product_1 = require("../data/product");
 // --- Firebase Configuration (for local development/manual run) ---
 // IMPORTANT: In the Canvas environment, __firebase_config and __initial_auth_token are provided globally.
 // For local testing outside Canvas, you might need to manually set these or your own config.
@@ -111,18 +112,18 @@ var auth = (0, auth_1.getAuth)(app);
  */
 function uploadInitialData() {
     return __awaiter(this, void 0, void 0, function () {
-        var _i, blogPosts_2, post, blogPostDocRef, error_1, authError_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _i, products_1, product, productDocRef, error_1, _a, blogPosts_2, post, blogPostDocRef, error_2, authError_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     console.log("Starting data upload to Firestore...");
-                    _a.label = 1;
+                    _b.label = 1;
                 case 1:
-                    _a.trys.push([1, 12, , 13]);
+                    _b.trys.push([1, 18, , 19]);
                     if (!initialAuthToken) return [3 /*break*/, 3];
                     return [4 /*yield*/, (0, auth_1.signInWithCustomToken)(auth, initialAuthToken)];
                 case 2:
-                    _a.sent();
+                    _b.sent();
                     console.log("Authenticated with custom token.");
                     return [3 /*break*/, 5];
                 case 3: 
@@ -130,61 +131,66 @@ function uploadInitialData() {
                 return [4 /*yield*/, (0, auth_1.signInAnonymously)(auth)];
                 case 4:
                     // Attempt anonymous sign-in if no custom token (might fail if rules disallow)
-                    _a.sent();
+                    _b.sent();
                     console.log("Signed in anonymously. Ensure your Firestore rules allow this or use a custom token.");
-                    _a.label = 5;
+                    _b.label = 5;
                 case 5:
                     // --- Upload Products ---
                     console.log("Uploading products to 'products' collection...");
-                    // for (const product of products) {
-                    //   try {
-                    //     // Using setDoc with explicit ID to ensure your predefined IDs are used
-                    //     const productDocRef = doc(db, "products", product.id);
-                    //     await setDoc(productDocRef, {
-                    //       ...product,
-                    //       createdAt: serverTimestamp(), // Set server timestamp for creation
-                    //       updatedAt: serverTimestamp(), // Set server timestamp for last update
-                    //     });
-                    //     console.log(`✅ Uploaded product: ${product.name} (ID: ${product.id})`);
-                    //   } catch (error) {
-                    //     console.error(
-                    //       `❌ Failed to upload product ${product.name} (ID: ${product.id}):`,
-                    //       error
-                    //     );
-                    //   }
-                    // }
-                    // console.log("Products upload complete.");
-                    // --- Upload Blog Posts ---
-                    console.log("Uploading blog posts to 'blogPosts' collection...");
-                    _i = 0, blogPosts_2 = blogPosts_1.blogPosts;
-                    _a.label = 6;
+                    _i = 0, products_1 = product_1.products;
+                    _b.label = 6;
                 case 6:
-                    if (!(_i < blogPosts_2.length)) return [3 /*break*/, 11];
-                    post = blogPosts_2[_i];
-                    _a.label = 7;
+                    if (!(_i < products_1.length)) return [3 /*break*/, 11];
+                    product = products_1[_i];
+                    _b.label = 7;
                 case 7:
-                    _a.trys.push([7, 9, , 10]);
-                    blogPostDocRef = (0, firestore_1.doc)(db, "blogPosts", post.id);
-                    return [4 /*yield*/, (0, firestore_1.setDoc)(blogPostDocRef, __assign(__assign({}, post), { createdAt: (0, firestore_1.serverTimestamp)(), updatedAt: (0, firestore_1.serverTimestamp)() }))];
+                    _b.trys.push([7, 9, , 10]);
+                    productDocRef = (0, firestore_1.doc)(db, "products", product.id);
+                    return [4 /*yield*/, (0, firestore_1.setDoc)(productDocRef, __assign(__assign({}, product), { createdAt: (0, firestore_1.serverTimestamp)(), updatedAt: (0, firestore_1.serverTimestamp)() }))];
                 case 8:
-                    _a.sent();
-                    console.log("\u2705 Uploaded blog post: ".concat(post.title, " (ID: ").concat(post.id, ")"));
+                    _b.sent();
+                    console.log("\u2705 Uploaded product: ".concat(product.name, " (ID: ").concat(product.id, ")"));
                     return [3 /*break*/, 10];
                 case 9:
-                    error_1 = _a.sent();
-                    console.error("\u274C Failed to upload blog post ".concat(post.title, " (ID: ").concat(post.id, "):"), error_1);
+                    error_1 = _b.sent();
+                    console.error("\u274C Failed to upload product ".concat(product.name, " (ID: ").concat(product.id, "):"), error_1);
                     return [3 /*break*/, 10];
                 case 10:
                     _i++;
                     return [3 /*break*/, 6];
                 case 11:
-                    console.log("Blog posts upload complete.");
-                    return [3 /*break*/, 13];
+                    console.log("Products upload complete.");
+                    // --- Upload Blog Posts ---
+                    console.log("Uploading blog posts to 'blogPosts' collection...");
+                    _a = 0, blogPosts_2 = blogPosts_1.blogPosts;
+                    _b.label = 12;
                 case 12:
-                    authError_1 = _a.sent();
-                    console.error("Authentication failed, cannot upload data:", authError_1);
-                    return [3 /*break*/, 13];
+                    if (!(_a < blogPosts_2.length)) return [3 /*break*/, 17];
+                    post = blogPosts_2[_a];
+                    _b.label = 13;
                 case 13:
+                    _b.trys.push([13, 15, , 16]);
+                    blogPostDocRef = (0, firestore_1.doc)(db, "blogPosts", post.id);
+                    return [4 /*yield*/, (0, firestore_1.setDoc)(blogPostDocRef, __assign(__assign({}, post), { createdAt: (0, firestore_1.serverTimestamp)(), updatedAt: (0, firestore_1.serverTimestamp)() }))];
+                case 14:
+                    _b.sent();
+                    console.log("\u2705 Uploaded blog post: ".concat(post.title, " (ID: ").concat(post.id, ")"));
+                    return [3 /*break*/, 16];
+                case 15:
+                    error_2 = _b.sent();
+                    console.error("\u274C Failed to upload blog post ".concat(post.title, " (ID: ").concat(post.id, "):"), error_2);
+                    return [3 /*break*/, 16];
+                case 16:
+                    _a++;
+                    return [3 /*break*/, 12];
+                case 17:
+                    console.log("Blog posts upload complete.");
+                    return [3 /*break*/, 19];
+                case 18:
+                    authError_1 = _b.sent();
+                    console.error("Authentication failed, cannot upload data:", authError_1);
+                    return [3 /*break*/, 19];
+                case 19:
                     console.log("Initial data upload process finished.");
                     return [2 /*return*/];
             }
