@@ -19,8 +19,8 @@ export interface Product {
   id?: string; // ID is optional when creating, Firestore generates it
   name: string;
   brand: string;
-  price: number;
-  imageUrl: string;
+  price?: number; // Price is now optional as per your data.ts file
+  imageUrl: string; // Keep as string, but required status changes
   description: string;
   category: "men" | "women" | "unisex";
   featured: boolean;
@@ -32,16 +32,16 @@ export interface Product {
   };
   createdAt?: Date; // To store creation timestamp
   updatedAt?: Date; // To store update timestamp
+  rating?: number; // ADDED: Trusted rating for the product (e.g., 1.0 to 5.0)
+  ratingSource?: string; // ADDED: Source of the rating for credibility
 }
 
 interface AdminProductFormProps {
-  // Renamed interface
   initialProduct?: Product; // Optional prop for pre-filling the form (for editing)
   isEditMode?: boolean; // Indicate if the form is in edit mode
 }
 
 const AdminProductForm: React.FC<AdminProductFormProps> = ({
-  // Renamed component
   initialProduct,
   isEditMode: propIsEditMode = false, // Default to false if not provided
 }) => {
@@ -50,7 +50,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     initialProduct || {
       name: "",
       brand: "",
-      price: 0,
       imageUrl: "",
       description: "",
       category: "unisex",
@@ -60,6 +59,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         heartNotes: "",
         baseNotes: "",
       },
+      rating: undefined,
+      ratingSource: undefined,
     }
   );
   const [statusMessage, setStatusMessage] = useState<{
@@ -73,19 +74,22 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
     if (initialProduct) {
       setFormData({
         ...initialProduct,
-        price: Number(initialProduct.price), // Ensure price is a number for the input
+        price: initialProduct.price ? Number(initialProduct.price) : undefined,
+        rating: initialProduct.rating
+          ? Number(initialProduct.rating)
+          : undefined,
       });
     } else {
-      // Reset form if initialProduct becomes null/undefined (e.g., navigating from edit to new)
       setFormData({
         name: "",
         brand: "",
-        price: 0,
         imageUrl: "",
         description: "",
         category: "unisex",
         featured: false,
         scentNotes: { topNotes: "", heartNotes: "", baseNotes: "" },
+        rating: undefined,
+        ratingSource: undefined,
       });
     }
   }, [initialProduct]);
@@ -105,6 +109,11 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           ...prev.scentNotes,
           [scentNoteKey]: value,
         } as Product["scentNotes"],
+      }));
+    } else if (type === "number") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value === "" ? undefined : Number(value), // Handle empty string for optional numbers
       }));
     } else {
       setFormData((prev) => ({
@@ -128,17 +137,23 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
       return;
     }
 
-    if (
-      !formData.name ||
-      !formData.brand ||
-      formData.price <= 0 ||
-      !formData.imageUrl ||
-      !formData.description
-    ) {
+    // Basic validation for required fields
+    // imageUrl is now only required for NEW products, not for edits
+    if (!formData.name || !formData.brand || !formData.description) {
       setStatusMessage({
         type: "error",
         message:
-          "Please fill in all required fields (Name, Brand, Price, Image URL, Description).",
+          "Please fill in all required fields (Name, Brand, Description).",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Explicitly check imageUrl for new products
+    if (!propIsEditMode && !formData.imageUrl) {
+      setStatusMessage({
+        type: "error",
+        message: "Image URL is required for new products.",
       });
       setLoading(false);
       return;
@@ -146,9 +161,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
 
     try {
       if (propIsEditMode && formData.id) {
-        // Prepare data for update: exclude `id` from the object to be written
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, ...dataToUpdate } = formData; // Fix: Renamed 'id' to '_id'
+        const { id: _id, ...dataToUpdate } = formData;
         await updateDoc(doc(db, "products", formData.id), {
           ...dataToUpdate,
           updatedAt: serverTimestamp(),
@@ -158,9 +172,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           message: "Product updated successfully!",
         });
       } else {
-        // Prepare data for add: exclude `id` from the object to be written
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, ...dataToAdd } = formData; // Fix: Renamed 'id' to '_id'
+        const { id: _id, ...dataToAdd } = formData;
         await addDoc(collection(db, "products"), {
           ...dataToAdd,
           createdAt: serverTimestamp(),
@@ -170,16 +183,16 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           type: "success",
           message: "New product added successfully!",
         });
-        // Reset form for a new product entry
         setFormData({
           name: "",
           brand: "",
-          price: 0,
           imageUrl: "",
           description: "",
           category: "unisex",
           featured: false,
           scentNotes: { topNotes: "", heartNotes: "", baseNotes: "" },
+          rating: undefined,
+          ratingSource: undefined,
         });
       }
     } catch (error) {
@@ -228,7 +241,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-md space-y-6"
       >
-        {/* Form fields remain the same */}
         <div>
           <label
             htmlFor="name"
@@ -267,23 +279,65 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
           />
         </div>
 
+        {/* PRICE FIELD */}
         <div>
           <label
             htmlFor="price"
             className="block text-ug-text-dark text-sm font-semibold mb-2"
           >
-            Price (UGX) <span className="text-red-500">*</span>
+            Price (UGX)
           </label>
           <input
             type="number"
             id="price"
             name="price"
-            value={formData.price}
+            value={formData.price !== undefined ? formData.price : ""}
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
-            required
             min="0"
             step="1000"
+            disabled={loading}
+          />
+        </div>
+
+        {/* RATING FIELD */}
+        <div>
+          <label
+            htmlFor="rating"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
+            Rating (1.0 to 5.0)
+          </label>
+          <input
+            type="number"
+            id="rating"
+            name="rating"
+            value={formData.rating !== undefined ? formData.rating : ""}
+            onChange={handleChange}
+            className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
+            min="1.0"
+            max="5.0"
+            step="0.1"
+            disabled={loading}
+          />
+        </div>
+
+        {/* RATING SOURCE FIELD */}
+        <div>
+          <label
+            htmlFor="ratingSource"
+            className="block text-ug-text-dark text-sm font-semibold mb-2"
+          >
+            Rating Source
+          </label>
+          <input
+            type="text"
+            id="ratingSource"
+            name="ratingSource"
+            value={formData.ratingSource || ""}
+            onChange={handleChange}
+            className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
+            placeholder="e.g., Fragrantica (4.5/5), Sephora (4.7/5)"
             disabled={loading}
           />
         </div>
@@ -293,7 +347,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             htmlFor="imageUrl"
             className="block text-ug-text-dark text-sm font-semibold mb-2"
           >
-            Image URL <span className="text-red-500">*</span>
+            Image URL{" "}
+            {propIsEditMode ? "" : <span className="text-red-500">*</span>}
           </label>
           <input
             type="url"
@@ -303,7 +358,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({
             onChange={handleChange}
             className="w-full p-3 border border-ug-neutral-light rounded-lg focus:ring-ug-purple-primary focus:border-ug-purple-primary"
             placeholder="https://example.com/perfume.png or /local-image.jpg"
-            required
+            required={!propIsEditMode} // Required only if not in edit mode
             disabled={loading}
           />
           {formData.imageUrl && (

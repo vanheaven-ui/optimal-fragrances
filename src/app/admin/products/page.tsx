@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link"; // Import Link for internal navigation
-import { formatPrice } from "../../../utils/currencyFormatter";
+// import { formatPrice } from "../../../utils/currencyFormatter"; // REMOVED: No longer needed for display
 import {
   getFirebaseInstances,
   collection,
@@ -59,7 +59,7 @@ export default function AdminProductsPage() {
             id: doc.id,
             name: data.name,
             brand: data.brand,
-            price: data.price,
+            price: data.price, // Keep price in data fetch, but it won't be displayed
             imageUrl: data.imageUrl,
             description: data.description,
             category: data.category,
@@ -74,6 +74,9 @@ export default function AdminProductsPage() {
               : undefined,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
+            rating: data.rating !== undefined ? data.rating : undefined, // Include rating
+            ratingSource:
+              data.ratingSource !== undefined ? data.ratingSource : undefined, // Include ratingSource
           };
           productsList.push(productData);
         });
@@ -151,12 +154,9 @@ export default function AdminProductsPage() {
         <div className="w-full bg-white rounded-lg shadow-md">
           <div className="overflow-x-auto">
             {" "}
-            {/* Changed md:overflow-x-visible to just overflow-x-auto for consistency on smaller screens */}
-            {/* Added table-fixed to ensure column widths are respected */}
             <table className="min-w-full divide-y divide-ug-neutral-light table-fixed w-full">
               <thead className="bg-ug-neutral-bg">
                 <tr>
-                  {/* Adjusted column widths for better visual balance and consistency with blog posts */}
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[10%]"
@@ -175,17 +175,32 @@ export default function AdminProductsPage() {
                   >
                     Brand
                   </th>
-                  <th
+                  {/* REMOVED: Price column */}
+                  {/* <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[12%]"
                   >
                     Price
-                  </th>
+                  </th> */}
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[12%]"
                   >
                     Category
+                  </th>
+                  {/* ADDED: Rating column */}
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[8%]"
+                  >
+                    Rating
+                  </th>
+                  {/* ADDED: Rating Source column */}
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-ug-text-dark uppercase tracking-wider w-[15%]" // Adjusted width
+                  >
+                    Rating Source
                   </th>
                   <th
                     scope="col"
@@ -223,11 +238,22 @@ export default function AdminProductsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
                       {product.brand}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
+                    {/* REMOVED: Price display */}
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark">
                       {formatPrice(product.price, "UGX", 0)}
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ug-text-dark capitalize">
                       {product.category}
+                    </td>
+                    {/* ADDED: Rating display */}
+                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-ug-text-dark">
+                      {product.rating !== undefined && product.rating !== null
+                        ? product.rating.toFixed(1) // Display rating to one decimal place
+                        : "N/A"}
+                    </td>
+                    {/* ADDED: Rating Source display */}
+                    <td className="px-6 py-4 text-sm text-ug-text-dark break-words">
+                      {product.ratingSource || "N/A"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
                       {product.featured ? (

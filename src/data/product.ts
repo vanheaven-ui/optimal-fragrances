@@ -20,7 +20,7 @@ export interface Product {
   volume?: number;
   createdAt?: Date; // Added for Firestore timestamps
   updatedAt?: Date; // Added for Firestore timestamps
-  rating: number; // ADDED: Trusted rating for the product (e.g., 1.0 to 5.0)
+  rating?: number; // ADDED: Trusted rating for the product (e.g., 1.0 to 5.0)
   ratingSource?: string; // ADDED: Source of the rating for credibility
 }
 
