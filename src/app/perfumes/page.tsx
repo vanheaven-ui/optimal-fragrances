@@ -1,23 +1,13 @@
 // src/app/perfumes/page.tsx
+// (No changes needed for existing gradients)
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { formatPrice } from "../../utils/currencyFormatter";
 import { useProducts } from "../../hooks/useProducts";
 import ProductCard from "../../components/ProductCard";
 import FragranceLoader from "../../components/FragranceLoader";
 import Image from "next/image";
-
-// Define the price ranges for filtering (using UGX currency context)
-const PRICE_RANGES = [
-  { label: "All Prices", min: 0, max: Infinity }, // Represents no filter
-  { label: "Under UGX 50,000", min: 0, max: 49999 },
-  { label: "UGX 50,000 - 100,000", min: 50000, max: 100000 },
-  { label: "UGX 100,001 - 250,000", min: 100001, max: 250000 },
-  { label: "UGX 250,001 - 500,000", min: 250001, max: 500000 },
-  { label: "UGX 500,001 - 1,000,000", min: 500001, max: 1000000 },
-  { label: "Over UGX 1,000,000", min: 1000001, max: Infinity },
-];
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -31,23 +21,21 @@ const shuffleArray = <T extends unknown>(array: T[]): T[] => {
 };
 
 export default function PerfumesPage() {
-  const { products: allProducts, loading, error } = useProducts(); // Use the custom hook to fetch all products
+  const { products: allProducts, loading, error } = useProducts();
 
   const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [searchTerm, setSearchTerm] = useState("");
-  // New state for selected price range, initialized to the "All Prices" index (0)
-  const [selectedPriceRangeIndex, setSelectedPriceRangeIndex] = useState(0);
+  // New state for rating filter: 0 means 'All Ratings'
+  const [selectedRating, setSelectedRating] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8; // Two rows of 4 columns = 8 products per page
+  const productsPerPage = 8;
 
-  // Select two random featured products to display prominently
   const topFeaturedProducts = useMemo(() => {
     const featured = allProducts.filter((p) => p.featured);
     const shuffledFeatured = shuffleArray(featured);
     return shuffledFeatured.slice(0, 2);
-  }, [allProducts]); // Re-shuffle only if allProducts changes
+  }, [allProducts]);
 
-  // Filter out the top featured products from the main collection to avoid duplicates
   const mainCollectionProducts = useMemo(() => {
     const featuredIds = new Set(topFeaturedProducts.map((p) => p.id));
     return allProducts.filter((p) => !featuredIds.has(p.id));
@@ -59,8 +47,20 @@ export default function PerfumesPage() {
     return ["All Brands", ...Array.from(brands).sort()];
   }, [allProducts]);
 
+  // Define rating options for the dropdown
+  const ratingOptions = useMemo(
+    () => [
+      { label: "All Ratings", value: 0 },
+      { label: "4 Stars & Up", value: 4 },
+      { label: "3 Stars & Up", value: 3 },
+      { label: "2 Stars & Up", value: 2 },
+      { label: "1 Star & Up", value: 1 },
+    ],
+    []
+  );
+
   const filteredProducts = useMemo(() => {
-    let productsToDisplay = mainCollectionProducts; // Start with products excluding top featured
+    let productsToDisplay = mainCollectionProducts;
 
     const lowerCaseSearchTerm = searchTerm.trim().toLowerCase();
     if (lowerCaseSearchTerm) {
@@ -78,28 +78,20 @@ export default function PerfumesPage() {
       );
     }
 
-    // --- APPLY PRICE RANGE FILTER ---
-    const { min, max } = PRICE_RANGES[selectedPriceRangeIndex];
-    if (min !== 0 || max !== Infinity) {
-      // Only apply if not "All Prices"
+    // New: Filter by rating
+    if (selectedRating > 0) {
       productsToDisplay = productsToDisplay.filter(
-        (product) => product.price >= min && product.price <= max
+        (product) => product.rating && product.rating >= selectedRating
       );
     }
-    // --- END APPLY PRICE RANGE FILTER ---
 
     return productsToDisplay;
-  }, [
-    selectedBrand,
-    searchTerm,
-    selectedPriceRangeIndex,
-    mainCollectionProducts,
-  ]); // Updated dependencies
+  }, [selectedBrand, searchTerm, selectedRating, mainCollectionProducts]);
 
   useEffect(() => {
     // Reset to first page when filters change
     setCurrentPage(1);
-  }, [selectedBrand, searchTerm, selectedPriceRangeIndex]); // Updated dependencies
+  }, [selectedBrand, searchTerm, selectedRating]); // Add selectedRating to dependencies
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -119,7 +111,7 @@ export default function PerfumesPage() {
   const clearFilters = () => {
     setSelectedBrand("All Brands");
     setSearchTerm("");
-    setSelectedPriceRangeIndex(0); // Reset to "All Prices"
+    setSelectedRating(0); // Reset rating filter
     setCurrentPage(1);
   };
 
@@ -134,6 +126,7 @@ export default function PerfumesPage() {
     } else {
       pageNumbers.push(1);
 
+      // Add "..." if needed after the first page
       if (currentPage > maxPagesToShow - 2 && totalPages > maxPagesToShow) {
         pageNumbers.push("...");
       }
@@ -147,22 +140,21 @@ export default function PerfumesPage() {
         currentPage + Math.floor(maxPagesToShow / 2) - 1
       );
 
-      // Adjust range if near start or end
       if (currentPage <= Math.ceil(maxPagesToShow / 2)) {
         endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
-        startPage = 2; // Make sure it doesn't go below 2
+        startPage = 2;
       } else if (currentPage > totalPages - Math.ceil(maxPagesToShow / 2)) {
         startPage = Math.max(2, totalPages - (maxPagesToShow - 2));
-        endPage = totalPages - 1; // Make sure it doesn't go above totalPages - 1
+        endPage = totalPages - 1;
       }
 
       for (let i = startPage; i <= endPage; i++) {
         if (i > 1 && i < totalPages) {
-          // Ensure we don't duplicate first/last page
           pageNumbers.push(i);
         }
       }
 
+      // Add "..." if needed before the last page
       if (
         currentPage < totalPages - Math.floor(maxPagesToShow / 2) &&
         totalPages > maxPagesToShow
@@ -170,15 +162,11 @@ export default function PerfumesPage() {
         pageNumbers.push("...");
       }
       if (totalPages > 1) {
-        // Only push last page if there's more than one page
         pageNumbers.push(totalPages);
       }
     }
 
-    // Remove duplicates from pagination numbers
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return Array.from(new Set(pageNumbers)).sort((a: any, b: any) => {
-      // Disabled two 'any' errors here
       if (a === "...") return 1;
       if (b === "...") return -1;
       return a - b;
@@ -197,85 +185,37 @@ export default function PerfumesPage() {
     );
   }
 
-  // Determine if any filters other than "All Brands" or "All Prices" are active
+  // Determine if any filters other than "All Brands" and "All Ratings" are active
   const areFiltersActive =
     selectedBrand !== "All Brands" ||
     searchTerm.trim() !== "" ||
-    selectedPriceRangeIndex !== 0;
+    selectedRating > 0;
 
   return (
     <div className="container mx-auto p-4 md:p-8 min-h-[calc(100vh-200px)]">
-      <h1 className="text-5xl md:text-6xl font-extrabold text-ug-text-heading text-center mb-6">
-        Our Perfume Collection
-      </h1>
-      <p className="text-xl text-ug-text-dark text-center max-w-2xl mx-auto mb-8">
-        Explore a curated selection of fragrances crafted to evoke unique
-        emotions and memories.
-      </p>
-
-      {/* Dynamic Featured Products Section */}
-      {topFeaturedProducts.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-ug-purple-primary text-center mb-8">
-            Special Highlights
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto">
-            {topFeaturedProducts.map((product) => (
-              <div
-                key={product.id}
-                className="relative bg-white rounded-lg shadow-lg overflow-hidden group"
-              >
-                <div className="relative w-full aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    width={100}
-                    height={100}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found"; // Fallback image
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg"></div>
-                </div>
-                <div className="p-4 text-center">
-                  <h3 className="text-xl font-bold text-ug-text-heading mb-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-ug-text-dark text-sm mb-3">
-                    {product.description.substring(0, 100)}...
-                  </p>
-                  <span className="text-2xl font-extrabold text-ug-purple-primary">
-                    {formatPrice(product.price, "UGX", 0)}
-                  </span>
-                  <div className="mt-4">
-                    <a
-                      href={`/perfumes/${product.id}`}
-                      className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-6 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300 ease-in-out"
-                    >
-                      View Details
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Hero Section with Title and Description */}
+      <section className="text-center mb-12 md:mb-16">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-ug-text-heading mb-4 leading-tight bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
+          Our Perfume Collection
+        </h1>
+        <p className="text-xl text-ug-text-dark max-w-2xl mx-auto">
+          Explore a curated selection of fragrances crafted to evoke unique
+          emotions and memories.
+        </p>
+      </section>
 
       {/* Filtering Controls */}
-      <div className="bg-ug-neutral-bg rounded-lg shadow-md p-6 mb-12 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 flex-wrap">
+      <div className="bg-ug-neutral-bg rounded-xl shadow-lg p-6 md:p-8 mb-12 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 flex-wrap">
         {/* Search Bar */}
-        <div className="relative w-full max-w-sm md:max-w-xs">
+        <div className="relative w-full max-w-md">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search perfumes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="block w-full p-3 pl-10 border border-ug-neutral-light rounded-lg shadow-sm
-                       focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                       bg-white text-ug-text-dark placeholder-ug-text-dark/70"
+                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                           bg-white text-ug-text-dark placeholder-ug-text-dark/70"
           />
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ug-text-dark"
@@ -301,9 +241,9 @@ export default function PerfumesPage() {
           id="brand-filter"
           value={selectedBrand}
           onChange={(e) => setSelectedBrand(e.target.value)}
-          className="block w-full max-w-sm md:max-w-xs p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                       focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                       bg-white text-ug-text-dark cursor-pointer"
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                           bg-white text-ug-text-dark cursor-pointer"
         >
           {uniqueBrands.map((brand) => (
             <option key={brand} value={brand}>
@@ -312,28 +252,27 @@ export default function PerfumesPage() {
           ))}
         </select>
 
-        {/* --- Price Range Filter Dropdown (New) --- */}
-        <label htmlFor="price-range-filter" className="sr-only">
-          Filter by Price Range
+        {/* New: Rating Filter Dropdown */}
+        <label htmlFor="rating-filter" className="sr-only">
+          Filter by Rating
         </label>
         <select
-          id="price-range-filter"
-          value={selectedPriceRangeIndex}
-          onChange={(e) => setSelectedPriceRangeIndex(Number(e.target.value))}
-          className="block w-full max-w-sm md:max-w-xs p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                       focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                       bg-white text-ug-text-dark cursor-pointer"
+          id="rating-filter"
+          value={selectedRating}
+          onChange={(e) => setSelectedRating(Number(e.target.value))}
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                           bg-white text-ug-text-dark cursor-pointer"
         >
-          {PRICE_RANGES.map((range, index) => (
-            <option key={index} value={index}>
-              {range.label}
+          {ratingOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
-        {/* --- End Price Range Filter Dropdown --- */}
 
         {/* Clear Filters Button */}
-        {areFiltersActive && ( // Show only if any filter is active
+        {areFiltersActive && (
           <button
             onClick={clearFilters}
             className="w-full md:w-auto bg-ug-neutral-light text-ug-text-dark hover:bg-ug-text-heading hover:text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300 ease-in-out"
@@ -343,8 +282,88 @@ export default function PerfumesPage() {
         )}
       </div>
 
+      {/* Dynamic Featured Products Section */}
+      {topFeaturedProducts.length > 0 && (
+        <section className="mb-12 border-b border-ug-neutral-light pb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-ug-purple-primary text-center mb-8 bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
+            Special Highlights
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto">
+            {topFeaturedProducts.map((product) => (
+              <div
+                key={product.id}
+                className="relative bg-white rounded-lg shadow-xl overflow-hidden group hover:shadow-2xl transition-shadow duration-300"
+              >
+                <div className="relative w-full aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={product.imageUrl}
+                    alt={product.name}
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found";
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg"></div>
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="text-xl font-bold text-ug-text-heading mb-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-ug-text-dark text-sm mb-3 line-clamp-2">
+                    {product.description}
+                  </p>
+                  {product.rating && (
+                    <div className="flex items-center justify-center mt-3">
+                      <div className="flex text-lg">
+                        {/* Re-using renderStars logic if available, or inline */}
+                        {(() => {
+                          const stars = [];
+                          for (let i = 1; i <= 5; i++) {
+                            if (i <= product.rating) {
+                              stars.push(
+                                <FaStar key={i} className="text-yellow-400" />
+                              );
+                            } else if (i - 0.5 === product.rating) {
+                              stars.push(
+                                <FaStarHalfAlt
+                                  key={i}
+                                  className="text-yellow-400"
+                                />
+                              );
+                            } else {
+                              stars.push(
+                                <FaStar key={i} className="text-gray-300" />
+                              );
+                            }
+                          }
+                          return stars;
+                        })()}
+                      </div>
+                      <span className="ml-2 text-ug-text-dark text-sm">
+                        ({product.rating.toFixed(1)})
+                      </span>
+                    </div>
+                  )}
+                  <div className="mt-4">
+                    <a
+                      href={`/perfumes/${product.id}`}
+                      className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-6 py-2 rounded-full text-sm font-semibold shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {currentProducts.length === 0 ? (
-        <div className="text-center py-10">
+        <div className="text-center py-10 bg-ug-neutral-light rounded-xl shadow-inner mt-8">
           <p className="text-2xl text-ug-text-dark mb-4">
             No perfumes found matching your criteria.
           </p>
@@ -353,7 +372,7 @@ export default function PerfumesPage() {
           </p>
           <button
             onClick={clearFilters}
-            className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-8 py-4 rounded-lg text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105"
+            className="inline-block bg-ug-purple-primary text-white hover:bg-ug-purple-accent px-8 py-4 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105"
           >
             Clear All Filters
           </button>
@@ -386,11 +405,11 @@ export default function PerfumesPage() {
                     key={index}
                     onClick={() => paginate(pageNumber)}
                     className={`p-3 min-w-[40px] rounded-lg font-semibold transition-colors duration-200 text-base
-                      ${
-                        currentPage === pageNumber
-                          ? "bg-ug-purple-primary text-white shadow-md"
-                          : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
-                      }`}
+                                     ${
+                                       currentPage === pageNumber
+                                         ? "bg-ug-purple-primary text-white shadow-md"
+                                         : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
+                                     }`}
                   >
                     {pageNumber}
                   </button>

@@ -1,7 +1,7 @@
-// HomePage.tsx
+// src/app/page.tsx
 "use client";
 
-import { useMemo, useState } from "react"; // Import useState
+import { useMemo, useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import SpotlightProduct from "../components/SpotLightProduct";
 import ProductCard from "../components/ProductCard";
@@ -10,7 +10,7 @@ import Link from "next/link";
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
-  const shuffledArray = [...array];
+  const shuffledArray = [...array.reverse()];
   for (let i = shuffledArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
@@ -19,8 +19,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default function HomePage() {
-  const { products, loading, error } = useProducts(); // Use the custom hook to fetch products
-  // State to manage the loading status of the "View All Perfumes" button
+  const { products, loading, error } = useProducts();
   const [isViewingAllPerfumes, setIsViewingAllPerfumes] = useState(false);
 
   const allFeaturedProducts = useMemo(() => {
@@ -40,24 +39,18 @@ export default function HomePage() {
     return shuffleArray(nonSpotlightProducts).slice(0, 4);
   }, [nonSpotlightProducts]);
 
-  // Handler for the "View All Perfumes" button click
-  const handleViewAllPerfumesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Prevent default navigation if we are already loading or to simulate async
+  const handleViewAllPerfumesClick = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     if (isViewingAllPerfumes) {
       e.preventDefault();
-      return; // Do nothing if already loading
+      return;
     }
-    
-    e.preventDefault(); // Prevent default link behavior initially
-    setIsViewingAllPerfumes(true); // Set loading state to true
-
-    // Simulate an async operation (e.g., fetching more data, navigation)
-    // In a real app, this would be replaced by actual data fetching or router.push
+    e.preventDefault();
+    setIsViewingAllPerfumes(true);
     setTimeout(() => {
-      window.location.href = "/perfumes"; // Navigate after a delay
-      // In a real application, you might reset the loading state if navigation fails,
-      // or if you're fetching data on the current page before rendering something new.
-    }, 1500); // Simulate 1.5 seconds of loading
+      window.location.href = "/perfumes";
+    }, 1500);
   };
 
   if (loading) {
@@ -74,15 +67,95 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* 1. Concise Introduction Banner */}
-      <section className="bg-gradient-to-r from-ug-purple-primary to-ug-purple-accent text-white py-16 text-center">
-        <div className="container mx-auto px-4">
+      {/* 1. Concise Introduction Banner (Hero Section) */}
+      <section className="bg-gradient-to-r from-ug-purple-primary to-ug-purple-accent text-white py-16 text-center relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight bg-gradient-to-r from-ug-neutral-bg via-white to-pink-400 text-transparent bg-clip-text">
             Discover Your Signature Scent
           </h1>
           <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto">
             Welcome to Optimal Fragrance – where luxury meets individuality.
           </p>
+        </div>
+
+        {/* Inlined SVG for Spraying Perfume Bottle */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          {/* SVG Code Starts Here */}
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 250 250"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full h-full transform scale-150 md:scale-125 lg:scale-100 xl:scale-90 -rotate-12 translate-x-1/3 translate-y-1/4 md:translate-x-1/4 md:translate-y-0"
+          >
+            <title>Perfume Bottle Spray</title>
+
+            {/* Bottle Body */}
+            <rect
+              x="75"
+              y="70"
+              width="100"
+              height="130"
+              rx="15"
+              fill="#E0BBE4"
+            />
+            <rect
+              x="75"
+              y="70"
+              width="100"
+              height="130"
+              rx="15"
+              stroke="#9A6FA6"
+              strokeWidth="2"
+            />
+
+            {/* Bottle Neck/Sprayer Top */}
+            <rect x="115" y="45" width="20" height="25" rx="5" fill="#C29DCC" />
+            <rect
+              x="115"
+              y="45"
+              width="20"
+              height="25"
+              rx="5"
+              stroke="#9A6FA6"
+              strokeWidth="1.5"
+            />
+
+            {/* Sprayer Nozzle */}
+            <circle cx="125" cy="40" r="5" fill="#6A4E7A" />
+
+            <path
+              d="M125 35 C130 15, 145 5, 155 15 C160 20, 150 30, 145 35 C140 40, 130 40, 125 35Z"
+              fill="url(#sprayGradient)"
+              opacity="0.8"
+            />
+            <path
+              d="M125 35 C120 15, 105 5, 95 15 C90 20, 100 30, 105 35 C110 40, 120 40, 125 35Z"
+              fill="url(#sprayGradient)"
+              opacity="0.8"
+            />
+            <path
+              d="M125 35 C125 10, 125 0, 125 15 C125 25, 125 30, 125 35Z"
+              fill="url(#sprayGradient)"
+              opacity="0.8"
+            />
+
+            <defs>
+              <linearGradient
+                id="sprayGradient"
+                x1="125"
+                y1="5"
+                x2="125"
+                y2="35"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="white" stopOpacity="0.8" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+          {/* SVG Code Ends Here */}
         </div>
       </section>
 
@@ -124,19 +197,17 @@ export default function HomePage() {
           <div className="text-center mt-16">
             <Link
               href="/perfumes"
-              onClick={handleViewAllPerfumesClick} // Attach the click handler
-              // Conditionally apply classes for visual feedback and disable effect
+              onClick={handleViewAllPerfumesClick}
               className={`inline-block bg-ug-purple-primary text-white px-10 py-4 rounded-lg text-lg font-semibold shadow-lg transition duration-300 ease-in-out
                 ${
-                  isViewingAllPerfumes // If loading
-                    ? 'opacity-70 cursor-not-allowed' // Dim and prevent clicks
-                    : 'hover:bg-ug-purple-accent transform hover:scale-105' // Normal state
+                  isViewingAllPerfumes
+                    ? "opacity-70 cursor-not-allowed"
+                    : "hover:bg-ug-purple-accent transform hover:scale-105"
                 }
               `}
-              aria-disabled={isViewingAllPerfumes} // For accessibility
+              aria-disabled={isViewingAllPerfumes}
             >
-              {/* Conditional text rendering */}
-              {isViewingAllPerfumes ? 'Loading...' : 'View All Perfumes'}
+              {isViewingAllPerfumes ? "Loading..." : "View All Perfumes"}
             </Link>
           </div>
         </section>

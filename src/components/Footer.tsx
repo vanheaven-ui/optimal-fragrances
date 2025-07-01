@@ -1,6 +1,7 @@
-"use client"; 
+// src/components/Footer.tsx
+"use client";
 
-import Link from "next/link"; 
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -20,6 +21,13 @@ export default function Footer() {
             className="hover:text-ug-purple-primary transition-colors duration-300"
           >
             Perfumes
+          </Link>
+          {/* Add the About Us link here */}
+          <Link
+            href="/about-us"
+            className="hover:text-ug-purple-primary transition-colors duration-300"
+          >
+            Our Story
           </Link>
           <Link
             href="/contact"
