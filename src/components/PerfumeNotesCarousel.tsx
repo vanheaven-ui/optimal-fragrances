@@ -71,7 +71,8 @@ const PerfumeNotesCarousel: React.FC<PerfumeNotesCarouselProps> = ({
   return (
     <div
       id={carouselId}
-      className="relative bg-white rounded-lg shadow-xl p-6 md:p-8 overflow-hidden group"
+      // CHANGED: bg-white to bg-white/90 for 90% opacity (adjust the number as needed)
+      className="relative bg-white/10 rounded-lg shadow-xl p-6 md:p-8 overflow-hidden group"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
