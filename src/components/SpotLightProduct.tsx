@@ -1,7 +1,7 @@
 // src/components/SpotlightProduct.tsx
 "use client";
 import Link from "next/link";
-import { Product } from "../data/product"; // Ensure this path is correct
+import { Product } from "../data/product1"; // Ensure this path is correct
 // REMOVED: import { formatPrice } from "../utils/currencyFormatter";
 import Image from "next/image";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa"; // Import star icons

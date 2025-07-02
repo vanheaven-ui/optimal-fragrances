@@ -1,7 +1,7 @@
 // src/hooks/useProducts.ts
 import { useState, useEffect } from "react";
 import { collection, getDocs, Firestore, query } from "firebase/firestore";
-import { Product } from "../data/product";
+import { Product } from "../data/product1";
 import { useFirebase } from "../context/FirebaseContext";
 
 interface UseProductsResult {

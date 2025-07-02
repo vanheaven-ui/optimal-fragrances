@@ -14,7 +14,7 @@ import {
 import { FirebaseError } from "firebase/app";
 import AdminLayout from "../../../components/AdminLayout";
 import { DocumentData, Firestore, QuerySnapshot } from "firebase/firestore";
-import { Product } from "../../../data/product";
+import { Product } from "../../../data/product1";
 import FragranceLoader from "components/FragranceLoader";
 import Image from "next/image";
 

@@ -7,6 +7,9 @@ import SpotlightProduct from "../components/SpotLightProduct";
 import ProductCard from "../components/ProductCard";
 import FragranceLoader from "../components/FragranceLoader";
 import Link from "next/link";
+import PerfumeNotesCarousel, {
+  PerfumeNote,
+} from "../components/PerfumeNotesCarousel";
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
@@ -17,6 +20,196 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffledArray;
 }
+
+// --- TOP SELLING MEN'S FRAGRANCES NOTES DATA ---
+const TOP_SELLING_MEN_PERFUMES_NOTES: PerfumeNote[] = [
+  {
+    id: "men-dior-sauvage",
+    name: "Dior Sauvage",
+    year: "EDT - 2015, EDP - 2018, Parfum - 2019",
+    description:
+      "A fresh and spicy blend. Inspired by wide-open spaces, it exudes raw and noble masculinity.",
+    details: [
+      "• Top notes of bergamot, heart notes of Sichuan pepper, and base notes of ambroxan.",
+      "• The EDP and Parfum versions deepen the intensity and longevity of the fragrance.",
+    ],
+  },
+  {
+    id: "men-bleu-de-chanel",
+    name: "Bleu de Chanel",
+    year: "EDT - 2010, EDP - 2014, Parfum - 2018",
+    description:
+      "Sophisticated and refreshing with citrus opening notes, a woody heart, and an aromatic finish.",
+    details: [
+      "• Key notes include lemon zest, sandalwood, and cedar, making it a refined choice for any occasion.",
+      "• The EDP and Parfum versions enhance the depth and richness.",
+    ],
+  },
+  {
+    id: "men-bvlgari-man-in-black",
+    name: "Bvlgari Man in Black",
+    year: "2014",
+    description: "Intense and charismatic, featuring rum, leather, and spices.",
+    details: [
+      "• Warm amber and sweet floral undertones create a powerful and seductive aroma.",
+    ],
+  },
+  {
+    id: "men-stronger-with-you-intensely",
+    name: "Emporio Armani Stronger With You Intensely",
+    year: "2019",
+    description:
+      "Vibrant and energetic with a sweet and spicy fragrance that captures passionate masculinity.",
+    details: ["• Features pink pepper, toffee, and vanilla."],
+  },
+  {
+    id: "men-xerjoff-erba-pura",
+    name: "Xerjoff Erba Pura",
+    year: "2013",
+    description:
+      "Luxurious and fruity, combining Mediterranean citrus with sweet vanilla and white musk.",
+    details: [
+      "• An enchanting and exuberant blend that leaves a lasting impression.",
+    ],
+  },
+  {
+    id: "men-yves-saint-laurent-y",
+    name: "Yves Saint Laurent Y",
+    year: "2017",
+    description: "Bold and modern, balancing freshness with intensity.",
+    details: [
+      "• Notes of bergamot, ginger, sage, and amber, making it a dynamic and youthful fragrance.",
+    ],
+  },
+  {
+    id: "men-versace-eros",
+    name: "Versace Eros",
+    year: "EDP - 2018, Parfum - 2020",
+    description:
+      "Embodies love, passion, and desire with mint, green apple, and tonka bean.",
+    details: [
+      "• The Parfum version intensifies these notes, offering a deeper, richer experience.",
+    ],
+  },
+  {
+    id: "men-tom-ford-ombre-leather",
+    name: "Tom Ford Ombré Leather",
+    year: "EDP - 2018, Parfum - 2021",
+    description: "Rich and luxurious with leather, floral, and woody notes.",
+    details: ["• Evokes the freedom and boldness of the open desert."],
+  },
+  {
+    id: "men-dolce-gabbana-the-one",
+    name: "Dolce & Gabbana The One",
+    year: "EDT - 2008, EDP - 2015",
+    description:
+      "Classic and sophisticated with tobacco, spices, and cedarwood.",
+    details: [
+      "• Balances sensuality and elegance, perfect for the refined gentleman.",
+      "• The EDP version enhances the depth and longevity of the fragrance.",
+    ],
+  },
+  {
+    id: "men-armani-code-parfum",
+    name: "Armani Code Parfum",
+    year: "2022",
+    description:
+      "A modern interpretation of the classic Armani Code, sensual and magnetic.",
+    details: [
+      "• With fresh bergamot, lavender, and tonka bean, it stands out as a contemporary favorite.",
+    ],
+  },
+];
+
+// --- TOP SELLING WOMEN'S FRAGRANCES NOTES DATA ---
+const TOP_SELLING_WOMEN_PERFUMES_NOTES: PerfumeNote[] = [
+  {
+    id: "women-ysl-libre",
+    name: "Yves Saint Laurent - Libre",
+    year: "Intense (2019) and Le Parfum (2022)",
+    description: "Bold and deeper interpretations of the Libre line.",
+    details: [
+      "• Intense (2019): Bold notes of lavender, orange blossom, and orchid, creating a deeper, more sultry interpretation.",
+      "• Le Parfum (2022): Richer, more concentrated with warm notes of saffron, honey, and ginger.",
+    ],
+  },
+  {
+    id: "women-chanel-coco-mademoiselle",
+    name: "Chanel - Coco Mademoiselle",
+    year: "EDP (2001) and Intense (2018)",
+    description: "A fresh oriental with vibrant notes.",
+    details: [
+      "• EDP (2001): Vibrant notes of orange, jasmine, and rose.",
+      "• Intense (2018): Higher concentration of patchouli, tonka bean, and vanilla for a powerful, long-lasting scent.",
+    ],
+  },
+  {
+    id: "women-lancome-la-vie-est-belle",
+    name: "Lancôme - La Vie Est Belle",
+    year: "EDP (2012)",
+    description:
+      "Sweet and sophisticated with notes of iris, praline, and vanilla.",
+    details: ["• Embodying joy and elegance."],
+  },
+  {
+    id: "women-giorgio-armani-si",
+    name: "Giorgio Armani - Si",
+    year: "EDP (2013) and Intense (2021)",
+    description:
+      "A modern chypre with notes of blackcurrant, rose, and vanilla.",
+    details: [
+      "• EDP (2013): Modern chypre with notes of blackcurrant, rose, and vanilla.",
+      "• Intense (2021): Deeper notes of blackcurrant nectar, patchouli, and benzoin for an intense, sensual experience.",
+    ],
+  },
+  {
+    id: "women-rasasi-jasmine-wisp",
+    name: "Rasasi - Jasmine Wisp",
+    year: "2016",
+    description:
+      "Fruity floral with notes of mandarin, grapefruit, and jasmine.",
+    details: ["• Combining sweetness and freshness."],
+  },
+  {
+    id: "women-parfums-de-marly-delina-exclusif",
+    name: "Parfums de Marly - Delina Exclusif",
+    year: "2018",
+    description: "Exquisite floral with notes of lychee, rose, and vanilla.",
+    details: ["• Rich and creamy."],
+  },
+  {
+    id: "women-dior-miss-dior",
+    name: "Dior - Miss Dior",
+    year: "Reformulated (2017)",
+    description:
+      "A modern floral with notes of Grasse rose, bergamot, and rosewood.",
+    details: ["• Capturing elegance and romance."],
+  },
+  {
+    id: "women-versace-eros-pour-femme",
+    name: "Versace - Eros Pour Femme",
+    year: "2014",
+    description:
+      "Floral woody musk with notes of Sicilian lemon, jasmine, and sandalwood.",
+    details: ["• Exuding sensuality and strength."],
+  },
+  {
+    id: "women-paco-rabanne-lady-million",
+    name: "Paco Rabanne - Lady Million",
+    year: "2010",
+    description:
+      "Fruity floral with notes of neroli, raspberry, and white honey.",
+    details: ["• Embodying luxury and extravagance."],
+  },
+  {
+    id: "women-victorias-secret-bombshell",
+    name: "Victoria's Secret – Bombshell",
+    year: "2010",
+    description:
+      "Fruity floral with notes of passion fruit, peony, and vanilla orchid.",
+    details: ["• Vibrant and alluring."],
+  },
+];
 
 export default function HomePage() {
   const { products, loading, error } = useProducts();
@@ -90,7 +283,6 @@ export default function HomePage() {
             className="w-full h-full transform scale-150 md:scale-125 lg:scale-100 xl:scale-90 -rotate-12 translate-x-1/3 translate-y-1/4 md:translate-x-1/4 md:translate-y-0"
           >
             <title>Perfume Bottle Spray</title>
-
             {/* Bottle Body */}
             <rect
               x="75"
@@ -109,7 +301,6 @@ export default function HomePage() {
               stroke="#9A6FA6"
               strokeWidth="2"
             />
-
             {/* Bottle Neck/Sprayer Top */}
             <rect x="115" y="45" width="20" height="25" rx="5" fill="#C29DCC" />
             <rect
@@ -121,10 +312,8 @@ export default function HomePage() {
               stroke="#9A6FA6"
               strokeWidth="1.5"
             />
-
             {/* Sprayer Nozzle */}
             <circle cx="125" cy="40" r="5" fill="#6A4E7A" />
-
             <path
               d="M125 35 C130 15, 145 5, 155 15 C160 20, 150 30, 145 35 C140 40, 130 40, 125 35Z"
               fill="url(#sprayGradient)"
@@ -140,7 +329,6 @@ export default function HomePage() {
               fill="url(#sprayGradient)"
               opacity="0.8"
             />
-
             <defs>
               <linearGradient
                 id="sprayGradient"
@@ -213,7 +401,21 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* 4. Our Vision/Story Section */}
+      {/* NEW SECTION: Top Selling Perfumes - Carousels (Notes Only) */}
+      <section className="container mx-auto py-6 px-4 bg-ug-neutral-bg space-y-16">
+        <PerfumeNotesCarousel
+          perfumes={TOP_SELLING_MEN_PERFUMES_NOTES}
+          title="Top Selling Men's Fragrances in May"
+          carouselId="men-fragrances-notes-carousel"
+        />
+        <PerfumeNotesCarousel
+          perfumes={TOP_SELLING_WOMEN_PERFUMES_NOTES}
+          title="Top Selling Women's Fragrances in May"
+          carouselId="women-fragrances-notes-carousel"
+        />
+      </section>
+
+      {/* ORIGINAL 4. Our Vision/Story Section (now 5th section) */}
       <section className="bg-ug-neutral-bg py-6 px-4">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">

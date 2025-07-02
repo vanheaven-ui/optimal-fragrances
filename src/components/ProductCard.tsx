@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { Product } from "../data/product"; // Ensure this path is correct
+import { Product } from "../data/product1"; // Ensure this path is correct
 import { FaEye, FaStar, FaStarHalfAlt } from "react-icons/fa"; // Import star icons
 import Link from "next/link";
 import Image from "next/image";

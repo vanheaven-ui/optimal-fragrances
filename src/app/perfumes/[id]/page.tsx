@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useProducts } from "../../../hooks/useProducts";
-import { Product } from "../../../data/product"; // Ensure this path is correct
+import { Product } from "../../../data/product1"; // Ensure this path is correct
 import { FaWhatsapp, FaStar, FaStarHalfAlt } from "react-icons/fa"; // Import star icons
 import FragranceLoader from "../../../components/FragranceLoader";
 import Link from "next/link";
