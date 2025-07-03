@@ -204,7 +204,7 @@ export default function PerfumeDetail() {
         <div className="space-y-6 text-ug-text-dark text-base">
           <p className="leading-relaxed">
             At <strong>Optimal Fragrance</strong>, we are committed to providing you with
-            <strong>100% authentic, high-quality perfumes</strong> sourced directly from
+            <strong> 100% authentic, high-quality perfumes</strong> sourced directly from
             trusted distributors. Every bottle we offer is meticulously
             inspected to ensure it meets our rigorous standards for excellence.
           </p>
