@@ -57,7 +57,7 @@ var app_1 = require("firebase/app");
 var firestore_1 = require("firebase/firestore");
 var auth_1 = require("firebase/auth");
 // import { blogPosts } from "../data/blogPosts";
-var product_1 = require("../data/product");
+var product1_1 = require("../data/product1");
 // --- Firebase Configuration (for local development/manual run) ---
 // IMPORTANT: In the Canvas environment, __firebase_config and __initial_auth_token are provided globally.
 // For local testing outside Canvas, you might need to manually set these or your own config.
@@ -137,7 +137,7 @@ function uploadInitialData() {
                 case 5:
                     // --- Upload Products ---
                     console.log("Uploading products to 'products' collection...");
-                    _i = 0, products_1 = product_1.products;
+                    _i = 0, products_1 = product1_1.products;
                     _a.label = 6;
                 case 6:
                     if (!(_i < products_1.length)) return [3 /*break*/, 11];

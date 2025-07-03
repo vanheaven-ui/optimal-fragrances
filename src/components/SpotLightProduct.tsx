@@ -1,8 +1,8 @@
 // src/components/SpotlightProduct.tsx
 "use client";
+import React, { useState } from "react"; 
 import Link from "next/link";
-import { Product } from "../data/product1"; // Ensure this path is correct
-// REMOVED: import { formatPrice } from "../utils/currencyFormatter";
+import { Product } from "../data/product"; 
 import Image from "next/image";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa"; // Import star icons
 
@@ -16,6 +16,8 @@ const SpotlightProduct: React.FC<SpotlightProductProps> = ({
   product,
   reverseLayout = false,
 }) => {
+  const [isLoading, setIsLoading] = useState(true); // State to track image loading
+
   // Function to render stars based on rating
   const renderStars = (rating: number) => {
     const stars = [];
@@ -38,20 +40,39 @@ const SpotlightProduct: React.FC<SpotlightProductProps> = ({
       }`}
     >
       <div className="relative w-full md:w-1/2 h-80 md:h-[400px] rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.01] transition-transform duration-300 ease-in-out">
+        {isLoading && ( // Show spinner only when isLoading is true
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 rounded-lg">
+            {/* Modern Spinner */}
+            <div
+              className="w-12 h-12 border-4 border-ug-purple-primary border-t-transparent rounded-full animate-spin"
+              role="status"
+            >
+              <span className="sr-only">Loading...</span>{" "}
+              {/* For accessibility */}
+            </div>
+          </div>
+        )}
         <Image
           src={product.imageUrl}
           alt={product.name}
-          width={100}
-          height={100}
-          className="absolute inset-0 w-full h-full object-cover rounded-lg"
+          fill // Use 'fill' to ensure image covers the parent div and maintains aspect ratio
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Optimize image loading
+          style={{ objectFit: "cover" }} // Ensure proper fitting
+          className={`absolute inset-0 w-full h-full object-cover rounded-lg transition-opacity duration-300 ease-in-out ${
+            isLoading ? "opacity-0" : "opacity-100" // Hide image until loaded
+          }`}
+          onLoadingComplete={() => setIsLoading(false)} // Hide spinner when image is loaded
           onError={(e) => {
+            setIsLoading(false); // Hide spinner even on error
             e.currentTarget.src =
               "https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found"; // Fallback image
           }}
         />
-        {/* Transparent overlay */}
-        <div className="absolute inset-0 bg-ug-purple-primary opacity-20 rounded-lg"></div>
+        {/* Transparent overlay - ensure it's above the image but below potential interactive elements */}
+        <div className="absolute inset-0 bg-ug-purple-primary opacity-20 rounded-lg z-[5]"></div>{" "}
+        {/* Adjusted z-index */}
       </div>
+
       <div className="w-full md:w-1/2 text-center md:text-left">
         <h3 className="text-3xl md:text-4xl font-bold text-ug-text-heading mb-4 leading-tight">
           {product.name}{" "}

@@ -85,7 +85,7 @@ const initialProducts: Product[] = [
     id: "41",
     name: "Azzaro The Most Wanted Eau de Parfum Intense",
     brand: "Azzaro",
-    imageUrl: "/Azzaro-The-Most-Wanted-EDP-Intense.jpeg",
+    imageUrl: "/Azaro-The-Most_Wanted-ED.jpeg",
     description:
       "**Azzaro The Most Wanted Eau de Parfum Intense**, launched in **2021**, is a bold woody aromatic scent crafted for men who dare to stand out. This modern classic has earned glowing reviews for its seductive intensity and commanding presence. Expect **long-lasting performance** that stays with you from day to night. Key notes include energizing and crisp **Green Mediterranean Bergamot**, smooth yet striking **Fiery Lavender**, and a warm, daring, and unforgettable **Liquor Accord**. The **set contents** include a 100ml main bottle and two 10ml travel sprays, perfect for both home rituals and scenting on-the-go.",
     category: "men",

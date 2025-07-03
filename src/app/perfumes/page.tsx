@@ -1,5 +1,4 @@
 // src/app/perfumes/page.tsx
-// (No changes needed for existing gradients)
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -30,11 +29,25 @@ export default function PerfumesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
 
+  // New state to manage loading of each featured image
+  const [featuredImageLoading, setFeaturedImageLoading] = useState<{
+    [id: string]: boolean;
+  }>({});
+
   const topFeaturedProducts = useMemo(() => {
     const featured = allProducts.filter((p) => p.featured);
     const shuffledFeatured = shuffleArray(featured);
     return shuffledFeatured.slice(0, 2);
   }, [allProducts]);
+
+  // Initialize featured image loading states
+  useEffect(() => {
+    const initialLoadingState: { [id: string]: boolean } = {};
+    topFeaturedProducts.forEach((product) => {
+      initialLoadingState[product.id] = true;
+    });
+    setFeaturedImageLoading(initialLoadingState);
+  }, [topFeaturedProducts]);
 
   const mainCollectionProducts = useMemo(() => {
     const featuredIds = new Set(topFeaturedProducts.map((p) => p.id));
@@ -203,7 +216,6 @@ export default function PerfumesPage() {
           emotions and memories.
         </p>
       </section>
-
       {/* Filtering Controls */}
       <div className="bg-ug-neutral-bg rounded-xl shadow-lg p-6 md:p-8 mb-12 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 flex-wrap">
         {/* Search Bar */}
@@ -214,8 +226,8 @@ export default function PerfumesPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="block w-full p-3 pl-10 border border-ug-neutral-light rounded-lg shadow-sm
-                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                           bg-white text-ug-text-dark placeholder-ug-text-dark/70"
+                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                          bg-white text-ug-text-dark placeholder-ug-text-dark/70"
           />
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ug-text-dark"
@@ -242,8 +254,8 @@ export default function PerfumesPage() {
           value={selectedBrand}
           onChange={(e) => setSelectedBrand(e.target.value)}
           className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                           bg-white text-ug-text-dark cursor-pointer"
+                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                          bg-white text-ug-text-dark cursor-pointer"
         >
           {uniqueBrands.map((brand) => (
             <option key={brand} value={brand}>
@@ -261,8 +273,8 @@ export default function PerfumesPage() {
           value={selectedRating}
           onChange={(e) => setSelectedRating(Number(e.target.value))}
           className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                           focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                           bg-white text-ug-text-dark cursor-pointer"
+                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                          bg-white text-ug-text-dark cursor-pointer"
         >
           {ratingOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -281,7 +293,6 @@ export default function PerfumesPage() {
           </button>
         )}
       </div>
-
       {/* Dynamic Featured Products Section */}
       {topFeaturedProducts.length > 0 && (
         <section className="mb-12 border-b border-ug-neutral-light pb-12">
@@ -295,18 +306,46 @@ export default function PerfumesPage() {
                 className="relative bg-white rounded-lg shadow-xl overflow-hidden group hover:shadow-2xl transition-shadow duration-300"
               >
                 <div className="relative w-full aspect-[4/3] overflow-hidden">
+                  {/* Spinner for featured image */}
+                  {featuredImageLoading[product.id] && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 rounded-lg">
+                      <div
+                        className="w-10 h-10 border-4 border-ug-purple-primary border-t-transparent rounded-full animate-spin"
+                        role="status"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                  )}
                   <Image
                     src={product.imageUrl}
                     alt={product.name}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                    fill // Changed to fill to correctly size within the parent div
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Added sizes for optimization
+                    style={{ objectFit: "cover" }} // Ensure object fit
+                    className={`absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out
+                                ${
+                                  featuredImageLoading[product.id]
+                                    ? "opacity-0"
+                                    : "opacity-100" // Hide until loaded
+                                }`}
+                    onLoadingComplete={() =>
+                      setFeaturedImageLoading((prev) => ({
+                        ...prev,
+                        [product.id]: false,
+                      }))
+                    }
                     onError={(e) => {
+                      setFeaturedImageLoading((prev) => ({
+                        ...prev,
+                        [product.id]: false,
+                      })); // Hide spinner on error
                       e.currentTarget.src =
                         "https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found";
                     }}
                   />
-                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg"></div>
+                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg z-[5]"></div>{" "}
+                  {/* Adjusted z-index */}
                 </div>
                 <div className="p-4 text-center">
                   <h3 className="text-xl font-bold text-ug-text-heading mb-2">
@@ -361,7 +400,6 @@ export default function PerfumesPage() {
           </div>
         </section>
       )}
-
       {currentProducts.length === 0 ? (
         <div className="text-center py-10 bg-ug-neutral-light rounded-xl shadow-inner mt-8">
           <p className="text-2xl text-ug-text-dark mb-4">
@@ -385,7 +423,7 @@ export default function PerfumesPage() {
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-
+          ---
           {/* Pagination Controls - Modernized */}
           {totalPages > 1 && (
             <nav
@@ -405,11 +443,11 @@ export default function PerfumesPage() {
                     key={index}
                     onClick={() => paginate(pageNumber)}
                     className={`p-3 min-w-[40px] rounded-lg font-semibold transition-colors duration-200 text-base
-                                     ${
-                                       currentPage === pageNumber
-                                         ? "bg-ug-purple-primary text-white shadow-md"
-                                         : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
-                                     }`}
+                                  ${
+                                    currentPage === pageNumber
+                                      ? "bg-ug-purple-primary text-white shadow-md"
+                                      : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
+                                  }`}
                   >
                     {pageNumber}
                   </button>

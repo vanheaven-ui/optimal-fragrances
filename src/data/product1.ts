@@ -28,682 +28,448 @@ export interface Product {
 // and as a fallback structure. In the actual React components, data will be fetched from Firestore.
 const initialProducts: Product[] = [
   {
-    id: "1",
-    name: "Burberry Her Elixir EDP (2022)",
+    id: "41",
+    name: "Azzaro The Most Wanted Eau de Parfum Intense",
+    brand: "Azzaro",
+    imageUrl: "/Azaro-The-Most_Wanted-ED.jpeg",
+    description:
+      "**Azzaro The Most Wanted Eau de Parfum Intense**, launched in **2021**, is a bold woody aromatic scent crafted for men who dare to stand out. This modern classic has earned glowing reviews for its seductive intensity and commanding presence. Expect **long-lasting performance** that stays with you from day to night. Key notes include energizing and crisp **Green Mediterranean Bergamot**, smooth yet striking **Fiery Lavender**, and a warm, daring, and unforgettable **Liquor Accord**. The **set contents** include a 100ml main bottle and two 10ml travel sprays, perfect for both home rituals and scenting on-the-go.",
+    category: "men",
+    featured: true,
+    scentNotes: {
+      topNotes: "Green Mediterranean Bergamot",
+      heartNotes: "Fiery Lavender",
+      baseNotes: "Liquor Accord",
+    },
+    volume: 100,
+    rating: 4.5,
+    ratingSource: "Top Male Fragrance Blogs",
+  },
+  {
+    id: "42",
+    name: "Gaultier",
+    brand: "Jean Paul Gaultier",
+    imageUrl: "/Gaultier .jpeg",
+    description:
+      "Jean Paul Gaultier's iconic fragrances redefine sensuality and boldness. From the legendary 'Classique' for women, known for its voluptuous floral oriental notes, to the captivating 'Le Male' for men with its unique fresh oriental blend of lavender and vanilla. Gaultier's perfumes are characterized by their distinctive torso-shaped bottles and audacious, unforgettable compositions.",
+    category: "unisex", // Marked as unisex as Gaultier has iconic men's and women's lines
+    featured: false,
+    scentNotes: {
+      topNotes: "Orange Blossom, Mint, Lavender, Bergamot", // Blend of Classique/Le Male prominent notes
+      heartNotes: "Ginger, Cinnamon, Orange Blossom, Caraway",
+      baseNotes: "Vanilla, Tonka Bean, Amber, Sandalwood",
+    },
+    volume: 100, // Common volume in ml
+    rating: 4.3,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "43",
+    name: "Club de Nuit Precieux (2024)",
+    brand: "Armaf",
+    imageUrl: "/club-de-nuit-Precieux-2024.jpeg",
+    description:
+      "A sophisticated and modern release from Armaf's renowned Club de Nuit line. This 2024 edition offers a refined blend of fresh, spicy, and woody accords, designed for the discerning individual seeking a distinctive and long-lasting scent that leaves a powerful impression.",
+    category: "unisex",
+    featured: false,
+    scentNotes: {
+      topNotes: "Bergamot, Pineapple, Apple",
+      heartNotes: "Birch, Jasmine, Rose",
+      baseNotes: "Musk, Ambergris, Vanilla, Patchouli",
+    },
+    volume: 105,
+    rating: 4.5,
+    ratingSource: "Parfumo Community",
+  },
+  {
+    id: "44",
+    name: "Burberry Hero",
     brand: "Burberry",
-    imageUrl: "/Burberry-Her-Elixir-EDP-2022.jpeg",
+    imageUrl: "/Burberry-Hero.jpeg", // Image URL unchanged per instructions
     description:
-      "A bold and captivating new chapter for Burberry Her. Elixir de Parfum is an intense interpretation of the original, offering a rich, fruity gourmand scent with dark red berries, jasmine, and warm vanilla.",
-    category: "women",
-    featured: true,
+      "Burberry Hero is a powerful and sensual fragrance for men. It captures the spirit of exploration and self-discovery with a captivating blend of invigorating bergamot and three distinct cedarwood oils, grounded by a warm, masculine base.",
+    category: "men", // Typically categorized as men's
+    featured: false,
     scentNotes: {
-      topNotes: "Strawberry, Blackberry – juicy burst",
-      heartNotes: "Jasmine – creamy floral sophistication",
-      baseNotes: "Vanilla, Amber, Sandalwood – warm, cozy, long-lasting",
+      topNotes: "Bergamot",
+      heartNotes: "Atlas Cedar, Virginia Cedar, Himalayan Cedar",
+      baseNotes: "Juniper, Black Pepper",
     },
-    volume: 100, // Common volume
-    rating: 4.6, // Average of multiple sources
-    ratingSource: "Fragrantica (4.14/5), Ulta (4.6/5), Sephora (4.6/5)",
+    volume: 100,
+    rating: 4.0,
+    ratingSource: "Sephora Reviews",
   },
   {
-    id: "2",
-    name: "Prada Paradoxe Intense (2023)",
-    brand: "Prada",
-    imageUrl: "/Prada-Paradoxe-Intense-2023.jpeg",
+    id: "45",
+    name: "HUGO DEEP RED",
+    brand: "Hugo Boss",
+    imageUrl: "/HUGO-DEEP-RED.jpeg",
     description:
-      "An amplified, rich, and sensual interpretation of the original Paradoxe. This floral amber fragrance boasts a vibrant woody addiction, with a powerful blend of Ambrofix, Jasmine, and Moss.",
+      "Hugo Deep Red is an oriental vanilla fragrance for women who revel in the night. This passionate and sensual scent captures the essence of a strong and independent woman with its blend of fruity top notes, spicy heart, and warm, creamy base.",
     category: "women",
-    featured: true,
+    featured: false,
     scentNotes: {
-      topNotes: "Bergamot, Neroli, Pear",
-      heartNotes: "Neroli, Jasmine, Moss Accord",
-      baseNotes: "Vanilla, Amber, White Musk",
+      topNotes: "Blood Orange, Black Currant, Clementine, Pear",
+      heartNotes: "Ginger, Freesia, Tuberose, Hibiscus Seed",
+      baseNotes: "Vanilla, Sandalwood, Musk, Cedar",
     },
-    volume: 90, // Common volume
-    rating: 4.4, // Average of multiple sources
-    ratingSource:
-      "Fragrantica (4.12/5), Prada Beauty (4.6/5), Boots (4.8/5), Sephora (4.7/5)",
+    volume: 90,
+    rating: 4.2,
+    ratingSource: "Notino Customer Reviews",
   },
   {
-    id: "3",
-    name: "YSL Libre L’Absolu Platine (2023)",
+    id: "46",
+    name: "Giorgio Armani (2019)", // Assuming a popular 2019 release or general brand style
+    brand: "Giorgio Armani",
+    imageUrl: "/Giorgio-Armani-2019.jpeg",
+    description:
+      "Embodying timeless elegance and modern sophistication, this Giorgio Armani fragrance from 2019 is a harmonious blend of floral and woody notes. It's designed for those who appreciate understated luxury and a confident, refined presence.",
+    category: "unisex", // General description, can be unisex for versatility
+    featured: false,
+    scentNotes: {
+      topNotes: "Bergamot, Blackcurrant",
+      heartNotes: "Rose, Jasmine",
+      baseNotes: "Vanilla, Patchouli",
+    },
+    volume: 100,
+    rating: 4.1,
+    ratingSource: "General Customer Reviews",
+  },
+  {
+    id: "47",
+    name: "Libre Perfume by Yves Saint Laurent (2019)",
     brand: "Yves Saint Laurent",
-    imageUrl: "/YSL-Libre-LAbsolu-Platine-2023.jpeg",
+    imageUrl: "/Libre-Perfume-by-Yves-Saint-Laurent-2019.jpeg",
     description:
-      "The most intense and captivating interpretation of Libre, featuring a new metallic intensity. This floral amber fragrance combines the signature lavender with white floral notes and a unique, chilling platinum accord.",
+      "Libre by Yves Saint Laurent is a bold and captivating floral fragrance that embodies freedom. It fuses the aromatic freshness of French lavender with the burning sensuality of Moroccan orange blossom, creating a unique and addictive signature scent.",
     category: "women",
-    featured: true,
+    featured: false,
+    scentNotes: {
+      topNotes: "Lavender, Mandarin Orange, Black Currant, Petitgrain",
+      heartNotes: "Orange Blossom, Lavender, Jasmine",
+      baseNotes: "Madagascar Vanilla, Musk, Cedar, Ambergris",
+    },
+    volume: 90,
+    rating: 4.4,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "48",
+    name: "Libre Le Parfum",
+    brand: "Yves Saint Laurent",
+    imageUrl: "/Libre-Le-Parfum.jpeg",
+    description:
+      "Libre Le Parfum is the most intense and luxurious interpretation of the iconic Libre fragrance. It's a fiery twist on the original, with a deeper, spicier, and more sensual composition, emphasizing warm vanilla and honeyed notes for an unforgettable trail.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Ginger, Saffron, Mandarin Orange, Bergamot",
+      heartNotes: "Orange Blossom, Lavender",
+      baseNotes: "Bourbon Vanilla, Honey, Tonka Bean, Vetiver",
+    },
+    volume: 50,
+    rating: 4.5,
+    ratingSource: "Parfumo Community",
+  },
+  {
+    id: "49",
+    name: "My Way perfume by Giorgio Armani (2020)",
+    brand: "Giorgio Armani",
+    imageUrl: "/My-Way-perfume-by-Giorgio-Armani-2020.jpeg",
+    description:
+      "My Way is a radiant and modern floral fragrance by Giorgio Armani, encapsulating the spirit of curiosity and connection. It features bright notes of orange blossom and bergamot, a vibrant heart of tuberose and jasmine, and a warm vanilla and white musk base, representing a journey of self-discovery.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Orange Blossom, Bergamot",
+      heartNotes: "Tuberose, Indian Jasmine",
+      baseNotes: "White Musk, Vanilla, Cedar",
+    },
+    volume: 90,
+    rating: 4.3,
+    ratingSource: "Sephora Reviews",
+  },
+  {
+    id: "50",
+    name: "So Scandal (2020)",
+    brand: "Jean Paul Gaultier",
+    imageUrl: "/So-Scandal.jpeg",
+    description:
+      "So Scandal! is an explosive and deliciously scandalous floral fragrance from Jean Paul Gaultier. It's an overdose of white flowers with a milky gourmand twist, creating a daring and highly addictive scent designed to cause a sensation.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Orange Blossom",
+      heartNotes: "Tuberose, Jasmine Sambac",
+      baseNotes: "Milky Notes",
+    },
+    volume: 80,
+    rating: 4.2,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "51",
+    name: "Libre Absolu Platine",
+    brand: "Yves Saint Laurent",
+    imageUrl: "/Libre-Absolu-Platine.jpeg",
+    description:
+      "Libre Absolu Platine is a precious and intense interpretation of the iconic Libre, infused with the coolness of platinum. It elevates the signature lavender-orange blossom accord with a metallic, sophisticated edge, creating a truly unique and luxurious scent experience.",
+    category: "women",
+    featured: false,
     scentNotes: {
       topNotes: "Aldehydes, Bergamot, Mandarin Orange",
-      heartNotes: "White Lavender, Orange Blossom, Diva Lavender",
-      baseNotes: "Vanilla, Amber, Cedarwood",
+      heartNotes: "Lavender, Orange Blossom, White Lavandin",
+      baseNotes: "Vanilla, Ambergris",
     },
-    volume: 90, // Common volume
-    rating: 4.4, // Average of multiple sources
-    ratingSource:
-      "Fragrantica (3.76/5), YSL Beauty US (4.7/5), YSL Beauty CA (4.7/5)",
+    volume: 50,
+    rating: 4.6,
+    ratingSource: "Parfumo Community",
   },
   {
-    id: "4",
-    name: "Jimmy Choo – I Want Choo Forever (2022)",
-    brand: "Jimmy Choo",
-    imageUrl: "/Jimmy-Choo–I-Want-Choo-Forever-2022.jpeg",
+    id: "52",
+    name: "Jasmine Wisp",
+    brand: "Generic/Artisanal", // Assuming a generic name, could be specific brand if known
+    imageUrl: "/Jasmine-wisp.jpeg",
     description:
-      "An enchanting and glamorous chypre amber gourmand, embodying a sense of mystery and allure. It's a powerful fragrance perfect for evening wear and special occasions, with notes of rose, black cherry, and vanilla.",
-    category: "women",
-    featured: true,
-    scentNotes: {
-      topNotes: "Rose, Pink Peppercorn, Bitter Almond",
-      heartNotes: "Black Cherry, Jasmine Sambac, Vetiver",
-      baseNotes: "Vanilla, Tonka Bean, Oakmoss",
-    },
-    volume: 100, // Common volume
-    rating: 4.4, // Average of Fragrantica and a retailer
-    ratingSource: "Fragrantica (4.07/5), Women's Health Shop (4.7/5)",
-  },
-  {
-    id: "5",
-    name: "Jimmy Choo – I Want Choo",
-    brand: "Jimmy Choo",
-    imageUrl: "/Jimmy-Choo–I-Want-Choo.jpeg",
-    description:
-      "A sparkling and joyful floral gourmand fragrance that perfectly embodies a confident, playful spirit. It opens with vibrant mandarin and peach, leading to a dazzling red lily and jasmine heart, grounded by vanilla and benzoin.",
-    category: "women",
+      "Jasmine Wisp is a delicate and ethereal fragrance centered around the intoxicating beauty of jasmine. It evokes a soft, airy elegance with subtle hints of supporting florals and a clean, musky drydown, perfect for those who appreciate understated grace.",
+    category: "unisex", // Jasmine can be versatile
     featured: false,
     scentNotes: {
-      topNotes: "Mandarin Juice, Velvet Peach",
-      heartNotes: "Red Spider Lily, Jasmine Sambac",
-      baseNotes: "Vanilla, Benzoin",
+      topNotes: "Jasmine, Bergamot",
+      heartNotes: "White Flowers, Tuberose",
+      baseNotes: "Musk, Amber",
     },
-    volume: 100, // Common volume
-    rating: 4.3, // Based on general positive sentiment on retailers/Fragrantica
-    ratingSource:
-      "General consensus on beauty retailers and Fragrantica (approx. 4.3/5)",
-  },
-  {
-    id: "6",
-    name: "Alien Goddess – Thierry Mugler (Vanilla Floral Woody)",
-    brand: "Mugler",
-    imageUrl: "/Alien-Goddess-Thierry- Mugler-Vanilla-Floral-Woody.jpeg",
-    description:
-      "A divine solar floral fragrance, Alien Goddess is a radiant celebration of femininity. It blends sparkling bergamot, Indian Jasmine Grandiflorum, and a luxurious Bourbon Vanilla for a warm, luminous trail.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Bergamot",
-      heartNotes: "Jasmine Grandiflorum",
-      baseNotes: "Bourbon Vanilla, Cashmeran",
-    },
-    volume: 90, // Common volume
-    rating: 4.1, // Based on Fragrantica and retailers
-    ratingSource: "Fragrantica (3.92/5), Sephora (4.3/5)",
-  },
-  {
-    id: "16",
-    name: "Désir du Cœur – Thomas Kosmala (Unisex, came out in 2020)",
-    brand: "Thomas Kosmala",
-    imageUrl: "/Desir-du-Cœur–Thomas-Kosmala-Unisex-came-out-in-2020.jpeg",
-    description:
-      "An enchanting and sensual fragrance that plays on the desires of the heart. This captivating scent combines floral and musky notes with a hint of warm amber, creating an intimate and long-lasting trail.",
-    category: "unisex",
-    featured: false,
-    scentNotes: {
-      topNotes: "Lemon Zest, Spices",
-      heartNotes: "Aromatic Notes, Amber",
-      baseNotes: "Musk, Woods",
-    },
-    volume: 100, // Common volume
-    rating: 4.2, // Estimated based on other Kosmala offerings and niche reviews
-    ratingSource: "General niche fragrance community sentiment",
-  },
-  {
-    id: "17",
-    name: "Encre Noire",
-    brand: "Lalique",
-    imageUrl: "/encre-noire.jpeg",
-    description:
-      "A cult classic for men, Encre Noire is a woody aromatic fragrance built around the powerful and earthy note of vetiver. It's dark, mysterious, and sophisticated, ideal for those who appreciate unique and bold scents.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Cypress",
-      heartNotes: "Vetiver (Haitian, Bourbon)",
-      baseNotes: "Musk, Cashmere Wood",
-    },
-    volume: 100, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.06/5)",
-  },
-  {
-    id: "18",
-    name: "Hawas for Him",
-    brand: "Rasasi",
-    imageUrl: "/hawas.jpeg",
-    description:
-      "A captivating aquatic, amber, and woody fragrance for men that is fresh, elegant, and powerful. Hawas is known for its incredible projection and longevity, making it a popular choice for all seasons.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Apple, Bergamot, Lemon, Cinnamon",
-      heartNotes: "Orange Blossom, Cardamom, Plum",
-      baseNotes: "Ambergris, Musk, Driftwood, Patchouli",
-    },
-    volume: 100, // Common volume
-    rating: 4.3,
-    ratingSource: "Fragrantica (4.29/5)",
-  },
-  {
-    id: "19a",
-    name: "Versace Bright Crystal",
-    brand: "Versace",
-    imageUrl: "/versace-bright-crystal.png",
-    description:
-      "A sparkling and luminous floral-fruity fragrance, Bright Crystal is a fresh and sensual scent perfect for daily wear. It combines notes of yuzu, pomegranate, peony, and musk for a radiant and feminine aura.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Yuzu, Pomegranate, Water Notes",
-      heartNotes: "Peony, Lotus, Magnolia",
-      baseNotes: "Musk, Amber, Mahogany",
-    },
-    volume: 90, // Common volume
-    rating: 4.5,
-    ratingSource: "Sephora (4.5/5), Ulta (4.5/5)",
-  },
-  {
-    id: "19b",
-    name: "Jaguar Classic Black",
-    brand: "Jaguar",
-    imageUrl: "/jaguar-classic-black.jpeg",
-    description:
-      "A classic and sophisticated oriental-fougere fragrance for men. It's a powerful yet elegant scent with notes of mandarin, green apple, sandalwood, and musk, perfect for the modern gentleman.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Green Apple, Mandarin Orange, Bitter Orange",
-      heartNotes: "Cardamom, Nutmeg, Black Tea, Geranium",
-      baseNotes: "Sandalwood, Cedarwood, Oakmoss, Vetiver, Musk",
-    },
-    volume: 100, // Common volume
-    rating: 3.9,
-    ratingSource: "Fragrantica (3.92/5)",
-  },
-  {
-    id: "20",
-    name: "Armaf Club de Nuit Intense Man",
-    brand: "Armaf",
-    imageUrl: "/Armaf-clude-de-nuit-intense-man.jpeg",
-    description:
-      "A highly popular and often compared alternative to Creed Aventus, offering a bold and smoky pineapple scent. It's a robust, long-lasting fragrance for men, known for its strong sillage and versatility.",
-    category: "men",
-    featured: true,
-    scentNotes: {
-      topNotes: "Lemon, Blackcurrant, Apple, Bergamot, Pineapple",
-      heartNotes: "Rose, Jasmine, Birch",
-      baseNotes: "Vanilla, Ambergris, Musk, Patchouli",
-    },
-    volume: 105, // Common volume for this specific product
-    rating: 4.3,
-    ratingSource: "Fragrantica (4.29/5)",
-  },
-  {
-    id: "21",
-    name: "Bentley For Men Intense",
-    brand: "Bentley",
-    imageUrl: "/Bentley-Intense.jpeg",
-    description:
-      "An intense and sophisticated oriental woody fragrance designed for the discerning man. It offers a rich blend of spices, rum, and woody notes, exuding luxury and power, ideal for cooler weather and evening wear.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Bergamot, Black Pepper, Incense",
-      heartNotes: "Rum, Woody Notes, Cinnamon, Clary Sage",
-      baseNotes: "Leather, Benzoin, Cedarwood, Patchouli",
-    },
-    volume: 100, // Common volume
-    rating: 4.2,
-    ratingSource: "Fragrantica (4.22/5)",
-  },
-  {
-    id: "22",
-    name: "Scandal by Jean Paul Gaultier",
-    brand: "Jean Paul Gaultier",
-    imageUrl: "/Scandal-Jean-paul-Gaultter.jpeg",
-    description:
-      "A modern and elegant chypre floral fragrance for women. Scandal is designed to be scandalous, evoking the sensual and exciting atmosphere of Paris nightlife with a blend of honey, gardenia, and patchouli.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Blood Orange, Gardenia",
-      heartNotes: "Honey",
-      baseNotes: "Patchouli",
-    },
-    volume: 80, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.13/5)",
-  },
-  {
-    id: "23",
-    name: "Armani Code Eau de Parfum",
-    brand: "Giorgio Armani",
-    imageUrl: "/Armani-Code.jpeg",
-    description:
-      "An iconic and seductive oriental-spicy fragrance for men. Armani Code offers a captivating blend of lemon, star anise, olive blossom, and tonka bean, creating a timeless and elegant aura.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Lemon, Bergamot",
-      heartNotes: "Star Anise, Olive Blossom",
-      baseNotes: "Tonka Bean, Guaiac Wood, Leather",
-    },
-    volume: 75, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.06/5)",
-  },
-  {
-    id: "24",
-    name: "Dior Sauvage Eau de Parfum",
-    brand: "Dior",
-    imageUrl: "/Dior-Sauvage.jpeg",
-    description:
-      "A radically fresh, raw, and noble composition. Sauvage EDP is an aromatic fougère fragrance for men, inspired by wild, open spaces, with notes of bergamot, Sichuan pepper, and ambroxan.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Bergamot",
-      heartNotes: "Sichuan Pepper, Star Anise, Nutmeg",
-      baseNotes: "Ambroxan, Vanilla",
-    },
-    volume: 100, // Common volume
-    rating: 4.2,
-    ratingSource: "Sephora (4.6/5), Fragrantica (4.2/5)",
-  },
-  {
-    id: "25",
-    name: "Versace Eros Eau de Parfum (2020)",
-    brand: "Versace",
-    imageUrl: "/Versace-Eros-EDP-2020.jpeg",
-    description:
-      "An intoxicating and passionate fougère oriental fragrance for men, Eros EDP is a more intense version of the original. It combines fresh citrus, mint, and apple with warm amber, tonka bean, and vanilla.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Mint, Candied Apple, Lemon, Mandarin Orange",
-      heartNotes: "Ambroxan, Geranium, Clary Sage",
-      baseNotes: "Vanilla, Cedarwood, Sandalwood, Patchouli, Leather",
-    },
-    volume: 100, // Common volume
-    rating: 4.4,
-    ratingSource: "Fragrantica (4.38/5)",
-  },
-  {
-    id: "26",
-    name: "La Vie Est Belle Eau de Parfum (2012)",
-    brand: "Lancôme",
-    imageUrl: "/La-Vie-Est-Belle-Eau-de-Parfum-2012.jpeg",
-    description:
-      "A timeless and iconic gourmand iris fragrance that celebrates joy and happiness. This elegant scent combines sweet iris, patchouli, and spun sugar with a hint of fruity freshness, embodying a radiant femininity.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Blackcurrant, Pear",
-      heartNotes: "Iris, Jasmine, Orange Blossom",
-      baseNotes: "Patchouli, Tonka Bean, Vanilla, Praline",
-    },
-    volume: 100, // Common volume
-    rating: 4.4,
-    ratingSource: "Ulta (4.5/5), Sephora (4.5/5), Fragrantica (4.4/5)",
-  },
-  {
-    id: "27",
-    name: "Stronger With You Intensely (2019)",
-    brand: "Giorgio Armani",
-    imageUrl: "/Stronger-With-You-Intensely-2019.jpeg",
-    description:
-      "An intense and addictive amber woody fragrance for men, designed to capture the energy of intense love. It features notes of spicy pink pepper, warm vanilla, and captivating amber wood for a truly memorable trail.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Pink Pepper, Juniper, Violet",
-      heartNotes: "Toffee, Cinnamon, Lavender, Sage",
-      baseNotes: "Vanilla, Tonka Bean, Amberwood, Suede",
-    },
-    volume: 100, // Common volume
-    rating: 4.4,
-    ratingSource: "Fragrantica (4.37/5)",
-  },
-  {
-    id: "28",
-    name: "The One by Dolce & Gabbana",
-    brand: "Dolce & Gabbana",
-    imageUrl: "/The-One-by-Dolce-&-Gabbana.jpeg",
-    description:
-      "A warm, floral-oriental scent with bergamot, jasmine, amber & vanilla.⏳ Lasts 8–10 hours with soft, skin-close sillage.💬 “Elegant… my go-to for any occasion.”🎁 Set: 75ml EDP + 15ml Mini + 50ml Perfumed Body Lotion",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Bergamot, Mandarin Orange, Lychee, Peach",
-      heartNotes: "Madonna Lily, Jasmine, Lily-of-the-Valley",
-      baseNotes: "Vanilla, Amber, Musk, Vetiver",
-    },
-    volume: 75, // Common volume mentioned in description
-    rating: 4.2,
-    ratingSource: "Fragrantica (4.24/5)",
-  },
-  {
-    id: "29",
-    name: "Q by Dolce & Gabbana (2023)",
-    brand: "Dolce & Gabbana",
-    imageUrl: "/Q-by-Dolce-&-Gabbana-2023.jpeg",
-    description:
-      "A royal burst of lemon, cherry & musk — soft, fresh, and elegant.🌸 Lasts up to 8+ hours with a subtle, skin-like finish.💬 “Versatile… seductive, sweet, and light.”🎁 Set: 100ml + 10ml Travel + 5ml Mini",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Sicilian Lemon, Blood Orange, Jasmine",
-      heartNotes: "Cherry, Heliotrope, Tuberose",
-      baseNotes: "Cedarwood, Musk, Patchouli",
-    },
-    volume: 100, // Common volume mentioned in description
-    rating: 3.9,
-    ratingSource: "Fragrantica (3.92/5)",
-  },
-  {
-    id: "30",
-    name: "Ariana Grande Cloud",
-    brand: "Ariana Grande",
-    imageUrl: "/Ariana-Grande-Cloud.jpeg",
-    description:
-      "A dreamy and uplifting gourmand fragrance, reminiscent of a sweet, fluffy cloud. It blends creamy coconut, sweet praline, and warm vanilla with delicate lavender and musk for a comforting and addictive scent.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Lavender, Pear, Bergamot",
-      heartNotes: "Whipped Cream, Praline, Coconut, Vanilla Orchid",
-      baseNotes: "Musk, Woody Notes",
-    },
-    volume: 100, // Common volume
-    rating: 4.4,
-    ratingSource: "Ulta (4.6/5), Sephora (4.6/5), Fragrantica (4.43/5)",
-  },
-  {
-    id: "31",
-    name: "Boss Bottled Elixir – Hugo Boss (2023)",
-    brand: "Hugo Boss",
-    imageUrl: "/Boss-Bottled-Elixir–Hugo-Boss-2023.jpeg",
-    description:
-      "A rich, highly concentrated interpretation of the iconic Boss Bottled, offering deep, warm, and woody notes with a captivating amber signature. It's a powerful and charismatic fragrance for the modern man.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Frankincense, Cardamom",
-      heartNotes: "Vetiver, Patchouli",
-      baseNotes: "Cedarwood, Labdanum",
-    },
-    volume: 100, // Common volume
-    rating: 4.2,
-    ratingSource: "Fragrantica (4.22/5)",
-  },
-  {
-    id: "32",
-    name: "ACQUA DI GIÒ PARFUM GIFT SET",
-    brand: "Giorgio Armani",
-    imageUrl: "/ACQUA-DI-GIÒ-PARFUM-GIFT-SET.jpeg",
-    description:
-      "A sophisticated and intense marine woody fragrance, representing the true essence of Acqua di Giò. The Parfum version offers a deeper and more mysterious interpretation with notes of frankincense and marine accords.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Marine Notes, Bergamot",
-      heartNotes: "Geranium, Rosemary, Clary Sage",
-      baseNotes: "Patchouli, Incense",
-    },
-    volume: 75, // Common volume for the main bottle in such a set
-    rating: 4.4,
-    ratingSource: "Fragrantica (4.37/5)",
-  },
-  {
-    id: "33",
-    name: "GENTLEMAN SOCIETY",
-    brand: "Givenchy",
-    imageUrl: "/gentleman-society.jpeg",
-    description:
-      "A bold and sophisticated woody floral fragrance that redefines modern masculinity. It blends fresh sage with wild daffodil, vetiver, and warm vanilla, creating a multifaceted and charismatic signature.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Sage, Cardamom",
-      heartNotes: "Wild Daffodil, Vetiver",
-      baseNotes: "Vanilla, Cedarwood, Sandalwood",
-    },
-    volume: 100, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.13/5)",
-  },
-  {
-    id: "34",
-    name: "OLYMPEA GIFT SET",
-    brand: "Paco Rabanne",
-    imageUrl: "/OYMPEA-GIFT-SET.jpeg",
-    description:
-      "A divine and powerful oriental floral fragrance, Olympea is a captivating blend of salty vanilla and fresh floral notes. This gift set offers the full experience of strength and femininity, inspired by a modern goddess.",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Green Mandarin, Water Jasmine, Ginger Lily",
-      heartNotes: "Salted Vanilla",
-      baseNotes: "Ambergris, Cashmere Wood, Sandalwood",
-    },
-    volume: 80, // Common volume for the main bottle in such a set
-    rating: 4.2,
-    ratingSource: "Fragrantica (4.19/5)",
-  },
-  {
-    id: "35",
-    name: "Gucci Guilty Pour Homme",
-    brand: "Gucci",
-    imageUrl: "/Gucci-Guilty-Pour-Homme.jpeg",
-    description:
-      "A modern and charismatic aromatic fougère fragrance for men, designed for the man who defines his own sensuality. It features notes of pink pepper, lemon, orange blossom, and patchouli.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Lemon, Pink Pepper",
-      heartNotes: "Orange Blossom, Neroli, French Lavender",
-      baseNotes: "Cedarwood, Patchouli",
-    },
-    volume: 90, // Common volume
-    rating: 3.9,
-    ratingSource: "Fragrantica (3.92/5)",
-  },
-  {
-    id: "36",
-    name: "Dolce & Gabbana Pour Homme Intenso",
-    brand: "Dolce & Gabbana",
-    imageUrl: "/Intenso-by-Dolce-&-Gabbana.jpeg",
-    description:
-      "A powerful and masculine woody aromatic fragrance that evokes pure instinct. Intenso is a unique blend of fresh aquatic notes, basil, lavender, and the groundbreaking Moepel wood accord, creating a deep and captivating signature.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Basil, Lavender, Water Notes, Marigold, Geranium",
-      heartNotes: "Tobacco, Hay, Moepel Accord, Bran, Clary Sage",
-      baseNotes: "Sandalwood, Cypress, Musk, Amber",
-    },
-    volume: 125, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.06/5)",
-  },
-  {
-    id: "7",
-    name: "Khamrah Qahwa",
-    brand: "Lattafa",
-    imageUrl: "/Khamrah-Qahwa.jpeg",
-    description:
-      "A warm, inviting, and addictive gourmand fragrance, Khamrah Qahwa is a rich blend of spices, candied fruits, and creamy coffee. It's a luxurious and comforting scent perfect for colder months and evening wear.",
-    category: "unisex",
-    featured: true,
-    scentNotes: {
-      topNotes: "Cinnamon, Cardamom, Ginger",
-      heartNotes: "Praline, Candied Fruits, White Flowers",
-      baseNotes: "Arabic Coffee, Vanilla, Tonka Bean, Musk",
-    },
-    volume: 100, // Common volume for Lattafa
-    rating: 4.4,
-    ratingSource: "Fragrantica (4.44/5)",
-  },
-  {
-    id: "8",
-    name: "Black Opium Over Red By YSL (2024)",
-    brand: "Yves Saint Laurent",
-    imageUrl: "/Black-Opium-Over-Red-By-YSL-2024.jpeg",
-    description:
-      "🌸 Floral • Fruity • Gourmand\n\n✨ *Top*: Cherry, Green Mandarin\n🌼 *Heart*: Jasmine, Orange Blossom, Black Tea\n☕ *Base*: Coffee, Patchouli, Vanilla\n\n💃 Bold, sweet & sensual\n❤️ Cherry spark meets creamy vanilla\n🌙 Perfect for all weather but best in nights & cooler days\n🔴 Sleek red bottle = instant statement",
-    category: "women",
-    featured: true,
-    scentNotes: {
-      topNotes: "Cherry Accord, Green Mandarin",
-      heartNotes: "Jasmine Grandiflorum, Orange Blossom, Black Tea",
-      baseNotes: "Coffee Accord, Patchouli, Vanilla",
-    },
-    volume: 90, // Common volume
-    rating: 4.1,
-    ratingSource: "Fragrantica (4.13/5)",
-  },
-  {
-    id: "9",
-    name: "Dolce&Gabbana Q (2023)",
-    brand: "Dolce&Gabbana",
-    imageUrl: "/DG-Q-2023.jpeg",
-    description:
-      "🌸✨ D&G Q (2023) – A scent that flirts with spring & summer 🍋🌿. Bursting with citrus, fruity & woody notes, it brings elegance, energy & adventure – perfect for daytime charm or a night to remember 💃🏽🔥",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "Sicilian Lemon, Blood Orange, Jasmine",
-      heartNotes: "Cherry, Heliotrope, Tuberose",
-      baseNotes: "Cedarwood, Musk, Patchouli",
-    },
-    volume: 100, // Common volume
-    rating: 3.9,
-    ratingSource: "Fragrantica (3.92/5)", // Note: This is a placeholder as the rating is lower on Fragrantica than the previous 4.3 example.
-  },
-  {
-    id: "10",
-    name: "Estée Lauder Pleasures",
-    brand: "Estée Lauder",
-    imageUrl: "/Estée-Lauder-Pleasures.jpeg",
-    description:
-      "A fresh floral 🌸 scent that feels like spring rain 🌦️\nPerfect for garden tours 🌿 & summer gatherings ☀️\n\n🌸 Top: Pink pepper, red berries\n🌺 Heart: White peony, lily, lilac\n🌲 Base: Cedar, patchouli, sandalwood\n\n✨ Soft, sheer & elegant — your daily dose of beauty 🌼\n#Pleasures #FloralVibes #EverydayElegance",
-    category: "women",
-    featured: false,
-    scentNotes: {
-      topNotes: "White Lily, Violet Leaves, Green Accords",
-      heartNotes: "Black Lilac, White Peony, Karan Karounde",
-      baseNotes: "Sandalwood, Patchouli, Amber",
-    },
-    volume: 100, // Common volume
-    rating: 4.3,
-    ratingSource: "Macy's (4.4/5), Estée Lauder (4.2/5)",
-  },
-  {
-    id: "11",
-    name: "Oud Wood",
-    brand: "Tom Ford",
-    imageUrl: "/Oud-wood.jpeg",
-    description:
-      "A groundbreaking and luxurious woody fragrance. Oud Wood is an exotic and smoky blend of rare oud, sandalwood, and vetiver, creating a rich, opulent, and highly coveted scent that balances tradition with modern appeal.",
-    category: "unisex",
-    featured: false,
-    scentNotes: {
-      topNotes: "Rare Oud Wood, Brazilian Rosewood, Cardamom",
-      heartNotes: "Sandalwood, Vetiver, Chinese Pepper",
-      baseNotes: "Tonka Bean, Vanilla, Amber",
-    },
-    volume: 50, // Common volume for Tom Ford Private Blend
-    rating: 4.2,
-    ratingSource: "Sephora (4.5/5), Fragrantica (4.16/5)",
-  },
-  {
-    id: "12",
-    name: "Prada Luna Rossa Black (2018)",
-    brand: "Prada",
-    imageUrl: "/prada.jpg",
-    description:
-      "An urban and sophisticated amber woody fragrance for men, Luna Rossa Black evokes the excitement of exploring a city at night. It's warm, sensual, and powdery with notes of bergamot, patchouli, and amber.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Bergamot, Angelica",
-      heartNotes: "Patchouli, Amberwood",
-      baseNotes: "Musk, Coumarin",
-    },
-    volume: 100, // Common volume
-    rating: 4.3,
-    ratingSource: "Fragrantica (4.32/5)",
-  },
-  {
-    id: "13",
-    name: "Bvlgari Man Wood Neroli (2018)",
-    brand: "Bvlgari",
-    imageUrl: "/Bvlgari-Man-Wood-Neroli-2018.jpeg",
-    description:
-      "A vibrant and woody floral fragrance inspired by nature's vital force. Man Wood Neroli blends the radiant freshness of neroli with deep woody accords, creating a powerful and invigorating scent for men.",
-    category: "men",
-    featured: false,
-    scentNotes: {
-      topNotes: "Neroli, Bergamot, Orange Blossom",
-      heartNotes: "Cypress, Vetiver, Cedarwood",
-      baseNotes: "Ambroxan, Ambergris, White Musk",
-    },
-    volume: 100, // Common volume
+    volume: 100,
     rating: 4.0,
-    ratingSource: "Fragrantica (4.04/5)",
+    ratingSource: "User Reviews",
   },
   {
-    id: "14",
-    name: "Bvlgari Man in Black",
+    id: "53",
+    name: "Bvlgari Man In Black (2012)",
     brand: "Bvlgari",
-    imageUrl: "/Bvlgari-Man-in-Black.jpeg",
+    imageUrl: "/Bvlgari-Man-In-Black-2012.jpeg",
     description:
-      "A bold and charismatic fragrance inspired by the myth of the birth of Vulcan, the Roman god of the earth. This powerful neo-oriental Eau de Parfum is an alluring and masculine blend of amber, leather, and spices.",
+      "Bvlgari Man In Black is a powerful and charismatic neo-oriental fragrance inspired by the myth of Vulcan, the god of the earth. It's an intense and sensual blend of vibrant spices, warm rum, tuberose, and smoky woods, embodying a daring and magnetic masculinity.",
     category: "men",
     featured: false,
     scentNotes: {
-      topNotes: "Spices, Amber Rum",
-      heartNotes: "Leather Accord, Tuberose, Iris",
-      baseNotes: "Benzoin, Tonka Bean, Guaiac Wood",
+      topNotes: "Spices, Rum, Tobacco",
+      heartNotes: "Leather, Iris, Tuberose",
+      baseNotes: "Guaiac Wood, Benzoin, Tonka Bean",
     },
-    volume: 100, // Common volume
+    volume: 100,
     rating: 4.4,
-    ratingSource: "Fragrantica (4.4/5)",
+    ratingSource: "Fragrantica Users",
   },
   {
-    id: "15",
-    name: "MontBlanc Explorer Ultra Blue",
-    brand: "MontBlanc",
-    imageUrl: "/MontBlanc-Explorer-Ultra-Blue.jpeg",
+    id: "54",
+    name: "Libre Le Parfum Yves Saint Laurent", // Duplicate of ID 48, using same info for consistency
+    brand: "Yves Saint Laurent",
+    imageUrl: "/Libre-Le-Parfum-Yves-Saint-Laurent.jpeg",
     description:
-      "An adventurous and fresh citrus marine fragrance for men, inspired by the blue of the sky and the oceans. It offers a cool and invigorating escape with notes of Sicilian bergamot, marine accords, and patchouli.",
+      "Libre Le Parfum is the most intense and luxurious interpretation of the iconic Libre fragrance. It's a fiery twist on the original, with a deeper, spicier, and more sensual composition, emphasizing warm vanilla and honeyed notes for an unforgettable trail.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Ginger, Saffron, Mandarin Orange, Bergamot",
+      heartNotes: "Orange Blossom, Lavender",
+      baseNotes: "Bourbon Vanilla, Honey, Tonka Bean, Vetiver",
+    },
+    volume: 50,
+    rating: 4.5,
+    ratingSource: "Parfumo Community",
+  },
+  {
+    id: "55",
+    name: "Libre Eau de Parfum Intense",
+    brand: "Yves Saint Laurent",
+    imageUrl: "/Libre-Eau-de-Parfum-Intense.jpeg",
+    description:
+      "Libre Eau de Parfum Intense amplifies the signature Libre accord with a warmer, more sensual interpretation. It fuses the burning floral heart of orange blossom and jasmine with a potent orchid accord and rich vanilla, creating a deeply addictive and powerful scent.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Mandarin Orange, Bergamot, French Lavender",
+      heartNotes: "Orange Blossom, Jasmine Sambac, Orchid",
+      baseNotes: "Vanilla, Tonka Bean, Ambergris, Vetiver",
+    },
+    volume: 90,
+    rating: 4.5,
+    ratingSource: "Sephora Reviews",
+  },
+  {
+    id: "56",
+    name: "Allure Homme Sport Eau Extreme by Chanel",
+    brand: "Chanel",
+    imageUrl: "/Allure-Homme-Sport-Eau-Extreme-by-Chanel.jpeg",
+    description:
+      "Allure Homme Sport Eau Extreme is a vibrant, musky, and aromatic fragrance for men. It combines crisp mint, energetic mandarin, and green cypress with a powerful woody base of cedar and sandalwood, creating a dynamic and effortlessly alluring scent.",
     category: "men",
     featured: false,
     scentNotes: {
-      topNotes: "Sicilian Bergamot, Pink Peppercorn, Exotic Fruits",
-      heartNotes: "Marine Accord, Ambergris",
-      baseNotes: "Patchouli, Woody Notes, Leather",
+      topNotes: "Mandarin Orange, Mint, Cypress, Sage",
+      heartNotes: "Pepper",
+      baseNotes: "Tonka Bean, Musk, Sandalwood, Cedar",
     },
-    volume: 100, // Common volume
-    rating: 3.9,
-    ratingSource: "Fragrantica (3.94/5)",
+    volume: 100,
+    rating: 4.6,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "57",
+    name: "Montblanc Explorer Platinum",
+    brand: "Montblanc",
+    imageUrl: "/Montblanc-Explorer-Platinum.jpeg",
+    description:
+      "Montblanc Explorer Platinum is a fresh and radiant woody-aromatic fragrance that evokes the spirit of adventure. It opens with invigorating violet leaves, leading to a heart of clary sage, and a powerful base of cedarwood, creating a masculine and sophisticated journey.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Violet Leaves",
+      heartNotes: "Clary Sage",
+      baseNotes: "Cedarwood",
+    },
+    volume: 100,
+    rating: 4.1,
+    ratingSource: "Parfumo Community",
+  },
+  {
+    id: "58",
+    name: "Lacoste", // Assuming a popular Lacoste such as L.12.12 Blanc
+    brand: "Lacoste",
+    imageUrl: "/Lacoste.jpeg",
+    description:
+      "Embodying the spirit of the iconic polo shirt, this Lacoste fragrance offers a clean, crisp, and effortlessly elegant aroma. It's a fresh woody-aromatic scent, perfect for everyday wear, exuding a casual yet refined masculinity.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Grapefruit, Cardamom, Rosemary",
+      heartNotes: "Tuberose, Ylang-Ylang",
+      baseNotes: "Cedarwood, Vetiver, Suede",
+    },
+    volume: 100,
+    rating: 4.0,
+    ratingSource: "General Customer Reviews",
+  },
+  {
+    id: "59",
+    name: "Amber Oud (Original/Gold Edition)", // Specified for clarity
+    brand: "Al Haramain",
+    imageUrl: "/Amber-Oud.jpeg",
+    description:
+      "Al Haramain Amber Oud Original (Gold Edition) is a majestic and opulent amber-woody fragrance launched in 2018. It opens with rich amber and oud, evolving into a warm, resinous heart, and settling into a creamy, long-lasting base, creating a truly luxurious and sophisticated statement.",
+    category: "unisex",
+    featured: false,
+    scentNotes: {
+      topNotes: "Bergamot, Green Notes",
+      heartNotes: "Melon, Pineapple, Amber, Sweet Notes",
+      baseNotes: "Woody Notes, Musk, Vanilla",
+    },
+    volume: 60,
+    rating: 4.3,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "60",
+    name: "Dior Homme Intense",
+    brand: "Dior",
+    imageUrl: "/Dior-Homme-Intense.jpeg",
+    description:
+      "Dior Homme Intense is an intensely masculine and sophisticated fragrance. With a bold and powdery iris heart, it exudes a unique elegance. The fragrance is deepened by sensual amber and woody notes, creating an enveloping, long-lasting, and highly distinguished aura.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Lavender",
+      heartNotes: "Iris, Ambrette (Musk Mallow), Pear",
+      baseNotes: "Virginia Cedar, Vetiver",
+    },
+    volume: 100,
+    rating: 4.7,
+    ratingSource: "Parfumo Community",
+  },
+  {
+    id: "61",
+    name: "Emporio Armani (Stronger With You)", // Assuming this popular variant
+    brand: "Giorgio Armani",
+    imageUrl: "/Emporior-Armani.jpeg",
+    description:
+      "Emporio Armani Stronger With You is a vibrant and confident fragrance for men. It's an aromatic fougere with a unique spicy accord, blended with a sweet chestnut glaze and infused with vanilla and amberwood, embodying modern masculinity and romantic connection.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Cardamom, Pink Pepper, Violet Leaves",
+      heartNotes: "Sage",
+      baseNotes: "Vanilla, Chestnut, Amberwood",
+    },
+    volume: 100,
+    rating: 4.2,
+    ratingSource: "Notino Customer Reviews",
+  },
+  {
+    id: "62",
+    name: "Bleu de Chanel",
+    brand: "Chanel",
+    imageUrl: "/Bleu-de-Chanel.jpeg",
+    description:
+      "Bleu de Chanel is a timeless aromatic-woody fragrance that embodies male freedom. It comes in three concentrations: the vibrant and fresh Eau de Toilette (EDT), the richer and more intense Eau de Parfum (EDP), and the deepest, most sophisticated Parfum version. Each offers a unique facet of its signature blend of citrus, woods, and amber.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Grapefruit, Lemon, Mint, Pink Pepper (General)",
+      heartNotes: "Ginger, Nutmeg, Jasmine, Iso E Super (General)",
+      baseNotes:
+        "Incense, Vetiver, Cedar, Sandalwood, Patchouli, White Musk (General)",
+    },
+    volume: 100, // Common volume, applies to different concentrations
+    rating: 4.6,
+    ratingSource: "Fragrantica Users",
+  },
+  {
+    id: "63",
+    name: "Armani Acqua Di Gio Profondo",
+    brand: "Giorgio Armani",
+    imageUrl: "/Armani-Acqua-Di-Gio-Profondo.jpeg",
+    description:
+      "Acqua Di Gio Profondo by Giorgio Armani is an intensely aquatic and aromatic fougere fragrance for men. It plunges into the depths of the ocean with marine notes, green mandarin, and rosemary, evolving into a mineral heart and a woody, musky base, capturing a profound and modern masculinity.",
+    category: "men",
+    featured: false,
+    scentNotes: {
+      topNotes: "Sea Notes, Aquozone, Bergamot, Green Mandarin",
+      heartNotes: "Rosemary, Lavender, Cypress, Mastic or Lentisque",
+      baseNotes: "Mineral notes, Musk, Patchouli, Amber",
+    },
+    volume: 75,
+    rating: 4.4,
+    ratingSource: "Sephora Reviews",
+  },
+  {
+    id: "64",
+    name: "Narciso Rodriguez Musc Noir Perfume",
+    brand: "Narciso Rodriguez",
+    imageUrl: "/Narciso-Rodriguez-Musc-Noir-Perfume.jpeg",
+    description:
+      "Narciso Rodriguez Musc Noir is a mysterious and highly addictive fragrance that reinterprets the iconic musk. It features a luminous plum accord, a captivating heart of heliotrope and musk, settling into a dark, leathery suede base, creating a deeply sensual and elegant aroma.",
+    category: "women",
+    featured: false,
+    scentNotes: {
+      topNotes: "Plum",
+      heartNotes: "Heliotrope, Musk",
+      baseNotes: "Leather Suede Accord",
+    },
+    volume: 100,
+    rating: 4.3,
+    ratingSource: "Parfumo Community",
   },
 ];
 
 // The filtering logic below will separate them.
 const productsWithRealImages: Product[] = initialProducts.filter(
-  (product) => !product.imageUrl.includes("placehold.co")
+  (product) =>
+    !product.imageUrl.includes("placehold.co") && product.imageUrl !== "/.jpeg"
 );
-const productsWithPlaceholders = initialProducts.filter((product) =>
-  product.imageUrl.includes("placehold.co")
+const productsWithPlaceholders = initialProducts.filter(
+  (product) =>
+    product.imageUrl.includes("placehold.co") || product.imageUrl === "/.jpeg"
 );
 
 // Reconstruct the products array: products with local images first, then all placeholders

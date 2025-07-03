@@ -19,7 +19,7 @@ import {
   signInAnonymously,
 } from "firebase/auth";
 // import { blogPosts } from "../data/blogPosts";
-import { products } from "../data/product";
+import { products } from "../data/product1";
 
 // --- Type definitions for global Canvas variables ---
 // This tells TypeScript that these global variables exist on the window object.
