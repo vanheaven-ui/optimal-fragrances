@@ -28,11 +28,11 @@ export const metadata = {
   openGraph: {
     title: "Optimal Fragrance",
     description: "Discover unique scents for every personality.",
-    url: "https://www.optimalfragrance.ug", // Replace with your actual domain
+    url: "https://optimalfragrance.vercel.app", 
     siteName: "Optimal Fragrance",
     images: [
       {
-        url: "https://www.optimalfragrance.ug/og-image.jpg", // Path to your OG image
+        url: "https://www.optimalfragrance.ug/og-image.jpg", 
         width: 1200,
         height: 630,
         alt: "Optimal Fragrance Banner",
@@ -45,8 +45,8 @@ export const metadata = {
     card: "summary_large_image",
     title: "Optimal Fragrance",
     description: "Discover unique scents for every personality.",
-    creator: "@optimalfragrance", // Your Twitter handle
-    images: ["https://www.optimalfragrance.ug/twitter-image.jpg"], // Path to your Twitter image
+    creator: "@optimalfragrance", 
+    images: ["https://www.optimalfragrance.ug/twitter-image.jpg"], 
   },
 };
 
@@ -62,7 +62,9 @@ export default function RootLayout({
         The client component (ClientLayoutContent) will receive `children`
         and render the rest of the layout inside the <body>.
       */}
-      <body className={`font-sans bg-ug-neutral-bg text-ug-text-dark relative`}>
+      <body
+        className={`font-sans bg-ug-neutral-bg text-ug-text-dark relative overflow-x-hidden`}
+      >
         {/* Render your new ClientLayoutContent component, passing `children` to it */}
         <ClientLayoutContent>{children}</ClientLayoutContent>
       </body>

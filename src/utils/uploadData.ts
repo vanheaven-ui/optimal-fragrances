@@ -9,7 +9,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getFirestore,
-  collection,
   setDoc,
   doc,
   serverTimestamp,
@@ -19,8 +18,8 @@ import {
   signInWithCustomToken,
   signInAnonymously,
 } from "firebase/auth";
-import { products } from "../data/product"
-import { blogPosts } from "../data/blogPosts";
+// import { blogPosts } from "../data/blogPosts";
+import { products } from "../data/product1";
 
 // --- Type definitions for global Canvas variables ---
 // This tells TypeScript that these global variables exist on the window object.
@@ -111,45 +110,45 @@ export async function uploadInitialData() {
 
     // --- Upload Products ---
     console.log("Uploading products to 'products' collection...");
-    // for (const product of products) {
-    //   try {
-    //     // Using setDoc with explicit ID to ensure your predefined IDs are used
-    //     const productDocRef = doc(db, "products", product.id);
-    //     await setDoc(productDocRef, {
-    //       ...product,
-    //       createdAt: serverTimestamp(), // Set server timestamp for creation
-    //       updatedAt: serverTimestamp(), // Set server timestamp for last update
-    //     });
-    //     console.log(`✅ Uploaded product: ${product.name} (ID: ${product.id})`);
-    //   } catch (error) {
-    //     console.error(
-    //       `❌ Failed to upload product ${product.name} (ID: ${product.id}):`,
-    //       error
-    //     );
-    //   }
-    // }
-    // console.log("Products upload complete.");
-
-    // --- Upload Blog Posts ---
-    console.log("Uploading blog posts to 'blogPosts' collection...");
-    for (const post of blogPosts) {
+    for (const product of products) {
       try {
         // Using setDoc with explicit ID to ensure your predefined IDs are used
-        const blogPostDocRef = doc(db, "blogPosts", post.id);
-        await setDoc(blogPostDocRef, {
-          ...post,
+        const productDocRef = doc(db, "products", product.id);
+        await setDoc(productDocRef, {
+          ...product,
           createdAt: serverTimestamp(), // Set server timestamp for creation
           updatedAt: serverTimestamp(), // Set server timestamp for last update
         });
-        console.log(`✅ Uploaded blog post: ${post.title} (ID: ${post.id})`);
+        console.log(`✅ Uploaded product: ${product.name} (ID: ${product.id})`);
       } catch (error) {
         console.error(
-          `❌ Failed to upload blog post ${post.title} (ID: ${post.id}):`,
+          `❌ Failed to upload product ${product.name} (ID: ${product.id}):`,
           error
         );
       }
     }
-    console.log("Blog posts upload complete.");
+    console.log("Products upload complete.");
+
+    // --- Upload Blog Posts ---
+    console.log("Uploading blog posts to 'blogPosts' collection...");
+    // for (const post of blogPosts) {
+    //   try {
+    //     // Using setDoc with explicit ID to ensure your predefined IDs are used
+    //     const blogPostDocRef = doc(db, "blogPosts", post.id);
+    //     await setDoc(blogPostDocRef, {
+    //       ...post,
+    //       createdAt: serverTimestamp(), // Set server timestamp for creation
+    //       updatedAt: serverTimestamp(), // Set server timestamp for last update
+    //     });
+    //     console.log(`✅ Uploaded blog post: ${post.title} (ID: ${post.id})`);
+    //   } catch (error) {
+    //     console.error(
+    //       `❌ Failed to upload blog post ${post.title} (ID: ${post.id}):`,
+    //       error
+    //     );
+    //   }
+    // }
+    // console.log("Blog posts upload complete.");
   } catch (authError) {
     console.error("Authentication failed, cannot upload data:", authError);
   }

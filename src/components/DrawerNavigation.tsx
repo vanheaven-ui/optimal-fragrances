@@ -127,6 +127,16 @@ export default function DrawerNavigation() {
                 Perfumes
               </Link>
             </li>
+            {/* New "About Us" Link */}
+            <li>
+              <Link
+                href="/about-us"
+                className="block text-xl text-ug-text-heading hover:text-ug-purple-primary font-semibold py-2 px-3 rounded-lg transition-colors duration-200"
+                onClick={closeDrawer}
+              >
+                Our Story
+              </Link>
+            </li>
             <li>
               <Link
                 href="/contact"
