@@ -423,7 +423,6 @@ export default function PerfumesPage() {
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          ---
           {/* Pagination Controls - Modernized */}
           {totalPages > 1 && (
             <nav
