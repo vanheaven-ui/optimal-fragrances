@@ -446,7 +446,7 @@ const initialProducts: Product[] = [
     id: "64",
     name: "Narciso Rodriguez Musc Noir Perfume",
     brand: "Narciso Rodriguez",
-    imageUrl: "/Narciso-Rodriguez-Musc-Noir-Perfume.jpeg",
+    imageUrl: "/Narciso-Rodriguez-Musc-Noir-Perfume.webp",
     description:
       "Narciso Rodriguez Musc Noir is a mysterious and highly addictive fragrance that reinterprets the iconic musk. It features a luminous plum accord, a captivating heart of heliotrope and musk, settling into a dark, leathery suede base, creating a deeply sensual and elegant aroma.",
     category: "women",
