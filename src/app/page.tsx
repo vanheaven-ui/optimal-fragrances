@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useProducts } from "../hooks/useProducts";
 import FragranceLoader from "../components/FragranceLoader";
 import PerfumeNotesCarousel, {
