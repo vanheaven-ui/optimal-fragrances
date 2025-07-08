@@ -4,7 +4,6 @@
 import { useMemo, useState } from "react";
 import { useProducts } from "../hooks/useProducts";
 import FragranceLoader from "../components/FragranceLoader";
-import Link from "next/link";
 import PerfumeNotesCarousel, {
   PerfumeNote,
 } from "../components/PerfumeNotesCarousel";
@@ -232,20 +231,6 @@ export default function HomePage() {
   const curatedProducts = useMemo(() => {
     return shuffleArray(nonSpotlightProducts).slice(0, 4);
   }, [nonSpotlightProducts]);
-
-  const handleViewAllPerfumesClick = (
-    e: React.MouseEvent<HTMLAnchorElement>
-  ) => {
-    if (isViewingAllPerfumes) {
-      e.preventDefault();
-      return;
-    }
-    e.preventDefault();
-    setIsViewingAllPerfumes(true);
-    setTimeout(() => {
-      window.location.href = "/perfumes";
-    }, 1500);
-  };
 
   if (loading) {
     return <FragranceLoader message="Unveiling exquisite scents..." />;
