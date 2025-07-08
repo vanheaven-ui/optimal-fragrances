@@ -9,6 +9,28 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
+        fadeInDown: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        pulseFade: {
+          "0%, 100%": {
+            opacity: "0.6",
+            transform: "scaleX(0.8)",
+          },
+          "50%": {
+            opacity: "1",
+            transform: "scaleX(1)",
+          },
+        },
         moveBike: {
           "0%, 100%": { transform: "translateX(0)" },
           "50%": { transform: "translateX(-10px)" },
@@ -36,6 +58,10 @@ const config: Config = {
         "particle-3": "particle-float 4.2s ease-in-out infinite",
         "particle-4": "particle-float 3.8s ease-in-out infinite",
         "pulse-light": "pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "fade-in-down": "fadeInDown 1s ease-out forwards",
+        "fade-in-up": "fadeInUp 1s ease-out forwards 0.2s",
+        "pulse-fade": "pulseFade 3s infinite ease-in-out", // For the animated heading underlines
+        "fade-in": "fadeIn 1s ease-out forwards", // For general fade-in
       },
       colors: {
         // Our custom color palette
