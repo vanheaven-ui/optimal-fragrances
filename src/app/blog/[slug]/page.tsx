@@ -12,7 +12,6 @@ import {
   getDocs,
   DocumentData,
 } from "firebase/firestore";
-import { FirebaseError } from "firebase/app";
 
 // Re-import the BlogPost interface from a consistent source (e.g., from the new blog form)
 // Ideally, this interface would be in a shared types file like '@/types/blogPost.ts'
@@ -32,11 +31,11 @@ const BlogPostDetailPage: React.FC = () => {
   useEffect(() => {
     // Only attempt to fetch if we have a slug and Firebase is ready
     if (!slug || !isAuthReady || !db) {
-      if (!isAuthReady || !db) {
+      if (!isAuthReady) {
         setLoading(true); // Keep loading if Firebase isn't ready yet
         setError(null);
-      } else if (!slug) {
-        setError("Blog post slug not found in URL.");
+      } else if (!db) {
+        setError("Firebase Firestore instance is not available.");
         setLoading(false);
       }
       return;
@@ -81,7 +80,9 @@ const BlogPostDetailPage: React.FC = () => {
           setPost(null); // No post found for the given slug
           setError("Blog post not found.");
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
+        // Line 83:21
         console.error("Error fetching blog post:", err);
         setError(`Error loading blog post: ${(err as Error).message}`);
       } finally {
