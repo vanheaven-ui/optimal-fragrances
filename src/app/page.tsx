@@ -319,7 +319,7 @@ export default function HomePage() {
       </section>
 
       {/* ORIGINAL 4. Our Vision/Story Section (now 5th section) */}
-      <section className="bg-ug-neutral-bg py-6 px-4">
+      {/* <section className="bg-ug-neutral-bg py-6 px-4">
         <div className="container mx-auto text-center max-w-3xl">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
             Our Vision
@@ -336,6 +336,35 @@ export default function HomePage() {
             your soul and leaves a lasting impression. Explore our collection
             and embark on a sensory journey unlike any other.
           </p>
+        </div>
+      </section> */}
+
+      <section className="bg-ug-neutral-bg py-16 px-4">
+        <div className="container mx-auto max-w-5xl">
+          {" "}
+          {/* Increased max-width for a broader feel */}
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-10 text-center tracking-tight bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
+            Our Vision & Philosophy
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+            <p className="text-lg text-ug-text-dark leading-loose">
+              {" "}
+              {/* Adjusted text color opacity and line height */}
+              At Optimal Fragrance, we believe that a scent is more than just a
+              fragrance; it&lsquo;s an extension of your personality, a memory,
+              a feeling. We meticulously curate a collection of the finest
+              perfumes from around the world, ensuring authenticity and
+              unparalleled quality.
+            </p>
+            <p className="text-lg text-ug-text-dark leading-loose">
+              {" "}
+              {/* Adjusted text color opacity and line height */}
+              Our passion is to help you discover the perfect aroma that speaks
+              to your soul and leaves a lasting impression. Explore our
+              collection and embark on a sensory journey unlike any other,
+              celebrating the art of perfumery with every spray.
+            </p>
+          </div>
         </div>
       </section>
     </div>

@@ -1,52 +1,198 @@
-/* Basic setup for full height */
-html, body {
-  height: 100%;
-  margin: 0; /* Remove default body margin */
-  padding: 0; /* Remove default body padding */
-}
+/* src/app/globals.css */
 
-body {
-  /* Your existing body styles will remain here */
-  /* e.g., font-sans bg-ug-neutral-bg text-ug-text-dark relative; */
-
-  position: relative; /* Ensure body is a positioning context for the pseudo-element */
-  z-index: 1; /* Ensure body content is above the pseudo-element */
-  overflow-x: hidden; /* Prevent horizontal scroll if background moves */
-}
-
-/* Pseudo-element for the subtle background logo */
-body::before {
-  content: '';
-  position: fixed; /* Fixed position so it stays in place when scrolling */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/optimal.png'); /* Path to your logo */
-  background-repeat: no-repeat; /* Don't repeat the logo */
-  background-position: center center; /* Center the logo on the page */
-  background-size: 60%; /* Adjust this value (e.g., 50%, 70%, cover, contain) to control its size relative to the viewport */
-  opacity: 0.05; /* This is the key for subtlety! Adjust from 0.02 (very faint) to 0.1 (more visible) */
-  pointer-events: none; /* Allows clicks and interactions to pass through to the content below */
-  z-index: -1; /* Place it behind all other content */
-}
-
-/* You might need to adjust the background-size for different screen sizes */
-@media (max-width: 768px) {
-  body::before {
-    background-size: 80%; /* Larger on smaller screens if it looks better */
-  }
-}
-/* Tailwind CSS Directives */
+/* 1. Tailwind CSS Directives - ALWAYS at the very top */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Global Styles - Use Tailwind's @apply for consistency */
-body {
-  @apply bg-ug-neutral-bg text-ug-text-dark font-sans; /* Apply our custom colors and a default font */
+/* 2. CSS Variables for Theming */
+/* These define the base (light mode) values for your custom color palette,
+   background logo, and image overlay colors. */
+:root {
+  /* Optimal Fragrance Custom Colors (Light Theme) */
+  --color-ug-purple-primary: #6b46c1;
+  --color-ug-purple-accent: #805ad5;
+  --color-ug-neutral-bg: #f7fafc;
+  --color-ug-neutral-light: #cbd5e0;
+  --color-ug-text-dark: #4a5568;
+  --color-ug-text-heading: #2d3748;
+  --color-ug-success: #38a169;
+  --color-ug-error: #e53e3e;
+
+  /* Standard Colors (Light Theme) - Define if you use these directly in components */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-300: #d1d5db;
+  --color-gray-600: #4b5563;
+  --color-yellow-400: #facc15;
+  --color-green-600: #059669;
+  --color-red-600: #dc2626;
+
+  /* Background Logo Variables (Light Theme) */
+  /* RECOMMENDED: Create '/optimal.png' for best results */
+  --bg-logo-image: url("/optimal.png");
+  --bg-logo-opacity: 0.03; /* Very subtle in light mode */
+  --bg-logo-position: center center; /* Keep centered to fill the area with 'cover' */
+
+  /* Image Overlay Colors & Opacity Variables for Light Mode */
+  --image-overlay-color: 0, 0, 0; /* Pure Black RGB components */
+  --image-overlay-opacity: 0.5; /* Darker for light mode (50% opaque) */
 }
 
-h1, h2, h3, h4, h5, h6 {
-  @apply text-ug-text-heading; /* Apply heading color */
+/* Dark Theme Variables - Applied when `html` has the `dark` class */
+html.dark {
+  /* Optimal Fragrance Custom Colors (Dark Theme) */
+  --color-ug-purple-primary: #9f7aea;
+  --color-ug-purple-accent: #b794f4;
+  --color-ug-neutral-bg: #1a202c;
+  --color-ug-neutral-light: #4a5568;
+  --color-ug-text-dark: #e2e8f0;
+  --color-ug-text-heading: #edf2f7;
+  --color-ug-success: #48bb78;
+  --color-ug-error: #fc8181;
+
+  /* Standard Colors (Dark Theme) */
+  --color-white: #1a202c; /* White text/bg might become dark bg in dark mode */
+  --color-black: #ffffff; /* Black text might become white in dark mode */
+  --color-gray-300: #374151;
+  --color-gray-600: #9ca3af;
+  --color-yellow-400: #fde047;
+  --color-green-600: #10b981;
+  --color-red-600: #ef4444;
+
+  /* Background Logo Variables (Dark Theme) */
+  /* RECOMMENDED: Create '/optimal.png' for best results */
+  --bg-logo-image: url("/optimal.png");
+  --bg-logo-opacity: 0.06; /* Slightly more visible on dark background */
+  --bg-logo-position: center center; /* Keep centered to fill the whole area */
+  /* Optional: filter to invert/adjust existing logo if you only have one image */
+  /* filter: invert(0.9) brightness(1.2) hue-rotate(180deg); */
+
+  /* UPDATED: Image Overlay Colors & Opacity Variables for Dark Mode */
+  --image-overlay-color: 159, 122, 234; /* **Transparent Purple RGB components (#9f7aea)** */
+  --image-overlay-opacity: 0.3; /* **Purple overlay for dark mode (30% opaque)** */
+}
+
+/* 3. Base HTML & Body Styles */
+html,
+body {
+  height: 100%; /* Ensures body takes full viewport height */
+  margin: 0;
+  padding: 0;
+  /* Smooth transition for background, text color, and potential filters on theme change */
+  transition: background-color 0.3s ease, color 0.3s ease, filter 0.3s ease;
+}
+
+body {
+  /* Apply default font family from Tailwind's base */
+  @apply font-sans;
+
+  /* Use CSS variables for background and text colors, which adapt to theme */
+  background-color: var(--color-ug-neutral-bg);
+  color: var(--color-ug-text-dark);
+
+  position: relative; /* Needed for z-index context */
+  z-index: 1; /* Ensure body content is above the pseudo-element */
+  overflow-x: hidden; /* Prevent horizontal scroll if background image is wider */
+}
+
+/* 4. Pseudo-element for the subtle background logo (full viewport fill) */
+body::before {
+  content: ""; /* Required for pseudo-elements */
+  position: fixed; /* Stays in place when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Ensures it covers the entire viewport */
+  background-image: var(--bg-logo-image); /* Uses theme-specific image */
+  background-repeat: no-repeat;
+  background-position: var(
+    --bg-logo-position
+  ); /* Uses theme-specific position (center center) */
+  background-size: cover; /* This makes the logo fill the entire viewport without distortion, cropping if needed */
+  opacity: var(--bg-logo-opacity); /* Uses theme-specific opacity */
+  pointer-events: none; /* Allows clicks and interactions to pass through */
+  z-index: -1; /* Places it behind all other content */
+}
+
+/* 5. Responsive adjustments for the background logo (less critical with 'cover') */
+@media (max-width: 768px) {
+  body::before {
+    /* With background-size: cover, these specific adjustments are less critical,
+       but you can still tweak opacity or position for mobile if the default isn't perfect. */
+    opacity: var(--bg-logo-opacity); /* Ensure it still uses the variable */
+    background-position: var(
+      --bg-logo-position
+    ); /* Ensure it still uses the variable */
+  }
+}
+
+/* 6. Custom Global Styles for headings (using CSS variables) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* Applies text color from the --color-ug-text-heading variable, adapting to theme */
+  @apply text-ug-text-heading;
+}
+
+/* 7. Custom Components and Utilities for Image Overlays */
+@layer components {
+  /* Base style for any image overlay */
+  .image-overlay-base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Dynamically sets background to black or purple with specified transparency based on theme */
+    background-color: rgba(
+      var(--image-overlay-color),
+      var(--image-overlay-opacity)
+    );
+    pointer-events: none; /* Allows clicks/interactions to pass through to the image/link below */
+    z-index: 1; /* Place it just above the image, below any text/icons */
+    transition: background-color 0.3s ease; /* Smooth transition for overlay color if theme changes */
+  }
+
+  /* Example: A permanent, subtle overlay on an image */
+  /* Apply this class to a div inside a 'relative' parent containing the image. */
+  .image-overlay-permanent {
+    @apply image-overlay-base;
+    /* Opacity is controlled by --image-overlay-opacity directly within rgba() */
+  }
+
+  /* Example: An overlay that appears on hover over a parent element */
+  /* Apply this class to a div inside a 'group' parent, covering the image. */
+  .image-overlay-on-hover {
+    @apply image-overlay-base opacity-0; /* Starts completely invisible */
+    transition: opacity 0.3s ease; /* Smooth fade in/out effect */
+  }
+
+  /* When the parent with 'group' class is hovered, make the overlay visible */
+  .group:hover .image-overlay-on-hover {
+    opacity: 1; /* Fully reveals the overlay (which already has its own transparency from rgba) */
+  }
+
+  /* Optional: Styles for content (like text or icons) that appears *on top* of the overlay on hover */
+  /* Apply this class to a div sibling to the overlay, also inside the 'relative' parent. */
+  .image-overlay-content {
+    position: absolute;
+    inset: 0; /* Equivalent to top:0, right:0, bottom:0, left:0 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none; /* Make content div itself non-interactive by default */
+    z-index: 2; /* Higher than the .image-overlay-base (z-index: 1) */
+    opacity: 0; /* Starts invisible */
+    transition: opacity 0.3s ease; /* Smooth fade in/out */
+  }
+  /* When the 'group' parent is hovered, make the content visible and interactive */
+  .group:hover .image-overlay-content {
+    opacity: 1;
+    pointer-events: auto; /* Make content interactive (e.g., clickable links/buttons) on hover */
+  }
 }

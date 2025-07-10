@@ -1,3 +1,4 @@
+// src/app/perfumes/[id]/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -49,6 +50,7 @@ export default function PerfumeDetail() {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       if (i <= rating) {
+        // text-yellow-400 and text-gray-300 should map to CSS variables now
         stars.push(<FaStar key={i} className="text-yellow-400" />);
       } else if (i - 0.5 === rating) {
         stars.push(<FaStarHalfAlt key={i} className="text-yellow-400" />);
@@ -75,7 +77,7 @@ export default function PerfumeDetail() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-ug-neutral-bg">
-        <p className="text-2xl text-red-600 font-semibold">
+        <p className="text-2xl text-ug-error font-semibold">
           Error loading perfume: {error}
         </p>
       </div>
@@ -108,15 +110,24 @@ export default function PerfumeDetail() {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="flex flex-col md:flex-row gap-8 lg:gap-16 items-center md:items-start bg-white p-6 md:p-10 rounded-3xl shadow-2xl border border-ug-neutral-light overflow-hidden"
+        // No dark: prefixes needed here!
+        className="flex flex-col md:flex-row gap-8 lg:gap-16 items-center md:items-start
+                   bg-white p-6 md:p-10 rounded-3xl
+                   shadow-2xl // Shadows can be handled by custom utilities if needed
+                   border border-ug-neutral-light
+                   overflow-hidden"
       >
         {/* Product Image */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ scale: 1.05 }} // Add this line for the zoom effect
-          transition={{ duration: 0.3 }} // Optional: Add a smooth transition
-          className="w-full md:w-1/2 lg:w-2/5 relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl flex-shrink-0 cursor-pointer
-  transform transition-transform duration-300 ease-in-out border-2 border-ug-neutral-light"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+          // No dark: prefixes needed here!
+          className="w-full md:w-1/2 lg:w-2/5 relative aspect-[3/4] rounded-xl overflow-hidden
+                     shadow-2xl
+                     flex-shrink-0 cursor-pointer
+                     transform transition-transform duration-300 ease-in-out
+                     border-2 border-ug-neutral-light"
         >
           <Image
             src={imageSrc}
@@ -137,8 +148,10 @@ export default function PerfumeDetail() {
         <div className="w-full md:w-1/2 lg:w-3/5 flex flex-col justify-center space-y-4 text-ug-text-dark">
           <motion.h1
             variants={itemVariants}
-            className="text-4xl lg:text-5xl font-extrabold text-ug-text-heading leading-tight
-  bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text drop-shadow-md"
+            className="text-4xl lg:text-5xl font-extrabold
+                       text-ug-text-heading leading-tight
+                       bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading
+                       text-transparent bg-clip-text drop-shadow-md"
           >
             {product.name}
           </motion.h1>
@@ -208,8 +221,13 @@ export default function PerfumeDetail() {
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center justify-center gap-3 bg-ug-success hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full text-lg shadow-xl mt-8 transition-all duration-300 ease-in-out
-  focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-ug-neutral-bg"
+            // No dark: prefixes needed here!
+            className="flex items-center justify-center gap-3
+                       bg-ug-success hover:bg-green-600
+                       text-white font-bold py-4 px-8 rounded-full text-lg shadow-xl mt-8
+                       transition-all duration-300 ease-in-out
+                       focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-offset-2
+                       focus:ring-offset-ug-neutral-bg"
           >
             <FaWhatsapp size={24} />
             Order via WhatsApp
@@ -223,11 +241,17 @@ export default function PerfumeDetail() {
           initial="hidden"
           animate="visible"
           variants={itemVariants}
-          className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl mt-12 border border-ug-neutral-light"
+          // No dark: prefixes needed here!
+          className="bg-white p-6 sm:p-8 rounded-3xl
+                     shadow-xl mt-12
+                     border border-ug-neutral-light"
         >
           <h3
-            className="text-2xl md:text-3xl font-semibold text-ug-text-heading mb-4 border-b pb-3 border-ug-neutral-light
-  bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text drop-shadow-sm"
+            className="text-2xl md:text-3xl font-semibold
+                       text-ug-text-heading mb-4
+                       border-b pb-3 border-ug-neutral-light
+                       bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading
+                       text-transparent bg-clip-text drop-shadow-sm"
           >
             Scent Notes
           </h3>
@@ -265,11 +289,15 @@ export default function PerfumeDetail() {
         initial="hidden"
         animate="visible"
         variants={itemVariants}
+        // No dark: prefixes needed here!
         className="bg-white border border-ug-neutral-light p-6 sm:p-8 rounded-3xl shadow-xl mt-12"
       >
         <h3
-          className="text-2xl md:text-3xl font-semibold text-ug-text-heading mb-4 border-b pb-3 border-ug-neutral-light
-  bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text drop-shadow-sm"
+          className="text-2xl md:text-3xl font-semibold
+                     text-ug-text-heading mb-4
+                     border-b pb-3 border-ug-neutral-light
+                     bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading
+                     text-transparent bg-clip-text drop-shadow-sm"
         >
           Why Choose Optimal Fragrance?
         </h3>
@@ -295,7 +323,7 @@ export default function PerfumeDetail() {
         <Link
           href="/perfumes"
           className="inline-flex items-center text-ug-purple-primary font-medium hover:underline text-lg transition-colors duration-200
-  hover:text-ug-purple-accent transform hover:-translate-x-1"
+                     hover:text-ug-purple-accent transform hover:-translate-x-1"
         >
           <FaChevronLeft className="mr-2" /> Back to catalog
         </Link>

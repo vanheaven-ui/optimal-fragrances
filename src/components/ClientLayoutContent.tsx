@@ -1,5 +1,5 @@
 // src/components/ClientLayoutContent.tsx
-"use client"; // This directive is crucial for this component
+"use client";
 
 import DrawerNavigation from "components/DrawerNavigation";
 import DeliveryMotorbikeSVG from "components/DeliveryBikeSVG";
@@ -10,30 +10,36 @@ import { usePathname } from "next/navigation";
 
 import MessageOfTheWeek from "./MessageOfTheWeek";
 import WhatsAppBanner from "./WhatsappBanner";
+import ThemeToggle from "./ThemeToggle";
 
 export default function ClientLayoutContent({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname(); // usePathname requires 'use client'
+  const pathname = usePathname();
   const whatsappChannelLink =
     "https://whatsapp.com/channel/0029Vaf9cCC1iUxWVnXWlO1i";
 
   return (
     <>
-      {/* NEW: WhatsApp Banner at the very top of the ClientLayoutContent.
-        This will appear above everything else.
-      */}
       <WhatsAppBanner channelLink={whatsappChannelLink} />
 
       <FirebaseProvider>
         <DrawerNavigation />
-        <div className="fixed top-4 right-4 z-10 w-20 sm:w-28 animate-moveBike">
+        <ThemeToggle />
+
+        {/* Delivery Motorbike Container (fixed bottom-right) */}
+        <div
+          className="fixed bottom-4 right-4 z-40
+                     w-20 animate-moveBike cursor-pointer
+                     transition-transform duration-300 hover:scale-105
+                     sm:w-24 md:w-28 lg:w-32"
+        >
           <DeliveryMotorbikeSVG />
         </div>
 
-        {/* AnimatePresence and motion.main need 'use client' */}
+        {/* AnimatePresence and motion.main (Adjusted padding-top) */}
         <AnimatePresence mode="wait">
           <motion.main
             key={pathname}
@@ -41,13 +47,8 @@ export default function ClientLayoutContent({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-            // IMPORTANT: Adjust padding-top here if the banner covers your content.
-            // A simple way is to add a dynamic class or extra padding.
-            // For example, if the banner is ~40px tall: `pt-[calc(4rem+40px)]`
-            // Assuming default pt-16 (4rem) is for DrawerNavigation.
-            // You might need to adjust this based on the exact height of your banner.
-            // Or use a more robust layout like flexbox column and make content scrollable below banner.
-            className="flex-grow pt-16 relative"
+            // Adjusted padding-top to bring content up slightly
+            className="flex-grow pt-[90px] sm:pt-[110px] md:pt-[130px] relative pb-20 sm:pb-24"
           >
             {children}
           </motion.main>
