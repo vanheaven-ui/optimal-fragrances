@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 /* 2. CSS Variables for Theming */
-/* These define the base (light mode) values for your custom color palette,
+/* These define the base (light mode) values for the custom color palette,
    background logo, and image overlay colors. */
 :root {
   /* Optimal Fragrance Custom Colors (Light Theme) */
@@ -19,7 +19,7 @@
   --color-ug-success: #38a169;
   --color-ug-error: #e53e3e;
 
-  /* Standard Colors (Light Theme) - Define if you use these directly in components */
+  /* Standard Colors (Light Theme) */
   --color-white: #ffffff;
   --color-black: #000000;
   --color-gray-300: #d1d5db;

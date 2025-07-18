@@ -20,7 +20,7 @@ export default function ThemeToggle() {
   }
 
   return (
-    <div className="fixed top-12 md:top-4 right-4 z-50 flex items-center space-x-2 p-1 rounded-full bg-ug-neutral-light dark:bg-ug-neutral-dark shadow-inner">
+    <div className="fixed top-4 right-4 z-50 flex items-center space-x-2 p-1 rounded-full bg-ug-neutral-light dark:bg-ug-neutral-dark shadow-inner">
       <button
         aria-label="Toggle Light Theme"
         onClick={() => setTheme("light")}

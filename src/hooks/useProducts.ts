@@ -1,7 +1,7 @@
 // src/hooks/useProducts.ts
 import { useState, useEffect } from "react";
 import { collection, getDocs, Firestore, query } from "firebase/firestore";
-import { Product } from "../data/product1";
+import { Product, products } from "../data/product1";
 import { useFirebase } from "../context/FirebaseContext";
 
 interface UseProductsResult {
@@ -16,7 +16,7 @@ interface UseProductsResult {
  */
 export const useProducts = (): UseProductsResult => {
   const { db, isAuthReady } = useFirebase(); // Get db instance and auth readiness from context
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products1, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

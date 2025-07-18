@@ -1,4 +1,3 @@
-// src/app/perfumes/page.tsx
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -24,12 +23,15 @@ export default function PerfumesPage() {
 
   const [selectedBrand, setSelectedBrand] = useState("All Brands");
   const [searchTerm, setSearchTerm] = useState("");
-  // New state for rating filter: 0 means 'All Ratings'
   const [selectedRating, setSelectedRating] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories"); // New state for category
+  const [selectedTopNote, setSelectedTopNote] = useState("All Top Notes"); // New state for top notes
+  const [selectedHeartNote, setSelectedHeartNote] = useState("All Heart Notes"); // New state for heart notes
+  const [selectedBaseNote, setSelectedBaseNote] = useState("All Base Notes"); // New state for base notes
+
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
 
-  // New state to manage loading of each featured image
   const [featuredImageLoading, setFeaturedImageLoading] = useState<{
     [id: string]: boolean;
   }>({});
@@ -40,7 +42,6 @@ export default function PerfumesPage() {
     return shuffledFeatured.slice(0, 2);
   }, [allProducts]);
 
-  // Initialize featured image loading states
   useEffect(() => {
     const initialLoadingState: { [id: string]: boolean } = {};
     topFeaturedProducts.forEach((product) => {
@@ -60,7 +61,44 @@ export default function PerfumesPage() {
     return ["All Brands", ...Array.from(brands).sort()];
   }, [allProducts]);
 
-  // Define rating options for the dropdown
+  const uniqueCategories = useMemo(() => {
+    const categories = new Set<string>();
+    allProducts.forEach(
+      (product) => product.category && categories.add(product.category)
+    );
+    return ["All Categories", ...Array.from(categories).sort()];
+  }, [allProducts]);
+
+  const uniqueTopNotes = useMemo(() => {
+    const notes = new Set<string>();
+    allProducts.forEach((product) =>
+      product.scentNotes?.topNotes
+        .split(",")
+        .forEach((note) => notes.add(note.trim()))
+    );
+    return ["All Top Notes", ...Array.from(notes).sort()];
+  }, [allProducts]);
+
+  const uniqueHeartNotes = useMemo(() => {
+    const notes = new Set<string>();
+    allProducts.forEach((product) =>
+      product.scentNotes?.heartNotes
+        .split(",")
+        .forEach((note) => notes.add(note.trim()))
+    );
+    return ["All Heart Notes", ...Array.from(notes).sort()];
+  }, [allProducts]);
+
+  const uniqueBaseNotes = useMemo(() => {
+    const notes = new Set<string>();
+    allProducts.forEach((product) =>
+      product.scentNotes?.baseNotes
+        .split(",")
+        .forEach((note) => notes.add(note.trim()))
+    );
+    return ["All Base Notes", ...Array.from(notes).sort()];
+  }, [allProducts]);
+
   const ratingOptions = useMemo(
     () => [
       { label: "All Ratings", value: 0 },
@@ -81,7 +119,19 @@ export default function PerfumesPage() {
         (product) =>
           product.name.toLowerCase().includes(lowerCaseSearchTerm) ||
           product.description.toLowerCase().includes(lowerCaseSearchTerm) ||
-          product.brand.toLowerCase().includes(lowerCaseSearchTerm)
+          product.brand.toLowerCase().includes(lowerCaseSearchTerm) ||
+          (product.scentNotes?.topNotes &&
+            product.scentNotes.topNotes
+              .toLowerCase()
+              .includes(lowerCaseSearchTerm)) ||
+          (product.scentNotes?.heartNotes &&
+            product.scentNotes.heartNotes
+              .toLowerCase()
+              .includes(lowerCaseSearchTerm)) ||
+          (product.scentNotes?.baseNotes &&
+            product.scentNotes.baseNotes
+              .toLowerCase()
+              .includes(lowerCaseSearchTerm))
       );
     }
 
@@ -91,20 +141,63 @@ export default function PerfumesPage() {
       );
     }
 
-    // New: Filter by rating
     if (selectedRating > 0) {
       productsToDisplay = productsToDisplay.filter(
         (product) => product.rating && product.rating >= selectedRating
       );
     }
 
+    // New: Filter by category
+    if (selectedCategory !== "All Categories") {
+      productsToDisplay = productsToDisplay.filter(
+        (product) => product.category === selectedCategory
+      );
+    }
+
+    // New: Filter by top notes
+    if (selectedTopNote !== "All Top Notes") {
+      productsToDisplay = productsToDisplay.filter((product) =>
+        product.scentNotes?.topNotes.includes(selectedTopNote)
+      );
+    }
+
+    // New: Filter by heart notes
+    if (selectedHeartNote !== "All Heart Notes") {
+      productsToDisplay = productsToDisplay.filter((product) =>
+        product.scentNotes?.heartNotes.includes(selectedHeartNote)
+      );
+    }
+
+    // New: Filter by base notes
+    if (selectedBaseNote !== "All Base Notes") {
+      productsToDisplay = productsToDisplay.filter((product) =>
+        product.scentNotes?.baseNotes.includes(selectedBaseNote)
+      );
+    }
+
     return productsToDisplay;
-  }, [selectedBrand, searchTerm, selectedRating, mainCollectionProducts]);
+  }, [
+    selectedBrand,
+    searchTerm,
+    selectedRating,
+    selectedCategory,
+    selectedTopNote,
+    selectedHeartNote,
+    selectedBaseNote,
+    mainCollectionProducts,
+  ]);
 
   useEffect(() => {
-    // Reset to first page when filters change
     setCurrentPage(1);
-  }, [selectedBrand, searchTerm, selectedRating]); // Add selectedRating to dependencies
+  }, [
+    selectedBrand,
+    searchTerm,
+    selectedRating,
+    selectedCategory,
+    selectedTopNote,
+    selectedHeartNote,
+    selectedBaseNote,
+  ]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -124,7 +217,11 @@ export default function PerfumesPage() {
   const clearFilters = () => {
     setSelectedBrand("All Brands");
     setSearchTerm("");
-    setSelectedRating(0); // Reset rating filter
+    setSelectedRating(0);
+    setSelectedCategory("All Categories"); // Reset category filter
+    setSelectedTopNote("All Top Notes"); // Reset top note filter
+    setSelectedHeartNote("All Heart Notes"); // Reset heart note filter
+    setSelectedBaseNote("All Base Notes"); // Reset base note filter
     setCurrentPage(1);
   };
 
@@ -139,7 +236,6 @@ export default function PerfumesPage() {
     } else {
       pageNumbers.push(1);
 
-      // Add "..." if needed after the first page
       if (currentPage > maxPagesToShow - 2 && totalPages > maxPagesToShow) {
         pageNumbers.push("...");
       }
@@ -167,7 +263,6 @@ export default function PerfumesPage() {
         }
       }
 
-      // Add "..." if needed before the last page
       if (
         currentPage < totalPages - Math.floor(maxPagesToShow / 2) &&
         totalPages > maxPagesToShow
@@ -198,15 +293,17 @@ export default function PerfumesPage() {
     );
   }
 
-  // Determine if any filters other than "All Brands" and "All Ratings" are active
   const areFiltersActive =
     selectedBrand !== "All Brands" ||
     searchTerm.trim() !== "" ||
-    selectedRating > 0;
+    selectedRating > 0 ||
+    selectedCategory !== "All Categories" ||
+    selectedTopNote !== "All Top Notes" ||
+    selectedHeartNote !== "All Heart Notes" ||
+    selectedBaseNote !== "All Base Notes";
 
   return (
     <div className="container mx-auto p-4 md:p-8 min-h-[calc(100vh-200px)]">
-      {/* Hero Section with Title and Description */}
       <section className="text-center mb-12 md:mb-16">
         <h1 className="text-5xl md:text-6xl font-extrabold text-ug-text-heading mb-4 leading-tight bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
           Our Perfume Collection
@@ -216,7 +313,7 @@ export default function PerfumesPage() {
           emotions and memories.
         </p>
       </section>
-      {/* Filtering Controls */}
+
       <div className="bg-ug-neutral-bg rounded-xl shadow-lg p-6 md:p-8 mb-12 flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 flex-wrap">
         {/* Search Bar */}
         <div className="relative w-full max-w-md">
@@ -226,8 +323,8 @@ export default function PerfumesPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="block w-full p-3 pl-10 border border-ug-neutral-light rounded-lg shadow-sm
-                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                          bg-white text-ug-text-dark placeholder-ug-text-dark/70"
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark placeholder-ug-text-dark/70"
           />
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ug-text-dark"
@@ -254,8 +351,8 @@ export default function PerfumesPage() {
           value={selectedBrand}
           onChange={(e) => setSelectedBrand(e.target.value)}
           className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                          bg-white text-ug-text-dark cursor-pointer"
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
         >
           {uniqueBrands.map((brand) => (
             <option key={brand} value={brand}>
@@ -264,7 +361,7 @@ export default function PerfumesPage() {
           ))}
         </select>
 
-        {/* New: Rating Filter Dropdown */}
+        {/* Rating Filter Dropdown */}
         <label htmlFor="rating-filter" className="sr-only">
           Filter by Rating
         </label>
@@ -273,12 +370,88 @@ export default function PerfumesPage() {
           value={selectedRating}
           onChange={(e) => setSelectedRating(Number(e.target.value))}
           className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
-                          focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
-                          bg-white text-ug-text-dark cursor-pointer"
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
         >
           {ratingOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
+            </option>
+          ))}
+        </select>
+
+        {/* New: Category Filter Dropdown */}
+        <label htmlFor="category-filter" className="sr-only">
+          Filter by Category
+        </label>
+        <select
+          id="category-filter"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
+        >
+          {uniqueCategories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+
+        {/* New: Top Note Filter Dropdown */}
+        <label htmlFor="top-note-filter" className="sr-only">
+          Filter by Top Note
+        </label>
+        <select
+          id="top-note-filter"
+          value={selectedTopNote}
+          onChange={(e) => setSelectedTopNote(e.target.value)}
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
+        >
+          {uniqueTopNotes.map((note) => (
+            <option key={note} value={note}>
+              {note}
+            </option>
+          ))}
+        </select>
+
+        {/* New: Heart Note Filter Dropdown */}
+        <label htmlFor="heart-note-filter" className="sr-only">
+          Filter by Heart Note
+        </label>
+        <select
+          id="heart-note-filter"
+          value={selectedHeartNote}
+          onChange={(e) => setSelectedHeartNote(e.target.value)}
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
+        >
+          {uniqueHeartNotes.map((note) => (
+            <option key={note} value={note}>
+              {note}
+            </option>
+          ))}
+        </select>
+
+        {/* New: Base Note Filter Dropdown */}
+        <label htmlFor="base-note-filter" className="sr-only">
+          Filter by Base Note
+        </label>
+        <select
+          id="base-note-filter"
+          value={selectedBaseNote}
+          onChange={(e) => setSelectedBaseNote(e.target.value)}
+          className="block w-full max-w-md p-3 border border-ug-neutral-light rounded-lg shadow-sm
+                        focus:ring-ug-purple-primary focus:border-ug-purple-primary text-lg
+                        bg-white text-ug-text-dark cursor-pointer"
+        >
+          {uniqueBaseNotes.map((note) => (
+            <option key={note} value={note}>
+              {note}
             </option>
           ))}
         </select>
@@ -293,7 +466,7 @@ export default function PerfumesPage() {
           </button>
         )}
       </div>
-      {/* Dynamic Featured Products Section */}
+
       {topFeaturedProducts.length > 0 && (
         <section className="mb-12 border-b border-ug-neutral-light pb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-ug-purple-primary text-center mb-8 bg-gradient-to-r from-ug-purple-primary via-ug-text-dark to-ug-text-heading text-transparent bg-clip-text">
@@ -306,7 +479,6 @@ export default function PerfumesPage() {
                 className="relative bg-white rounded-lg shadow-xl overflow-hidden group hover:shadow-2xl transition-shadow duration-300"
               >
                 <div className="relative w-full aspect-[4/3] overflow-hidden">
-                  {/* Spinner for featured image */}
                   {featuredImageLoading[product.id] && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10 rounded-lg">
                       <div
@@ -320,14 +492,14 @@ export default function PerfumesPage() {
                   <Image
                     src={product.imageUrl}
                     alt={product.name}
-                    fill // Changed to fill to correctly size within the parent div
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Added sizes for optimization
-                    style={{ objectFit: "cover" }} // Ensure object fit
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
                     className={`absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out
                                 ${
                                   featuredImageLoading[product.id]
                                     ? "opacity-0"
-                                    : "opacity-100" // Hide until loaded
+                                    : "opacity-100"
                                 }`}
                     onLoadingComplete={() =>
                       setFeaturedImageLoading((prev) => ({
@@ -339,13 +511,12 @@ export default function PerfumesPage() {
                       setFeaturedImageLoading((prev) => ({
                         ...prev,
                         [product.id]: false,
-                      })); // Hide spinner on error
+                      }));
                       e.currentTarget.src =
                         "https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found";
                     }}
                   />
-                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg z-[5]"></div>{" "}
-                  {/* Adjusted z-index */}
+                  <div className="absolute inset-0 bg-ug-purple-primary opacity-20 group-hover:opacity-30 transition-opacity duration-300 rounded-lg z-[5]"></div>
                 </div>
                 <div className="p-4 text-center">
                   <h3 className="text-xl font-bold text-ug-text-heading mb-2">
@@ -357,7 +528,6 @@ export default function PerfumesPage() {
                   {product.rating && (
                     <div className="flex items-center justify-center mt-3">
                       <div className="flex text-lg">
-                        {/* Re-using renderStars logic if available, or inline */}
                         {(() => {
                           const stars = [];
                           for (let i = 1; i <= 5; i++) {
@@ -400,6 +570,7 @@ export default function PerfumesPage() {
           </div>
         </section>
       )}
+
       {currentProducts.length === 0 ? (
         <div className="text-center py-10 bg-ug-neutral-light rounded-xl shadow-inner mt-8">
           <p className="text-2xl text-ug-text-dark mb-4">
@@ -417,13 +588,12 @@ export default function PerfumesPage() {
         </div>
       ) : (
         <>
-          {/* Product Grid (Paginated) - Two rows of 4 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {currentProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          {/* Pagination Controls - Modernized */}
+
           {totalPages > 1 && (
             <nav
               className="flex justify-center items-center space-x-2 mt-12"
@@ -442,11 +612,11 @@ export default function PerfumesPage() {
                     key={index}
                     onClick={() => paginate(pageNumber)}
                     className={`p-3 min-w-[40px] rounded-lg font-semibold transition-colors duration-200 text-base
-                                  ${
-                                    currentPage === pageNumber
-                                      ? "bg-ug-purple-primary text-white shadow-md"
-                                      : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
-                                  }`}
+                                ${
+                                  currentPage === pageNumber
+                                    ? "bg-ug-purple-primary text-white shadow-md"
+                                    : "bg-ug-neutral-bg text-ug-text-dark hover:bg-ug-neutral-light"
+                                }`}
                   >
                     {pageNumber}
                   </button>

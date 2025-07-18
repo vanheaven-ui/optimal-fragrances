@@ -56,8 +56,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {" "}
-      {/* <--- Add suppressHydrationWarning here */}
       <body
         // The classes for body will now implicitly be handled by Tailwind's dark mode
         // based on whether the 'dark' class is present on the html element.
