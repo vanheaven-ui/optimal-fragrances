@@ -20,6 +20,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
+import { FirebaseError } from "firebase/app"; // Import FirebaseError
 
 // Use environment variables (MUST start with NEXT_PUBLIC_ for client-side access)
 const FIREBASE_CONFIG = {
@@ -39,7 +40,12 @@ let authInstance: Auth | null = null;
 
 export const getFirebaseInstances = () => {
   if (appInstance && dbInstance && authInstance) {
-    return { app: appInstance, db: dbInstance, auth: authInstance, error: null };
+    return {
+      app: appInstance,
+      db: dbInstance,
+      auth: authInstance,
+      error: null,
+    };
   }
 
   try {
@@ -58,9 +64,30 @@ export const getFirebaseInstances = () => {
       auth: authInstance,
       error: null,
     };
-  } catch (e: any) {
-    console.error("Error initializing Firebase:", e);
-    return { app: null, db: null, auth: null, error: e };
+  } catch (caughtError: unknown) {
+    console.error("Error initializing Firebase:", caughtError);
+
+    let errorMessage: string =
+      "An unknown error occurred during Firebase initialization.";
+    let errorObject: Error | FirebaseError | unknown = caughtError; // Keep the original for logging
+
+    if (caughtError instanceof FirebaseError) {
+      errorMessage = `Firebase Error: ${caughtError.message} (Code: ${caughtError.code})`;
+      // If you want to return a FirebaseError instance, use it directly
+      errorObject = caughtError;
+    } else if (caughtError instanceof Error) {
+      errorMessage = `General Error: ${caughtError.message}`;
+      // If you want to return a standard Error instance, use it directly
+      errorObject = caughtError;
+    } else if (typeof caughtError === "string") {
+      errorMessage = `String Error: ${caughtError}`;
+      errorObject = new Error(errorMessage); // Wrap string in Error object for consistency
+    }
+
+    // Return an Error object for consistency in the 'error' property.
+    // We now use errorObject, which might be a FirebaseError, Error, or wrapped string.
+    // Casting to Error ensures consistency with the return type of the hook.
+    return { app: null, db: null, auth: null, error: errorObject as Error };
   }
 };
 
