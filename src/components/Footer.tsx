@@ -1,14 +1,13 @@
-// src/components/Footer.tsx
 "use client";
 
 import Link from "next/link";
-import RotatingFooterTagline from "./RotatingFooterTagline"; // Import the new component
+import RotatingFooterTagline from "./RotatingFooterTagline";
 import {
   FaFacebookF,
   FaTwitter,
   FaInstagram,
   FaWhatsapp,
-} from "react-icons/fa"; // Import social media icons
+} from "react-icons/fa";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -60,7 +59,7 @@ export default function Footer() {
           {/* Social Media Icons (Right aligned on larger screens) */}
           <div className="flex justify-center md:justify-end space-x-6 text-2xl">
             <a
-              href="https://facebook.com/your-optimal-fragrance-page" // Replace with actual Facebook URL
+              href="https://facebook.com/your-optimal-fragrance-page"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
@@ -69,7 +68,7 @@ export default function Footer() {
               <FaFacebookF />
             </a>
             <a
-              href="https://twitter.com/your-optimal-fragrance-page" // Replace with actual Twitter URL
+              href="https://twitter.com/your-optimal-fragrance-page"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Twitter"
@@ -78,7 +77,7 @@ export default function Footer() {
               <FaTwitter />
             </a>
             <a
-              href="https://instagram.com/your-optimal-fragrance-page" // Replace with actual Instagram URL
+              href="https://instagram.com/your-optimal-fragrance-page"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"

@@ -1,26 +1,25 @@
-// components/admin/AdminProductForm.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
-  doc, // Keep doc for updateDoc
+  doc, 
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { useFirebase } from "../context/FirebaseContext";
 import FragranceLoader from "components/FragranceLoader";
 import Image from "next/image";
-import Link from "next/link"; // For the cancel button
+import Link from "next/link";
 
-// Define the Product interface
+// Product interface
 export interface Product {
   id?: string; // ID is optional when creating, Firestore generates it
   name: string;
   brand: string;
-  price?: number; // Price is now optional as per your data.ts file
-  imageUrl: string; // Keep as string, but required status changes
+  price?: number; 
+  imageUrl: string; 
   description: string;
   category: "men" | "women" | "unisex";
   featured: boolean;
@@ -32,18 +31,18 @@ export interface Product {
   };
   createdAt?: Date; // To store creation timestamp
   updatedAt?: Date; // To store update timestamp
-  rating?: number; // ADDED: Trusted rating for the product (e.g., 1.0 to 5.0)
-  ratingSource?: string; // ADDED: Source of the rating for credibility
+  rating?: number; 
+  ratingSource?: string; 
 }
 
 interface AdminProductFormProps {
-  initialProduct?: Product; // Optional prop for pre-filling the form (for editing)
-  isEditMode?: boolean; // Indicate if the form is in edit mode
+  initialProduct?: Product; 
+  isEditMode?: boolean; 
 }
 
 const AdminProductForm: React.FC<AdminProductFormProps> = ({
   initialProduct,
-  isEditMode: propIsEditMode = false, // Default to false if not provided
+  isEditMode: propIsEditMode = false, 
 }) => {
   const { db, isAuthReady } = useFirebase();
   const [formData, setFormData] = useState<Product>(

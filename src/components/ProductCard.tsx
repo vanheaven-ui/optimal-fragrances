@@ -1,4 +1,3 @@
-// src/components/ProductCard.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -76,7 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
 
           {/* NEW: Theme-aware Hover Overlay */}
-          {/* This div will use the image-overlay-on-hover class from globals.css */}
+          {/* This div uses the image-overlay-on-hover class from globals.css */}
           <div className="image-overlay-on-hover"></div>
 
           {/* Existing Hover Content (FaEye Icon) - Ensure it's above the overlay */}

@@ -2,13 +2,13 @@
 "use client"; // If this component is used in a Next.js App Router client component context
 
 import React, { useState } from "react";
-import Link from "next/link"; 
-import { Product } from "../data/product"; 
+import Link from "next/link";
+import { Product } from "../data/product";
 import ProductCard from "./ProductCard";
 
 // Define the props interface for this component
 interface CuratedProductsSectionProps {
-  curatedProducts: Product[]; 
+  curatedProducts: Product[];
 }
 
 const CuratedProductsSection: React.FC<CuratedProductsSectionProps> = ({
@@ -17,12 +17,10 @@ const CuratedProductsSection: React.FC<CuratedProductsSectionProps> = ({
   const [isViewingAllPerfumes, setIsViewingAllPerfumes] = useState(false);
 
   const handleViewAllPerfumesClick = () => {
-    // In a real application, you might navigate using router.push
-    // or trigger a loading state for a full page transition.
     setIsViewingAllPerfumes(true);
     // Simulate a delay for demonstration, remove in production if not needed
     setTimeout(() => {
-      // You would typically use router.push('/perfumes'); here
+      // use router.push('/perfumes'); here
       // For this example, we'll just reset the loading state
       setIsViewingAllPerfumes(false);
     }, 1500);

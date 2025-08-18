@@ -1,9 +1,8 @@
-// src/app/layout.tsx
-// NO 'use client' directive here anymore! This file is now a Server Component.
+// NO 'use client' directive here because the file is a Server Component.
 
-import "./globals.css"; // Your global styles
-import ClientLayoutContent from "components/ClientLayoutContent"; // Import the existing client component
-import { ThemeProvider } from "components/ThemeProvider"; // <--- Import the new ThemeProvider
+import "./globals.css"; 
+import ClientLayoutContent from "components/ClientLayoutContent"; 
+import { ThemeProvider } from "components/ThemeProvider";
 
 export const metadata = {
   title: {
@@ -31,7 +30,7 @@ export const metadata = {
     siteName: "Optimal Fragrance",
     images: [
       {
-        url: "https://www.optimalfragrance.ug/og-image.jpg",
+        url: "https://optimalfragrance.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Optimal Fragrance Banner",
@@ -45,7 +44,7 @@ export const metadata = {
     title: "Optimal Fragrance",
     description: "Discover unique scents for every personality.",
     creator: "@optimalfragrance",
-    images: ["https://www.optimalfragrance.ug/twitter-image.jpg"],
+    images: ["https://optimalfragrance.vercel.app/twitter-image.jpg"],
   },
 };
 
@@ -59,10 +58,8 @@ export default function RootLayout({
       <body
         // The classes for body will now implicitly be handled by Tailwind's dark mode
         // based on whether the 'dark' class is present on the html element.
-        // You generally don't need to change this part of the className
         className={`font-sans bg-ug-neutral-bg text-ug-text-dark relative overflow-x-hidden`}
       >
-        {/* Wrap ClientLayoutContent with ThemeProvider */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ClientLayoutContent>{children}</ClientLayoutContent>
         </ThemeProvider>

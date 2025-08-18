@@ -11,9 +11,9 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useFirebase } from "../context/FirebaseContext"
+import { useFirebase } from "../context/FirebaseContext";
 
-// Define the BlogPost interface (can be in a central types file too)
+// BlogPost interface
 export interface BlogPost {
   id?: string;
   slug: string;
@@ -26,8 +26,8 @@ export interface BlogPost {
   seoTitle?: string;
   seoDescription?: string;
   keywords?: string[];
-  createdAt?: Date; // For retrieved data
-  updatedAt?: Date; // For retrieved data
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // This component can be re-used for editing by passing `initialPost` prop
@@ -207,7 +207,6 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
   };
 
   return (
-    // Your form JSX goes here
     <form
       onSubmit={handleSubmit}
       className="bg-white p-6 rounded-lg shadow-md space-y-6"
@@ -227,9 +226,6 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ initialPost }) => {
           {statusMessage.message}
         </div>
       )}
-
-      {/* Your form fields for title, slug, author, etc. */}
-      {/* ... (rest of your form JSX) ... */}
 
       <div>
         <label

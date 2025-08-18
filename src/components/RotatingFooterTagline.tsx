@@ -1,4 +1,3 @@
-// src/components/RotatingFooterTagline.tsx
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
@@ -38,11 +37,8 @@ const RotatingFooterTagline: React.FC = () => {
 
   return (
     <p className="italic mb-4">
-      {" "}
-      {/* Container for the tagline, applying italic style and bottom margin */}
       <span className="text-sm font-semibold bg-gradient-to-r from-ug-purple-primary via-white to-pink-400 text-transparent bg-clip-text">
-        {TAGLINES[currentTaglineIndex]}{" "}
-        {/* Displays the current rotating tagline with the gradient */}
+        {TAGLINES[currentTaglineIndex]}
       </span>
     </p>
   );

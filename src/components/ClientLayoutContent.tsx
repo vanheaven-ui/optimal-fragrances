@@ -1,4 +1,3 @@
-// src/components/ClientLayoutContent.tsx
 "use client";
 
 import DrawerNavigation from "components/DrawerNavigation";
@@ -39,7 +38,7 @@ export default function ClientLayoutContent({
           <DeliveryMotorbikeSVG />
         </div>
 
-        {/* AnimatePresence and motion.main (Adjusted padding-top) */}
+        {/* AnimatePresence and motion.main */}
         <AnimatePresence mode="wait">
           <motion.main
             key={pathname}
@@ -47,7 +46,6 @@ export default function ClientLayoutContent({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-            // Adjusted padding-top to bring content up slightly
             className="flex-grow pt-[90px] sm:pt-[110px] md:pt-[130px] relative pb-20 sm:pb-24"
           >
             {children}

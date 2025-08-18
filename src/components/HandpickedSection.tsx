@@ -1,8 +1,8 @@
-// src/components/HandpickedSection.tsx
 import React from "react";
 import { Product } from "../data/product";
 import SpotlightProduct from "./SpotLightProduct";
-// Define the props interface for this component
+
+// Props Interface
 interface HandpickedSectionProps {
   spotlightProducts: Product[]; // Expects an array of Product objects
 }
@@ -38,7 +38,6 @@ const HandpickedSection: React.FC<HandpickedSectionProps> = ({
                 reverseLayout={true}
               />
             )}
-            {/* You can add more SpotlightProduct components here for additional items */}
           </>
         ) : (
           <p className="text-center text-xl md:text-2xl font-semibold text-ug-text-dark animate-fade-in">

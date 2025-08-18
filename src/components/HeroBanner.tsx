@@ -17,7 +17,7 @@ export default function HeroBanner() {
         </p>
       </div>
 
-      {/* Perfume Bottle SVG - Re-calibrated for all screens */}
+      {/* Perfume Bottle SVG - Calibrated for all screens */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <svg
           width="100%"

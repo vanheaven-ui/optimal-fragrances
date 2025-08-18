@@ -1,5 +1,3 @@
-/* src/app/globals.css */
-
 /* 1. Tailwind CSS Directives - ALWAYS at the very top */
 @tailwind base;
 @tailwind components;
@@ -29,7 +27,6 @@
   --color-red-600: #dc2626;
 
   /* Background Logo Variables (Light Theme) */
-  /* RECOMMENDED: Create '/optimal.png' for best results */
   --bg-logo-image: url("/optimal.png");
   --bg-logo-opacity: 0.03; /* Very subtle in light mode */
   --bg-logo-position: center center; /* Keep centered to fill the area with 'cover' */

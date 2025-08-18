@@ -1,9 +1,8 @@
-// src/components/WhatsAppBanner.tsx
 "use client";
 
-import React, { useState } from "react"; // Only useState is needed if no useEffect for localStorage
+import React, { useState } from "react";
 import Link from "next/link";
-import { FaWhatsapp } from "react-icons/fa"; // Assuming you have react-icons installed
+import { FaWhatsapp } from "react-icons/fa";
 
 interface WhatsAppBannerProps {
   channelLink: string;
