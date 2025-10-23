@@ -1,16 +1,17 @@
-// src/context/FirebaseContext.tsx
 "use client";
 
 import React, {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   ReactNode,
 } from "react";
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import {
   getAuth,
+  onAuthStateChanged,
   signInWithCustomToken,
   signOut,
   Auth,
@@ -18,143 +19,105 @@ import {
 } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
+// Define context shape
 interface FirebaseContextType {
   db: Firestore | null;
   auth: Auth | null;
-  userId: string | null;
+  user: User | null;
   isAuthReady: boolean;
   logout: () => Promise<void>;
 }
 
+// Context
 const FirebaseContext = createContext<FirebaseContextType | undefined>(
   undefined
 );
 
-declare global {
-  interface Window {
-    __firebase_config?: string;
-    __initial_auth_token?: string;
-    __app_id?: string;
-  }
-}
-
+// Props
 interface FirebaseProviderProps {
   children: ReactNode;
 }
 
+// Firebase init helper (ensures single instance)
+function initFirebaseApp(): FirebaseApp {
+  const config = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
+  };
+
+  if (!getApps().length) {
+    return initializeApp(config);
+  }
+  return getApp();
+}
+
+// Provider
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
 }) => {
-  const [db, setDb] = useState<Firestore | null>(null);
   const [auth, setAuth] = useState<Auth | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [isAuthReady, setIsAuthReady] = useState<boolean>(false);
+  const [db, setDb] = useState<Firestore | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
-    let firebaseApp: FirebaseApp;
-
     try {
-      const firebaseConfigString =
-        typeof window !== "undefined" ? window.__firebase_config : undefined;
-      let firebaseConfig: object;
+      const app = initFirebaseApp();
+      const authInstance = getAuth(app);
+      const dbInstance = getFirestore(app);
 
-      if (firebaseConfigString) {
-        try {
-          firebaseConfig = JSON.parse(firebaseConfigString);
-        } catch (e) {
-          console.error("Error parsing __firebase_config:", e);
-          firebaseConfig = {
-            apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-            authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-            storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-            messagingSenderId:
-              process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-            appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-            measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
-          };
-        }
-      } else {
-        console.warn("No __firebase_config found. Using fallback config.");
-        firebaseConfig = {
-          apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-          authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-          storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-          messagingSenderId:
-            process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-          appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-          measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!,
-        };
-      }
-
-      if (!getApps().length) {
-        firebaseApp = initializeApp(firebaseConfig);
-      } else {
-        firebaseApp = getApp();
-      }
-
-      const firestoreInstance = getFirestore(firebaseApp);
-      const authInstance = getAuth(firebaseApp);
-
-      setDb(firestoreInstance);
       setAuth(authInstance);
+      setDb(dbInstance);
 
-      const initialAuthToken =
-        typeof window !== "undefined" ? window.__initial_auth_token : undefined;
+      // Optional: authenticate with a pre-fetched custom token (if provided)
+      const token =
+        typeof window !== "undefined"
+          ? (window as any).__initial_auth_token
+          : undefined;
 
-      const authenticate = async () => {
-        try {
-          if (initialAuthToken) {
-            await signInWithCustomToken(authInstance, initialAuthToken);
-            console.log("Firebase: Authenticated with custom token.");
+      if (token) {
+        signInWithCustomToken(authInstance, token).catch((err) => {
+          if (process.env.NODE_ENV !== "production") {
+            console.error("Firebase: custom token sign-in failed:", err);
           }
-        } catch (error) {
-          console.error("Firebase Authentication failed:", error);
-        } finally {
-          setIsAuthReady(true);
-        }
-      };
+        });
+      }
 
-      authenticate();
-    } catch (error) {
-      console.error("Failed to initialize Firebase:", error);
+      const unsub = onAuthStateChanged(authInstance, (currentUser) => {
+        setUser(currentUser);
+        setIsAuthReady(true);
+      });
+
+      return () => unsub();
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Firebase initialization failed:", err);
+      }
       setIsAuthReady(true);
     }
   }, []);
 
-  // Listen for changes in auth state
-  useEffect(() => {
-    if (auth) {
-      const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
-        if (user) {
-          setUserId(user.uid);
-          console.log("Firebase Auth State Changed: User ID set:", user.uid);
-        } else {
-          setUserId(null);
-          console.log("Firebase Auth State Changed: No authenticated user.");
-        }
-      });
-      return () => unsubscribe();
-    }
-  }, [auth]);
-
-  // Clean logout function
   const logout = async () => {
-    if (auth) {
-      try {
-        await signOut(auth);
-        setUserId(null);
-        console.log("User signed out successfully.");
-        // Optional: Clear token from localStorage or cookies if used
-        // localStorage.removeItem("your_custom_token");
-      } catch (error) {
-        console.error("Error signing out:", error);
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Sign out failed:", err);
       }
     }
   };
 
-  const contextValue = { db, auth, userId, isAuthReady, logout };
+  const contextValue = useMemo(
+    () => ({ db, auth, user, isAuthReady, logout }),
+    [db, auth, user, isAuthReady]
+  );
 
   return (
     <FirebaseContext.Provider value={contextValue}>
@@ -163,9 +126,10 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   );
 };
 
+// Hook
 export const useFirebase = () => {
   const context = useContext(FirebaseContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useFirebase must be used within a FirebaseProvider");
   }
   return context;

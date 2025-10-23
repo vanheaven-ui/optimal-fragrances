@@ -185,7 +185,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="flex min-h-screen bg-ug-neutral-bg">
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:block w-64 bg-ug-text-heading text-white p-6 shadow-lg fixed top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <aside className="hidden md:block w-64 bg-ug-text-heading text-white p-6 shadow-lg fixed top-16 h-[calc(100vh-4rem)] overflow-y-auto z-[9999]">
         <h2 className="text-3xl font-bold mb-8 text-ug-purple-primary mt-10">
           Admin Panel
         </h2>

@@ -1,5 +1,3 @@
-// NO 'use client' directive here because the file is a Server Component.
-
 import "./globals.css"; 
 import ClientLayoutContent from "components/ClientLayoutContent"; 
 import { ThemeProvider } from "components/ThemeProvider";

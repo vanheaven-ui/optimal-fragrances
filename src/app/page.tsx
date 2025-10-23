@@ -214,6 +214,8 @@ const TOP_SELLING_WOMEN_PERFUMES_NOTES: PerfumeNote[] = [
 export default function HomePage() {
   const { products, loading, error } = useProducts();
 
+  console.log("Fetched products:", products);
+
   const allFeaturedProducts = useMemo(() => {
     return products.filter((p) => p.featured);
   }, [products]);
