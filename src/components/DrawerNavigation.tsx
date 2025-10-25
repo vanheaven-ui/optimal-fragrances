@@ -1,11 +1,8 @@
-// src/components/DrawerNavigation.tsx
-"use client"; // This is a client component as it manages state and user interaction
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
-// Using standard <a> tags for navigation instead of Next.js Link
 
-// Replaced react-icons/fa with inline SVG equivalents to resolve import issues
 const IconBars = () => (
   <svg
     className="h-6 w-6"
@@ -55,11 +52,8 @@ export default function DrawerNavigation() {
     <>
       {/* Hamburger Icon / Menu Button with Tooltip */}
       <div className="relative group">
-        {/* Wrapper for tooltip */}
         <button
           onClick={toggleDrawer}
-          // Changed background back to ug-purple-primary
-          // Added a white border for contrast
           className="fixed top-4 left-4 z-50 p-3 rounded-full bg-ug-purple-primary text-white shadow-lg
                      border-2 border-white // Added border for visibility
                      hover:bg-ug-purple-accent focus:outline-none focus:ring-2 focus:ring-ug-purple-accent
@@ -69,17 +63,16 @@ export default function DrawerNavigation() {
           <IconBars /> {/* Using inline SVG icon */}
         </button>
         {/* Tooltip content */}
-        {/* Adjusted text content */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-1 bg-ug-text-heading text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
-          Click to open menu {/* Changed text here */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-ug-text-heading"></div>
+        <div className="absolute left-1/4 -translate-x-1/4 bottom-full mb-2 px-3 py-1 bg-ug-text-heading text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+          Click to open menu
+          <div className="absolute left-1/4 -translate-x-1/4 top-full w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-ug-text-heading"></div>
         </div>
       </div>
 
       {/* Drawer Overlay (to dim background when open) */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" // Hidden on medium screens and up
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={closeDrawer}
         ></div>
       )}
@@ -129,6 +122,15 @@ export default function DrawerNavigation() {
             </li>
             <li>
               <Link
+                href="/about-us"
+                className="block text-xl text-ug-text-heading hover:text-ug-purple-primary font-semibold py-2 px-3 rounded-lg transition-colors duration-200"
+                onClick={closeDrawer}
+              >
+                Our Story
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/contact"
                 className="block text-xl text-ug-text-heading hover:text-ug-purple-primary font-semibold py-2 px-3 rounded-lg transition-colors duration-200"
                 onClick={closeDrawer}
@@ -154,7 +156,6 @@ export default function DrawerNavigation() {
                 Admin Login
               </Link>
             </li>
-            {/* Add more links here as needed */}
           </ul>
         </nav>
       </div>

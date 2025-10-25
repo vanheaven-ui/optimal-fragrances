@@ -19,6 +19,7 @@
 
 # production
 /build
+/utils/uploadData.js
 
 # misc
 .DS_Store

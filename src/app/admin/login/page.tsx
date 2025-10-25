@@ -9,11 +9,46 @@ import {
 import { getFirebaseInstances } from "../../../lib/firebase";
 import FragranceLoader from "components/FragranceLoader";
 
+// -----------------------------------------------------
+// NEW COMPONENT: UniquePulsingButtonLoader
+// -----------------------------------------------------
+const UniquePulsingButtonLoader: React.FC = () => (
+  // Container for the animation
+  <div className="flex items-center justify-center space-x-1">
+    <div className="relative w-4 h-4">
+      {/* Central "Orbiting" Dot */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white animate-pulse-slow-reverse"></div>
+
+      {/* Outer Rotating Dot (The unique part) */}
+      <div className="absolute w-full h-full animate-spin-slow">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white shadow-lg"></div>
+      </div>
+    </div>
+    <span className="text-sm font-medium">Logging in...</span>
+  </div>
+);
+
+// NOTE: You need to add the following keyframes to your global CSS (e.g., globals.css or tailwind.config.js):
+/*
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse-slow-reverse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+*/
+
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // Manages loading state during initial auth check
+
+  // NEW STATE: Manages loading state during the signInWithEmailAndPassword attempt
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
   const [authInstance, setAuthInstance] = useState<Auth | null>(null); // State to hold the Firebase Auth instance
 
   useEffect(() => {
@@ -56,10 +91,16 @@ export default function AdminLoginPage() {
       return;
     }
 
+    // START SIGN-IN LOADING
+    setIsSigningIn(true);
+
     try {
       await signInWithEmailAndPassword(authInstance, email, password);
-      // The onAuthStateChanged listener above will handle the redirect
-    } catch (firebaseError: any) {
+      // Success: The onAuthStateChanged listener will handle the redirect
+    } catch (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      firebaseError: any
+    ) {
       // Handle Firebase specific errors
       let errorMessage = "An unexpected error occurred during login.";
       switch (firebaseError.code) {
@@ -77,6 +118,9 @@ export default function AdminLoginPage() {
           errorMessage = firebaseError.message;
       }
       setError(errorMessage);
+
+      // END SIGN-IN LOADING ON FAILURE
+      setIsSigningIn(false);
     }
   };
 
@@ -105,6 +149,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isSigningIn}
             />
           </div>
           <div className="mb-6">
@@ -121,16 +166,25 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isSigningIn}
             />
           </div>
           {error && (
             <p className="text-red-500 text-sm text-center mb-4">{error}</p>
           )}
+
+          {/* UPDATED BUTTON WITH LOADER LOGIC */}
           <button
             type="submit"
-            className="w-full bg-ug-purple-primary text-white p-3 rounded-lg font-semibold hover:bg-ug-purple-accent transition duration-300"
+            className={`w-full text-white p-3 rounded-lg font-semibold transition duration-300 flex items-center justify-center
+                ${
+                  isSigningIn
+                    ? "bg-ug-purple-accent cursor-not-allowed" // Loading state style
+                    : "bg-ug-purple-primary hover:bg-ug-purple-accent" // Default state style
+                }`}
+            disabled={isSigningIn}
           >
-            Login
+            {isSigningIn ? <UniquePulsingButtonLoader /> : "Login"}
           </button>
         </form>
       </div>

@@ -1,4 +1,3 @@
-// components/FragranceLoader.tsx
 import React from "react";
 
 interface FragranceLoaderProps {

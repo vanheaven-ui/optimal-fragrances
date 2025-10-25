@@ -16,23 +16,6 @@ import { FirebaseError } from "firebase/app";
 import { BlogPost } from "../../data/blogPosts";
 import FragranceLoader from "components/FragranceLoader";
 
-// // Re-define or import the BlogPost interface if it's not globally available
-// // Ensure this matches the structure you're saving to Firestore.
-// export interface BlogPost {
-//   id: string;
-//   title: string;
-//   author: string;
-//   date: string; // Stored as a date string (YYYY-MM-DD)
-//   imageUrl?: string;
-//   excerpt: string;
-//   content: string;
-//   slug: string;
-//   seoTitle?: string;
-//   seoDescription?: string;
-//   keywords?: string[];
-//   createdAt?: Date;
-//   updatedAt?: Date;
-// }
 
 export default function BlogPage() {
   const { db, isAuthReady } = useFirebase(); // Get db instance and auth status

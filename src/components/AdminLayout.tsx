@@ -1,11 +1,10 @@
-// src/components/AdminLayout.tsx
 "use client";
 
 import React, { useEffect, useState, ReactNode } from "react";
-import { useRouter } from "next/navigation"; // Next 13+ app router
-import Link from "next/link"; // Import Link for internal navigation
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { onAuthStateChanged, signOut, Auth } from "firebase/auth";
-import { getFirebaseInstances } from "../lib/firebase"; // Your Firebase utility
+import { getFirebaseInstances } from "../lib/firebase";
 import FragranceLoader from "./FragranceLoader";
 
 // Inline SVG for Hamburger icon
@@ -54,7 +53,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // NEW STATE for logout loading
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [authInstance, setAuthInstance] = useState<Auth | null>(null);
   const [firebaseInitError, setFirebaseInitError] = useState<string | null>(
     null
@@ -107,7 +106,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return () => {
       unsubscribe();
     };
-  }, [router, isLoggingOut]); // Added isLoggingOut to dependency array
+  }, [router, isLoggingOut]);
 
   const handleLogout = async () => {
     if (authInstance) {
@@ -134,8 +133,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {/* A simple spinning circle or pulse for a loading animation */}
           <div className="absolute inset-0 border-4 border-ug-neutral-light border-t-ug-text-heading rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-bold">✨</span>{" "}
-            {/* A fragrance-related emoji */}
+            <span className="text-4xl font-bold">✨</span>
           </div>
         </div>
         <h1 className="text-4xl font-bold mb-4 text-center">
@@ -187,7 +185,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <div className="flex min-h-screen bg-ug-neutral-bg">
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:block w-64 bg-ug-text-heading text-white p-6 shadow-lg fixed top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <aside className="hidden md:block w-64 bg-ug-text-heading text-white p-6 shadow-lg fixed top-16 h-[calc(100vh-4rem)] overflow-y-auto z-[9999]">
         <h2 className="text-3xl font-bold mb-8 text-ug-purple-primary mt-10">
           Admin Panel
         </h2>

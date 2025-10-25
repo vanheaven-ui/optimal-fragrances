@@ -1,3 +1,4 @@
+// tailwind.config.js
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -6,9 +7,34 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
+
   theme: {
     extend: {
       keyframes: {
+        // ... (your existing keyframes)
+        fadeInDown: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        pulseFade: {
+          "0%, 100%": {
+            opacity: "0.6",
+            transform: "scaleX(0.8)",
+          },
+          "50%": {
+            opacity: "1",
+            transform: "scaleX(1)",
+          },
+        },
         moveBike: {
           "0%, 100%": { transform: "translateX(0)" },
           "50%": { transform: "translateX(-10px)" },
@@ -29,6 +55,7 @@ const config: Config = {
         },
       },
       animation: {
+        // ... (your existing animations)
         moveBike: "moveBike 6s ease-in-out infinite",
         "mist-diffusion": "mist-diffusion 3s ease-out infinite forwards",
         "particle-1": "particle-float 4s ease-in-out infinite",
@@ -36,17 +63,28 @@ const config: Config = {
         "particle-3": "particle-float 4.2s ease-in-out infinite",
         "particle-4": "particle-float 3.8s ease-in-out infinite",
         "pulse-light": "pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "fade-in-down": "fadeInDown 1s ease-out forwards",
+        "fade-in-up": "fadeInUp 1s ease-out forwards 0.2s",
+        "pulse-fade": "pulseFade 3s infinite ease-in-out",
+        "fade-in": "fadeIn 1s ease-out forwards",
       },
       colors: {
-        // Our custom color palette
-        "ug-purple-primary": "#6B46C1", // Primary purple
-        "ug-purple-accent": "#805AD5", // Lighter purple for accents
-        "ug-neutral-bg": "#F7FAFC", // Off-white for backgrounds
-        "ug-neutral-light": "#CBD5E0", // Light grey for borders/dividers
-        "ug-text-dark": "#4A5568", // Dark grey for body text
-        "ug-text-heading": "#2D3748", // Even darker grey for headings
-        "ug-success": "#38A169", // Green for success messages
-        "ug-error": "#E53E3E", // Red for error messages
+        // Define your colors using CSS variables (e.g., 'var(--color-primary)')
+        // These keys will be used in your Tailwind classes (e.g., `bg-primary`)
+        "ug-purple-primary": "var(--color-ug-purple-primary)",
+        "ug-purple-accent": "var(--color-ug-purple-accent)",
+        "ug-neutral-bg": "var(--color-ug-neutral-bg)",
+        "ug-neutral-light": "var(--color-ug-neutral-light)",
+        "ug-text-dark": "var(--color-ug-text-dark)",
+        "ug-text-heading": "var(--color-ug-text-heading)",
+        "ug-success": "var(--color-ug-success)",
+        "ug-error": "var(--color-ug-error)",
+        // Keep standard Tailwind colors like 'white', 'gray-300', 'yellow-400', 'green-600', 'red-600' etc. if you use them directly.
+        // For example, if you use 'white' for text on buttons:
+        white: "var(--color-white)", // Add a variable for white too for consistency
+        black: "var(--color-black)", // Add a variable for black
+        // If you still want to use non-variable colors like 'gray-300', you can leave them as is
+        // Or define them as variables for complete control.
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

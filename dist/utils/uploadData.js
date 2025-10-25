@@ -56,7 +56,8 @@ exports.uploadInitialData = uploadInitialData;
 var app_1 = require("firebase/app");
 var firestore_1 = require("firebase/firestore");
 var auth_1 = require("firebase/auth");
-var blogPosts_1 = require("../data/blogPosts");
+// import { blogPosts } from "../data/blogPosts";
+var product1_1 = require("../data/product1");
 // --- Firebase Configuration (for local development/manual run) ---
 // IMPORTANT: In the Canvas environment, __firebase_config and __initial_auth_token are provided globally.
 // For local testing outside Canvas, you might need to manually set these or your own config.
@@ -111,7 +112,7 @@ var auth = (0, auth_1.getAuth)(app);
  */
 function uploadInitialData() {
     return __awaiter(this, void 0, void 0, function () {
-        var _i, blogPosts_2, post, blogPostDocRef, error_1, authError_1;
+        var _i, products_1, product, productDocRef, error_1, authError_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -136,49 +137,31 @@ function uploadInitialData() {
                 case 5:
                     // --- Upload Products ---
                     console.log("Uploading products to 'products' collection...");
-                    // for (const product of products) {
-                    //   try {
-                    //     // Using setDoc with explicit ID to ensure your predefined IDs are used
-                    //     const productDocRef = doc(db, "products", product.id);
-                    //     await setDoc(productDocRef, {
-                    //       ...product,
-                    //       createdAt: serverTimestamp(), // Set server timestamp for creation
-                    //       updatedAt: serverTimestamp(), // Set server timestamp for last update
-                    //     });
-                    //     console.log(`✅ Uploaded product: ${product.name} (ID: ${product.id})`);
-                    //   } catch (error) {
-                    //     console.error(
-                    //       `❌ Failed to upload product ${product.name} (ID: ${product.id}):`,
-                    //       error
-                    //     );
-                    //   }
-                    // }
-                    // console.log("Products upload complete.");
-                    // --- Upload Blog Posts ---
-                    console.log("Uploading blog posts to 'blogPosts' collection...");
-                    _i = 0, blogPosts_2 = blogPosts_1.blogPosts;
+                    _i = 0, products_1 = product1_1.products;
                     _a.label = 6;
                 case 6:
-                    if (!(_i < blogPosts_2.length)) return [3 /*break*/, 11];
-                    post = blogPosts_2[_i];
+                    if (!(_i < products_1.length)) return [3 /*break*/, 11];
+                    product = products_1[_i];
                     _a.label = 7;
                 case 7:
                     _a.trys.push([7, 9, , 10]);
-                    blogPostDocRef = (0, firestore_1.doc)(db, "blogPosts", post.id);
-                    return [4 /*yield*/, (0, firestore_1.setDoc)(blogPostDocRef, __assign(__assign({}, post), { createdAt: (0, firestore_1.serverTimestamp)(), updatedAt: (0, firestore_1.serverTimestamp)() }))];
+                    productDocRef = (0, firestore_1.doc)(db, "products", product.id);
+                    return [4 /*yield*/, (0, firestore_1.setDoc)(productDocRef, __assign(__assign({}, product), { createdAt: (0, firestore_1.serverTimestamp)(), updatedAt: (0, firestore_1.serverTimestamp)() }))];
                 case 8:
                     _a.sent();
-                    console.log("\u2705 Uploaded blog post: ".concat(post.title, " (ID: ").concat(post.id, ")"));
+                    console.log("\u2705 Uploaded product: ".concat(product.name, " (ID: ").concat(product.id, ")"));
                     return [3 /*break*/, 10];
                 case 9:
                     error_1 = _a.sent();
-                    console.error("\u274C Failed to upload blog post ".concat(post.title, " (ID: ").concat(post.id, "):"), error_1);
+                    console.error("\u274C Failed to upload product ".concat(product.name, " (ID: ").concat(product.id, "):"), error_1);
                     return [3 /*break*/, 10];
                 case 10:
                     _i++;
                     return [3 /*break*/, 6];
                 case 11:
-                    console.log("Blog posts upload complete.");
+                    console.log("Products upload complete.");
+                    // --- Upload Blog Posts ---
+                    console.log("Uploading blog posts to 'blogPosts' collection...");
                     return [3 /*break*/, 13];
                 case 12:
                     authError_1 = _a.sent();
